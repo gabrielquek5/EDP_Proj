@@ -21,7 +21,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 
 function AddSchedule() {
@@ -34,45 +33,46 @@ function AddSchedule() {
   const [postalCode, setPostalCode] = useState("");
   const [location, setLocation] = useState(null);
 
-  const handlePostalCodeChange = (e) => {
-    setPostalCode(e.target.value);
+  const handleSearchLocation = async (postalCode) => {
+    // Check if postal code has at least 6 digits before making the API call
+    if (postalCode.length >= 6) {
+      try {
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&region=SG&key=AIzaSyA3dZPJdXKjR22pktSERq2kfFWrOuP-78I`
+        );
+
+        if (response.data.results.length > 0) {
+          const addressComponents = response.data.results[0].address_components;
+          const blockComponent = addressComponents.find((component) =>
+            component.types.includes("street_number")
+          );
+          const neighborhoodComponent = addressComponents.find((component) =>
+            component.types.includes("neighborhood")
+          );
+          const last3DigitsOfPostalCode = postalCode.slice(-3);
+          const formattedAddress =
+            (neighborhoodComponent ? neighborhoodComponent.long_name : "") +
+            `, Block${last3DigitsOfPostalCode} ` +
+            `, SG${postalCode}`;
+
+          setLocation({ formattedAddress });
+        } else {
+          setLocation(null);
+          toast.error("Location not found for the given postal code");
+        }
+      } catch (error) {
+        console.error("Error fetching location:", error);
+        setLocation(null);
+        toast.error("Error fetching location. Please try again.");
+      }
+    } else {
+      setLocation(null);
+    }
   };
 
-  const handleSearchLocation = async () => {
-    try {
-      const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&region=SG&key=AIzaSyA3dZPJdXKjR22pktSERq2kfFWrOuP-78I`
-      );
-
-      if (response.data.results.length > 0) {
-        const addressComponents = response.data.results[0].address_components;
-
-        // Find components based on type
-        const blockComponent = addressComponents.find((component) =>
-          component.types.includes("street_number")
-        );
-
-        const neighborhoodComponent = addressComponents.find((component) =>
-          component.types.includes("neighborhood")
-        );
-
-        const last3DigitsOfPostalCode = postalCode.slice(-3);
-
-        const formattedAddress =
-          (neighborhoodComponent ? neighborhoodComponent.long_name : "") +
-          `, Block${last3DigitsOfPostalCode} ` +
-          `, SG${postalCode}`;
-
-        setLocation({ formattedAddress });
-      } else {
-        setLocation(null);
-        toast.error("Location not found for the given postal code");
-      }
-    } catch (error) {
-      console.error("Error fetching location:", error);
-      setLocation(null);
-      toast.error("Error fetching location. Please try again.");
-    }
+  const handlePostalCodeChange = (e) => {
+    setPostalCode(e.target.value);
+    handleSearchLocation(e.target.value);
   };
 
   const formik = useFormik({
@@ -81,6 +81,7 @@ function AddSchedule() {
       description: "",
       selectedDate: dayjs(),
       selectedTime: dayjs(),
+      postalCode: "",
     },
     validationSchema: yup.object({
       title: yup
@@ -95,10 +96,16 @@ function AddSchedule() {
         .min(6, "Description must be at least 6 characters")
         .max(100, "Description must be at most 100 characters")
         .required("Description is required"),
-        price: yup
+      price: yup
         .number()
         .min(0, "Price must be a non-negative number")
         .required("Price is required"),
+      postalCode: yup
+        .string()
+        .trim()
+        .min(6, "Postal code must be 6 digits!")
+        .max(6, "Postal code must be 6 digits only!")
+        .required("Postal Code is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
@@ -111,6 +118,7 @@ function AddSchedule() {
       data.imageFile = imageFile;
       data.title = data.title.trim();
       data.description = data.description.trim();
+      data.postalCode = data.postalCode.trim();
       const selectedDateTime = dayjs.tz(
         `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
           "HH:mm:ss"
@@ -121,10 +129,17 @@ function AddSchedule() {
       data.selectedDate = selectedDateTime.format();
       data.selectedTime = selectedDateTime.format();
 
-      http.post("/schedule", data).then((res) => {
-        console.log(res.data);
-        navigate("/schedules");
-      });
+      http
+        .post("/schedule", data)
+        .then((res) => {
+          navigate("/schedules");
+        })
+        .catch((error) => {
+          console.error("Error submitting form:", error.response);
+          toast.error("Error submitting form. Please try again.");
+        });
+
+      console.log("Form submitted!", data);
     },
   });
   const onFileChange = (e) => {
@@ -239,6 +254,38 @@ function AddSchedule() {
                 fullWidth
                 margin="dense"
                 autoComplete="off"
+                label="Postal Code"
+                name="postalCode"
+                value={formik.values.postalCode}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  handleSearchLocation(e.target.value);
+                }}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.postalCode && Boolean(formik.errors.postalCode)
+                }
+                helperText={
+                  formik.touched.postalCode && formik.errors.postalCode
+                }
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => handleSearchLocation(formik.values.postalCode)}
+              >
+                Search Location
+              </Button>
+              {location && (
+                <div>
+                  <h3>Location Details</h3>
+                  <p>{location.formattedAddress}</p>
+                </div>
+              )}
+              <TextField
+                fullWidth
+                margin="dense"
+                autoComplete="off"
                 label="Price"
                 name="price"
                 type="number"
@@ -248,27 +295,6 @@ function AddSchedule() {
                 error={formik.touched.price && Boolean(formik.errors.price)}
                 helperText={formik.touched.price && formik.errors.price}
               />
-              <FormControl fullWidth margin="dense">
-
-                <TextField
-                  id="postalCode"
-                  name="postalCode"
-                  label="Postal Code"
-                  value={postalCode}
-                  onChange={handlePostalCodeChange}
-                />
-              </FormControl>
-              <Button variant="contained" onClick={handleSearchLocation}>
-                Search Location
-              </Button>
-
-
-              {location && (
-                <div>
-                  <h3>Location Details</h3>
-                  <p>{location.formattedAddress}</p>
-                </div>
-              )}
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Box sx={{ textAlign: "center", mt: 2 }}>

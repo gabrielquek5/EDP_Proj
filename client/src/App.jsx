@@ -10,9 +10,6 @@ import {
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import MyTheme from "./themes/MyTheme";
-import Tutorials from "./pages/Tutorials";
-import AddTutorial from "./pages/AddTutorial";
-import EditTutorial from "./pages/EditTutorial";
 import MyForm from "./pages/MyForm";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -28,7 +25,6 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import AddReview from "./pages/AddReview";
 import Reviews from "./pages/Reviews";
 import EditReview from "./pages/EditReview";
-import EventsPlaceholder from "./pages/EventsPlaceholder";
 import AdminReviews from "./pages/AdminReviews";
 import Checkout from "./pages/Checkout";
 import SuccessfulPayment from "./pages/SuccessfulPayment";
@@ -51,7 +47,7 @@ function App() {
     if (localStorage.getItem("accessToken")) {
       http.get("/user/auth").then((res) => {
         setUser(res.data.user);
-        setLoading(false); // Set loading to false once user data is available
+        setLoading(false);
       });
     }
   }, []);
@@ -106,9 +102,6 @@ function App() {
                     <Link to="/reviews">
                       <Typography>Reviews</Typography>
                     </Link>
-                    <Link to="/eventsplaceholder">
-                      <Typography>Events</Typography>
-                    </Link>
                     <Link to="/shoppingcart">
                       <Button>
                         <MdOutlineShoppingCart class="cart-btn" size={24} />
@@ -137,10 +130,7 @@ function App() {
 
           <Container>
             <Routes>
-              <Route path={"/"} element={<Tutorials />} />
-              <Route path={"/tutorials"} element={<Tutorials />} />
-              <Route path={"/addtutorial"} element={<AddTutorial />} />
-              <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/"} element={<Schedules />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
@@ -154,23 +144,12 @@ function App() {
               <Route path={"/addreview"} element={<AddReview />} />
               <Route path={"/reviews"} element={<Reviews />} />
               <Route path={"/editreview/:id"} element={<EditReview />} />
-              <Route
-                path={"/eventsplaceholder"}
-                element={<EventsPlaceholder />}
-              />
               <Route path={"/adminreviews"} element={<AdminReviews />} />
               <Route path={"/checkout"} element={<Checkout />} />
-              <Route
-                path={"/successfulpayment"}
-                element={<SuccessfulPayment />}
-              />
+              <Route path={"/successfulpayment"} element={<SuccessfulPayment />}/>
               <Route path={"/addschedule"} element={<AddSchedule />} />
-              <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/individualschedule"} element={<IndividualSchedules />}/>
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
-              <Route
-                path={"/individualschedule"}
-                element={<IndividualSchedules />}
-              />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
             </Routes>
