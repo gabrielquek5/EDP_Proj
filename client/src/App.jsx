@@ -32,147 +32,152 @@ import EventsPlaceholder from "./pages/EventsPlaceholder";
 import AdminReviews from "./pages/AdminReviews";
 import Checkout from "./pages/Checkout";
 import SuccessfulPayment from "./pages/SuccessfulPayment";
-
+import UserContext from "./contexts/UserContext";
 import Schedules from "./pages/Schedules";
 import AddSchedule from "./pages/AddSchedule";
 import EditSchedule from "./pages/EditSchedule";
 import IndividualSchedules from "./pages/IndividualSchedules";
-import ViewEvent from "./pages/viewevent";
+import ViewEvent from "./pages/ViewEvent";
 
 function App() {
   const logout = () => {
     localStorage.clear();
     window.location = "/";
   };
+  const [loading, setLoading] = useState(true);
 
   const [user, setUser] = useState(null);
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
-      http.get("/user/auth").then((res) => setUser(res.data.user));
-      setUser({ name: "User" });
+      http.get("/user/auth").then((res) => {
+        setUser(res.data.user);
+        setLoading(false); // Set loading to false once user data is available
+      });
     }
   }, []);
   return (
-    <Router>
-      <ThemeProvider theme={MyTheme}>
-        <AppBar
-          position="static"
-          sx={{ backgroundColor: "#FFA500", fontFamily: "Poppins" }}
-          className="AppBar"
-        >
-          <Container>
-            <Toolbar disableGutters={true}>
-              <Link to="/">
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ fontFamily: "Poppins" }}
-                >
-                  Uplay
-                </Typography>
-              </Link>
-              <Link to="/schedules">
-                <Typography>All Events</Typography>
-              </Link>
-              {user && (
-                <>
-                  <Link to="/individualschedule">
-                    <Typography>Your Schedules</Typography>
-                  </Link>
-                </>
-              )}
-              <Box sx={{ flexGrow: 1 }}></Box>
-
-              {user && (
-                <>
+    <UserContext.Provider value={{ user, setUser }}>
+      <Router>
+        <ThemeProvider theme={MyTheme}>
+          <AppBar
+            position="static"
+            sx={{ backgroundColor: "#FFA500", fontFamily: "Poppins" }}
+            className="AppBar"
+          >
+            <Container>
+              <Toolbar disableGutters={true}>
+                <Link to="/">
                   <Typography
-                    style={{ marginRight: "8px", fontFamily: "Poppins" }}
+                    variant="h6"
+                    component="div"
+                    sx={{ fontFamily: "Poppins" }}
                   >
-                    {user.name}{" "}
+                    Uplay
                   </Typography>
-                  <Link to="/Update">
-                    <Typography>Update</Typography>
-                  </Link>
-                  <Link to="/Delete">
-                    <Typography>Delete</Typography>
-                  </Link>
-                  <Link to="/bookings">
-                    <Typography>Bookings</Typography>
-                  </Link>
-                  <Link to="/reviews">
-                    <Typography>Reviews</Typography>
-                  </Link>
-                  <Link to="/eventsplaceholder">
-                    <Typography>Events</Typography>
-                  </Link>
-                  <Link to="/shoppingcart">
-                    <Button>
-                      <MdOutlineShoppingCart class="cart-btn" size={24} />
-                    </Button>
-                  </Link>
-                  <Button onClick={logout}>Logout</Button>
-                </>
-              )}
-              {!user && (
-                <>
-                  <Link to="/register">
-                    <Typography style={{ fontFamily: "Poppins" }}>
-                      Register
-                    </Typography>
-                  </Link>
-                  <Link to="/login">
-                    <Typography style={{ fontFamily: "Poppins" }}>
-                      Login
-                    </Typography>
-                  </Link>
-                </>
-              )}
-            </Toolbar>
-          </Container>
-        </AppBar>
+                </Link>
+                <Link to="/schedules">
+                  <Typography>All Events</Typography>
+                </Link>
+                {user && (
+                  <>
+                    <Link to="/individualschedule">
+                      <Typography>Your Schedules</Typography>
+                    </Link>
+                  </>
+                )}
+                <Box sx={{ flexGrow: 1 }}></Box>
 
-        <Container>
-          <Routes>
-            <Route path={"/"} element={<Tutorials />} />
-            <Route path={"/tutorials"} element={<Tutorials />} />
-            <Route path={"/addtutorial"} element={<AddTutorial />} />
-            <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
-            <Route path={"/form"} element={<MyForm />} />
-            <Route path={"/register"} element={<Register />} />
-            <Route path={"/login"} element={<Login />} />
-            <Route path={"/update"} element={<Update />} />
-            <Route path={"/delete"} element={<Delete />} />
-            <Route path={"/bookings"} element={<Bookings />} />
-            <Route path={"/addbooking"} element={<AddBooking />} />
-            <Route path={"/editbooking/:id"} element={<EditBooking />} />
-            <Route path={"/form"} element={<MyForm />} />
-            <Route path={"/shoppingcart"} element={<ShoppingCart />} />
-            <Route path={"/addreview"} element={<AddReview />} />
-            <Route path={"/reviews"} element={<Reviews />} />
-            <Route path={"/editreview/:id"} element={<EditReview />} />
-            <Route
-              path={"/eventsplaceholder"}
-              element={<EventsPlaceholder />}
-            />
-            <Route path={"/adminreviews"} element={<AdminReviews />} />
-            <Route path={"/checkout"} element={<Checkout />} />
-            <Route
-              path={"/successfulpayment"}
-              element={<SuccessfulPayment />}
-            />
-            <Route path={"/addschedule"} element={<AddSchedule />} />
-            <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
-            <Route path={"/editschedule/:id"} element={<EditSchedule />} />
-            <Route
-              path={"/individualschedule"}
-              element={<IndividualSchedules />}
-            />{" "}
-            <Route path={"/schedules"} element={<Schedules />} />
-            <Route path={"/viewevent/:id"} element={<ViewEvent />} />
-          </Routes>
-        </Container>
-      </ThemeProvider>
-    </Router>
+                {user && (
+                  <>
+                    <Typography
+                      style={{ marginRight: "8px", fontFamily: "Poppins" }}
+                    >
+                      {user.name}{" "}
+                    </Typography>
+                    <Link to="/Update">
+                      <Typography>Update</Typography>
+                    </Link>
+                    <Link to="/Delete">
+                      <Typography>Delete</Typography>
+                    </Link>
+                    <Link to="/bookings">
+                      <Typography>Bookings</Typography>
+                    </Link>
+                    <Link to="/reviews">
+                      <Typography>Reviews</Typography>
+                    </Link>
+                    <Link to="/eventsplaceholder">
+                      <Typography>Events</Typography>
+                    </Link>
+                    <Link to="/shoppingcart">
+                      <Button>
+                        <MdOutlineShoppingCart class="cart-btn" size={24} />
+                      </Button>
+                    </Link>
+                    <Button onClick={logout}>Logout</Button>
+                  </>
+                )}
+                {!user && (
+                  <>
+                    <Link to="/register">
+                      <Typography style={{ fontFamily: "Poppins" }}>
+                        Register
+                      </Typography>
+                    </Link>
+                    <Link to="/login">
+                      <Typography style={{ fontFamily: "Poppins" }}>
+                        Login
+                      </Typography>
+                    </Link>
+                  </>
+                )}
+              </Toolbar>
+            </Container>
+          </AppBar>
+
+          <Container>
+            <Routes>
+              <Route path={"/"} element={<Tutorials />} />
+              <Route path={"/tutorials"} element={<Tutorials />} />
+              <Route path={"/addtutorial"} element={<AddTutorial />} />
+              <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/form"} element={<MyForm />} />
+              <Route path={"/register"} element={<Register />} />
+              <Route path={"/login"} element={<Login />} />
+              <Route path={"/update"} element={<Update />} />
+              <Route path={"/delete"} element={<Delete />} />
+              <Route path={"/bookings"} element={<Bookings />} />
+              <Route path={"/addbooking"} element={<AddBooking />} />
+              <Route path={"/editbooking/:id"} element={<EditBooking />} />
+              <Route path={"/form"} element={<MyForm />} />
+              <Route path={"/shoppingcart"} element={<ShoppingCart />} />
+              <Route path={"/addreview"} element={<AddReview />} />
+              <Route path={"/reviews"} element={<Reviews />} />
+              <Route path={"/editreview/:id"} element={<EditReview />} />
+              <Route
+                path={"/eventsplaceholder"}
+                element={<EventsPlaceholder />}
+              />
+              <Route path={"/adminreviews"} element={<AdminReviews />} />
+              <Route path={"/checkout"} element={<Checkout />} />
+              <Route
+                path={"/successfulpayment"}
+                element={<SuccessfulPayment />}
+              />
+              <Route path={"/addschedule"} element={<AddSchedule />} />
+              <Route path={"/edittutorial/:id"} element={<EditTutorial />} />
+              <Route path={"/editschedule/:id"} element={<EditSchedule />} />
+              <Route
+                path={"/individualschedule"}
+                element={<IndividualSchedules />}
+              />
+              <Route path={"/schedules"} element={<Schedules />} />
+              <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+            </Routes>
+          </Container>
+        </ThemeProvider>
+      </Router>
+    </UserContext.Provider>
   );
 }
 

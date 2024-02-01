@@ -82,10 +82,11 @@ function IndividualSchedules() {
           <Clear />
         </IconButton>
         <Box sx={{ flexGrow: 1 }} />
-
-        <Link to="/addschedule" style={{ textDecoration: "none" }}>
-          <Button variant="contained">Add</Button>
-        </Link>
+        {user && (
+          <Link to="/addschedule" style={{ textDecoration: "none" }}>
+            <Button variant="contained">Add</Button>
+          </Link>
+        )}
       </Box>
 
       <Grid container spacing={2}>
