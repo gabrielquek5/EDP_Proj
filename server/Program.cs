@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<MyDbContext>();
 
@@ -81,7 +82,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors();
-
+// Configure Stripe API key
+StripeConfiguration.ApiKey = "sk_test_51OPMIjE7dlDzSq3bdLinND1GsOB1umKYNwDgYOubmE9LyTupQQHt0cFKj5re4ucAl3E5PINgwPS74OJgWyxvaE3U00AYisjkJZ";
+app.UseRouting();
+app.UseStaticFiles();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.UseAuthentication();
 app.UseAuthorization();

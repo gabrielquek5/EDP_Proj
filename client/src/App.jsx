@@ -13,6 +13,18 @@ import Update from './pages/Update.Jsx';
 import Delete from './pages/Delete';
 import http from './http';
 import {useState, useEffect} from 'react';
+import Bookings from './pages/Bookings';
+import AddBooking from './pages/AddBooking';
+import EditBooking from './pages/EditBooking';
+import ShoppingCart from './pages/ShoppingCart';
+import { MdOutlineShoppingCart } from "react-icons/md";
+import AddReview from './pages/AddReview';
+import Reviews from './pages/Reviews';
+import EditReview from './pages/EditReview';
+import EventsPlaceholder from './pages/EventsPlaceholder';
+import AdminReviews from './pages/AdminReviews';
+import Checkout from './pages/Checkout';
+import SuccessfulPayment from './pages/SuccessfulPayment';
 
 
 function App() {
@@ -32,11 +44,11 @@ setUser({ name: 'User' });
   return (
     <Router>
       <ThemeProvider theme={MyTheme}>
-        <AppBar position="static" sx={{backgroundColor: "#FFA500", fontFamily: "cursive"}} className="AppBar">
+        <AppBar position="static" sx={{backgroundColor: "#FFA500", fontFamily: "Poppins"}} className="AppBar">
           <Container>
             <Toolbar disableGutters={true}>
               <Link to="/">
-                <Typography variant="h6" component="div" sx={{fontFamily: "cursive"}}>
+                <Typography variant="h6" component="div" sx={{fontFamily: "Poppins"}}>
                   Uplay
                 </Typography>
               </Link>
@@ -44,23 +56,27 @@ setUser({ name: 'User' });
 
               {user && (
                 <>
-                  <Typography style={{marginRight:'8px', fontFamily: "cursive"}}>{user.name}  </Typography>
+                  <Typography style={{marginRight:'8px', fontFamily: "Poppins"}}>{user.name}  </Typography>
                   <Link to="/Update">
                     <Typography>Update</Typography>
                   </Link>
                   <Link to="/Delete">
                     <Typography>Delete</Typography>
                   </Link>
+                  <Link to="/bookings" ><Typography>Bookings</Typography></Link>
+              <Link to="/reviews" ><Typography>Reviews</Typography></Link>
+              <Link to="/eventsplaceholder" ><Typography>Events</Typography></Link>
+              <Link to="/shoppingcart"><Button><MdOutlineShoppingCart class="cart-btn" size={24}/></Button></Link>
                   <Button onClick={logout}>Logout</Button>
                 </>
               )}
               {!user && (
                 <>
                   <Link to="/register">
-                    <Typography style={{fontFamily: "cursive"}}>Register</Typography>
+                    <Typography style={{fontFamily: "Poppins"}}>Register</Typography>
                   </Link>
                   <Link to="/login">
-                    <Typography style={{fontFamily: "cursive"}}>Login</Typography>
+                    <Typography style={{fontFamily: "Poppins"}}>Login</Typography>
                   </Link>
                 </>
               )}
@@ -79,6 +95,18 @@ setUser({ name: 'User' });
             <Route path={"/login"} element={<Login />} />
             <Route path={"/update"} element={<Update/>}  />
             <Route path={"/delete"} element={<Delete/>}  />
+            <Route path={"/bookings"} element={<Bookings />} />
+            <Route path={"/addbooking"} element={<AddBooking />} />
+            <Route path={"/editbooking/:id"} element={<EditBooking />} />
+            <Route path={"/form"} element={<MyForm />} />
+            <Route path={"/shoppingcart"} element={<ShoppingCart />} />
+            <Route path={"/addreview"} element={<AddReview/>}/>
+            <Route path={"/reviews"} element={<Reviews/>}/>
+            <Route path={"/editreview/:id"} element={<EditReview/>}/>
+            <Route path={"/eventsplaceholder"} element={<EventsPlaceholder/>}/>
+            <Route path={"/adminreviews"} element={<AdminReviews/>}/>
+            <Route path={"/checkout"} element={<Checkout/>}/>
+            <Route path={"/successfulpayment"} element={<SuccessfulPayment/>}/>
           </Routes>
         </Container>
       </ThemeProvider>
