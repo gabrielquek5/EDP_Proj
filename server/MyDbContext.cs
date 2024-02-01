@@ -25,6 +25,7 @@ namespace WebApplication1
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
         public DbSet<User> Users { get; set; }
 	}
 }

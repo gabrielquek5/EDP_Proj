@@ -86,7 +86,5 @@ namespace WebApplication1.Controllers
             }
             return Ok(tutorial);
 		}
-
 	}
-
 }

@@ -84,13 +84,16 @@ app.UseHttpsRedirection();
 app.UseCors();
 // Configure Stripe API key
 StripeConfiguration.ApiKey = "sk_test_51OPMIjE7dlDzSq3bdLinND1GsOB1umKYNwDgYOubmE9LyTupQQHt0cFKj5re4ucAl3E5PINgwPS74OJgWyxvaE3U00AYisjkJZ";
-app.UseRouting();
 app.UseStaticFiles();
-app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebApplication1.Models
 {
@@ -28,5 +29,8 @@ namespace WebApplication1.Models
 		[Column(TypeName ="datetime")]
 		public DateTime UpdatedAt { get; set; }
 
-	}
+        // Navigation property to represent the one-to-many relationship
+        [JsonIgnore]
+        public List<Tutorial>? Tutorials { get; set; }
+    }
 }
