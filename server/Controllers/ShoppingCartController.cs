@@ -117,7 +117,7 @@ namespace EDP_Project.Controllers
     [HttpPost("create-checkout-session")]
         public IActionResult CreateCheckoutSession()
         {
-            var domain = "http://localhost:7104";
+            var domain = "http://localhost:7051"; //changed from 7104 
 
             // Retrieve cart items from the database
             List<ShoppingCart> cartItems = _context.ShoppingCarts.ToList();
@@ -125,7 +125,7 @@ namespace EDP_Project.Controllers
             // Build line items for the session
             var lineItems = cartItems.Select(item => new SessionLineItemOptions
             {
-                Price = "price_1OefBME7dlDzSq3bRUCnK4Ap", // Price ID for the product
+                Price = "price_1Of3R1E7dlDzSq3b86JsC0QX", // Price ID for the product
                 Quantity = item.Quantity
             }).ToList();
 

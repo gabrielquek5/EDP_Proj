@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Stripe;
 
 
 namespace WebApplication1.Controllers
@@ -79,6 +80,36 @@ namespace WebApplication1.Controllers
         [HttpPost, Authorize]
         public IActionResult AddSchedule(Schedule schedule)
         {
+
+            StripeConfiguration.ApiKey = "sk_test_51OPMIjE7dlDzSq3bdLinND1GsOB1umKYNwDgYOubmE9LyTupQQHt0cFKj5re4ucAl3E5PINgwPS74OJgWyxvaE3U00AYisjkJZ";
+
+            // Create a Product
+            var productOptions = new ProductCreateOptions
+            {
+                Name = schedule.Title,
+                Description = schedule.Description,
+                Images = new List<string> { schedule.ImageFile }
+            };
+
+            var productService = new ProductService();
+            var product = productService.Create(productOptions);
+
+            // Create a Price
+            var priceOptions = new PriceCreateOptions
+            {
+                UnitAmountDecimal = (long)(schedule.Price * 100), // Convert the price to cents if not already in cents
+                Currency = "sgd", // Set the currency code (adjust if needed)
+                Product = product.Id, // Associate the Price with the Product
+                Metadata = new Dictionary<string, string>
+    {
+        { "schedule_id", schedule.ScheduleId.ToString() } // Optionally add metadata
+    }
+            };
+
+            var priceService = new PriceService();
+            var price = priceService.Create(priceOptions);
+
+            //create in db
             int userId = GetUserId();
             var now = DateTime.Now;
             var mySchedule = new Schedule()
@@ -127,7 +158,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpDelete("{id}"), Authorize]
-        public IActionResult DeleteSchedule(int id)
+        public IActionResult DeleteSchedule(int id, Schedule schedule)
         {
             var mySchedule = _context.Schedules.Find(id);
             if (mySchedule == null)
@@ -140,6 +171,7 @@ namespace WebApplication1.Controllers
             {
                 return Forbid();
             }
+
 
             _context.Schedules.Remove(mySchedule);
             _context.SaveChanges();
