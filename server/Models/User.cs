@@ -39,5 +39,7 @@ namespace WebApplication1.Models
         public List<Booking> Bookings { get; set; }
         [JsonIgnore]
         public List<Review> Reviews { get; set; }
+        [JsonIgnore]
+        public List<Schedule>? Schedules { get; set; }
     }
 }

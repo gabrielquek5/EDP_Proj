@@ -22,6 +22,9 @@ namespace WebApplication1.Models
         [Required, Column(TypeName = "datetime")]
         public DateTime SelectedTime { get; set; }
 
+        [Required, MinLength(6), MaxLength(6)]
+        public string PostalCode { get; set; } = string.Empty;
+
         [MaxLength(20)]
         public string? ImageFile { get; set; }
 
@@ -33,6 +36,9 @@ namespace WebApplication1.Models
 
         [Required]
         public float Price { get; set; }
+
+        [Required]
+        public bool IsDeleted { get; set; }
 
         [JsonIgnore]
         public List<Booking>? Bookings { get; set; }

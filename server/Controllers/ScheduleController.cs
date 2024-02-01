@@ -22,32 +22,41 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult GetAll(string? search)
         {
-            IQueryable<Schedule> result = _context.Schedules.Include(t => t.User);
-            if (search != null)
+            try
             {
-                result = result.Where(x => x.Title.Contains(search)
-                    || x.Description.Contains(search));
-            }
-            var list = result.OrderByDescending(x => x.CreatedAt).ToList();
-            var data = list.Select(t => new
-            {
-                t.ScheduleId,
-                t.Title,
-                t.Description,
-                t.SelectedDate,
-                t.SelectedTime,
-                t.ImageFile,
-                t.Price,
-                t.CreatedAt,
-                t.UpdatedAt,
-                t.UserId,
-                User = new
+                IQueryable<Schedule> result = _context.Schedules.Include(t => t.User);
+                if (search != null)
                 {
-                    t.User?.FirstName
+                    result = result.Where(x => x.Title.Contains(search) || x.Description.Contains(search) || x.PostalCode.Contains(search));
                 }
-            });
-            return Ok(data);
+                var list = result.OrderByDescending(x => x.CreatedAt).ToList();
+                var data = list.Select(t => new
+                {
+                    t.ScheduleId,
+                    t.Title,
+                    t.Description,
+                    t.PostalCode,
+                    t.SelectedDate,
+                    t.SelectedTime,
+                    t.ImageFile,
+                    t.Price,
+                    t.IsDeleted,
+                    t.CreatedAt,
+                    t.UpdatedAt,
+                    t.UserId,
+                    User = new
+                    {
+                        t.User?.FirstName
+                    }
+                });
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetSchedule(int id)
@@ -63,9 +72,11 @@ namespace WebApplication1.Controllers
                 schedule.ScheduleId,
                 schedule.Title,
                 schedule.Description,
+                schedule.PostalCode,
                 schedule.SelectedDate,
                 schedule.SelectedTime,
                 schedule.Price,
+                schedule.IsDeleted,
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
@@ -116,10 +127,12 @@ namespace WebApplication1.Controllers
             {
                 Title = schedule.Title.Trim(),
                 Description = schedule.Description.Trim(),
+                PostalCode = schedule.PostalCode.Trim(),
                 SelectedDate = schedule.SelectedDate,
                 SelectedTime = schedule.SelectedTime,
                 ImageFile = schedule.ImageFile,
                 Price = schedule.Price,
+                IsDeleted = false,
                 CreatedAt = now,
                 UpdatedAt = now,
                 UserId = userId
@@ -147,10 +160,12 @@ namespace WebApplication1.Controllers
 
             mySchedule.Title = schedule.Title.Trim();
             mySchedule.Description = schedule.Description.Trim();
+            mySchedule.PostalCode = schedule.PostalCode.Trim();
             mySchedule.SelectedDate = schedule.SelectedDate;
             mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
+            mySchedule.IsDeleted = false;
             mySchedule.UpdatedAt = DateTime.Now;
 
             _context.SaveChanges();
@@ -174,6 +189,26 @@ namespace WebApplication1.Controllers
 
 
             _context.Schedules.Remove(mySchedule);
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{id}/soft-delete"), Authorize]
+        public IActionResult SoftDeleteSchedule(int id)
+        {
+            var mySchedule = _context.Schedules.Find(id);
+            if (mySchedule == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (mySchedule.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            mySchedule.IsDeleted = true;
             _context.SaveChanges();
             return Ok();
         }

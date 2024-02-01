@@ -16,6 +16,8 @@ import {
   Search,
   Clear,
   Edit,
+  DateRangeOutlined,
+  TimerOutlined,
 } from "@mui/icons-material";
 import http from "../http";
 import dayjs from "dayjs";
@@ -33,13 +35,18 @@ function IndividualSchedules() {
 
   const getSchedules = () => {
     http.get("/schedule").then((res) => {
-      setScheduleList(res.data);
+      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
+      setScheduleList(filteredSchedules);
+      console.log("Before", res.data);
+      console.log(filteredSchedules);
     });
   };
 
   const searchSchedules = () => {
     http.get(`/schedule?search=${search}`).then((res) => {
-      setScheduleList(res.data);
+      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
+      setScheduleList(filteredSchedules);
+      console.log(filteredSchedules);
     });
   };
 
@@ -112,7 +119,7 @@ function IndividualSchedules() {
                         {schedule.title}
                       </Typography>
                       {user && user.id === schedule.userId && (
-                        <Link to={`/editschedule/${schedule.id}`}>
+                        <Link to={`/editschedule/${schedule.scheduleId}`}>
                           <IconButton color="primary" sx={{ padding: "4px" }}>
                             <Edit />
                           </IconButton>
@@ -124,22 +131,39 @@ function IndividualSchedules() {
                       color="text.secondary"
                     >
                       <AccountCircle sx={{ mr: 1 }} />
-                      <Typography>{schedule.user?.name}</Typography>
+                      <Typography>{schedule.user?.firstName}</Typography>
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      color="text.secondary"
+                    >
+                      <DateRangeOutlined sx={{ mr: 1 }} />
+                      <Typography>Start Date: </Typography>
+                      <Typography>
+                        {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
+                      </Typography>
                     </Box>
                     <Box
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       color="text.secondary"
                     >
                       <AccessTime sx={{ mr: 1 }} />
+                      <Typography>Created Date: </Typography>
                       <Typography>
                         {dayjs(schedule.createdAt).format(
                           global.datetimeFormat
                         )}
                       </Typography>
                     </Box>
-                    {/* <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                      {schedule.description}
-                    </Typography> */}
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }} color="text.secondary">
+                      <AccessTime sx={{ mr: 1 }} />
+                      <Typography>Updated Date: </Typography>
+                      <Typography>
+                        {dayjs(schedule.updateAt).format(
+                          global.datetimeFormat
+                        )}
+                      </Typography>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>

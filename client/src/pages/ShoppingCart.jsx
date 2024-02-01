@@ -118,7 +118,7 @@ function ShoppingCart() {
 
 
   return (
-    <Container maxWidth="lg" sx={{ background: "#f0f0f0", minHeight: "100vh", paddingY: 4 }}>
+    <Container maxWidth="lg" sx={{ background: "#00000", minHeight: "100vh", paddingY: 4 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={8}>
         <Message message={message} />

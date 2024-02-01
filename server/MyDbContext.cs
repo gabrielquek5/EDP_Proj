@@ -14,8 +14,7 @@ namespace WebApplication1
 		protected override void OnConfiguring(DbContextOptionsBuilder
 		optionsBuilder)
 		{
-			string? connectionString = _configuration.GetConnectionString(
-			"MyConnection");
+			string? connectionString = _configuration.GetConnectionString("MyConnection");
 			if (connectionString != null)
 			{
 				optionsBuilder.UseMySQL(connectionString);
