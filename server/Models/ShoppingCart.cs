@@ -17,12 +17,11 @@ namespace EDP_Project.Models
         public DateTime DateCart { get; set; }
 
         // Foreign key property
-        public int EventID { get; set; }
+        public int ScheduleId { get; set; }
+        public int UserId { get; set; }
 
         // Navigation property to represent the one-to-many relationship
-        public Event? Event { get; set; }
-
-        public int UserID { get; set; }
+        public Schedule? Schedule { get; set; }
         public User? User { get; set; }
 
     }

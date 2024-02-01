@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
 			// Return user info
 			var user = new
 			{
-				foundUser.Id,
+				foundUser.UserId,
 				foundUser.Email,
 				foundUser.FirstName,
 				foundUser.LastName,
@@ -132,7 +132,7 @@ namespace WebApplication1.Controllers
 			{
 				Subject = new ClaimsIdentity(new Claim[]
 				{
-			new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+			new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
 			new Claim(ClaimTypes.Name, user.FirstName),
 			new Claim(ClaimTypes.Email, user.Email),
 

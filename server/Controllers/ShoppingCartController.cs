@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebApplication1;
+using WebApplication1.Models;
 
 namespace EDP_Project.Controllers
 {
@@ -29,15 +30,15 @@ namespace EDP_Project.Controllers
             try
             {
                 var result = _context.ShoppingCarts
-                    .Include(s => s.Event)
+                    .Include(s => s.Schedule)
                     .OrderByDescending(x => x.itemID)
                     .Select(cart => new
                     {
                         cart.itemID,
                         cart.Quantity,
                         cart.DateCart,
-                        EventName = cart.Event.EventName,
-                        EventPrice = cart.Event.EventPrice
+                        EventName = cart.Schedule.Title,
+                        EventPrice = cart.Schedule.Price
                         // Include other properties you need
                     })
                     .ToList();
@@ -51,24 +52,32 @@ namespace EDP_Project.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult AddToCart(ShoppingCart shoppingCart)
+        [HttpPost("{id}")]
+        public IActionResult AddToCart(int id,ShoppingCart shoppingCart)
         {
-            var now = DateTime.Now;
+
+            // Add the shopping cart item
             var myShoppingCart = new ShoppingCart()
             {
                 Quantity = shoppingCart.Quantity,
-                DateCart = shoppingCart.DateCart,
-                EventID = 1,
-                UserID=1
-
+                DateCart = DateTime.Now, // Use the current timestamp
+                ScheduleId = id,
+                UserId = 1
             };
 
-            _context.ShoppingCarts.Add(myShoppingCart);
-            _context.SaveChanges();
-
-            return Ok(myShoppingCart);
+            try
+            {
+                _context.ShoppingCarts.Add(myShoppingCart);
+                _context.SaveChanges();
+                return Ok(myShoppingCart);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Failed to add item to cart: " + ex.Message);
+            }
         }
+
 
         [HttpPut("{id}")]
         public IActionResult UpdateCart(int id, ShoppingCart shoppingCart)
@@ -89,7 +98,7 @@ namespace EDP_Project.Controllers
     public IActionResult DeleteShoppingCartForUser(int userId)
     {
         // Find all shopping cart items associated with the specified userId
-        var shoppingCarts = _context.ShoppingCarts.Where(cart => cart.UserID == userId).ToList();
+        var shoppingCarts = _context.ShoppingCarts.Where(cart => cart.UserId == userId).ToList();
 
         // Check if there are any shopping cart items for the user
         if (shoppingCarts == null || !shoppingCarts.Any())

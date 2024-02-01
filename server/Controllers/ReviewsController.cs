@@ -1,6 +1,8 @@
 ﻿using EDP_Project.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1;
+using WebApplication1.Models;
+
 namespace EDP_Project.Controllers
 {
     [ApiController]
@@ -62,8 +64,8 @@ namespace EDP_Project.Controllers
                 Picture = review.Picture,
                 createdAt = now,
                 updatedAt = now,
-                EventID = 1,
-                UserID=1,
+                ScheduleId = review.ScheduleId,
+                UserId= review.UserId,
                 Reported = false
             };
 

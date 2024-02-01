@@ -62,6 +62,8 @@ function Schedules() {
     getSchedules();
   };
 
+
+
   return (
     <Box>
       <Typography variant="h5" sx={{ my: 2 }}>
@@ -87,8 +89,8 @@ function Schedules() {
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
           return (
-            <Grid item xs={12} md={6} lg={4} key={schedule.id}>
-              <Link to={`/viewevent/${schedule.id}`} style={{ textDecoration: "none" }}>
+            <Grid item xs={12} md={6} lg={4} key={schedule.scheduleId}>
+              <Link to={`/viewevent/${schedule.scheduleId}`} style={{ textDecoration: "none" }}>
                 <Card>
                   {schedule.imageFile && (
                     <Box className="image-size">

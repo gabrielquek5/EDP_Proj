@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EDP_Project.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -6,7 +7,8 @@ namespace WebApplication1.Models
 {
 	public class User
 	{
-		public int Id { get; set; }
+		[Key]
+		public int UserId { get; set; }
 
 
 		[MaxLength(30)]
@@ -30,7 +32,12 @@ namespace WebApplication1.Models
 		public DateTime UpdatedAt { get; set; }
 
         // Navigation property to represent the one-to-many relationship
+
+		[JsonIgnore]
+		public List<ShoppingCart> ShoppingCarts { get; set;}
         [JsonIgnore]
-        public List<Tutorial>? Tutorials { get; set; }
+        public List<Booking> Bookings { get; set; }
+        [JsonIgnore]
+        public List<Review> Reviews { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace EDP_Project.Models
 {
     public class Booking
     {
+        [Key]
         public int BookingID { get; set; }
 
         [Required]
@@ -26,12 +27,12 @@ namespace EDP_Project.Models
 
 
         // Foreign key property
-        public int UserID { get; set; }
-        public int EventID { get; set; }
+        public int UserId { get; set; }
+        public int ScheduleId { get; set; }
 
         // Navigation property to represent the one-to-many relationship
         public User? User { get; set; }
-        public Event? Event { get; set; }
+        public Schedule? Schedule { get; set; }
     }
 
 }

@@ -21,7 +21,6 @@ namespace WebApplication1
 				optionsBuilder.UseMySQL(connectionString);
 			}
 		}
-		public DbSet<Tutorial> Tutorials { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }

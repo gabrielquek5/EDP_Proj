@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using EDP_Project.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace WebApplication1.Models
 {
     public class Schedule
     {
-        public int Id { get; set; }
+        [Key]
+        public int ScheduleId { get; set; }
 
         [Required, MinLength(3), MaxLength(100)]
         public string Title { get; set; } = string.Empty;
@@ -27,6 +30,16 @@ namespace WebApplication1.Models
 
         [Column(TypeName = "datetime")]
         public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public float Price { get; set; }
+
+        [JsonIgnore]
+        public List<Booking>? Bookings { get; set; }
+        [JsonIgnore]
+        public List<Review>? Reviews { get; set; }
+        [JsonIgnore]
+        public List<ShoppingCart>? ShoppingCart { get; set; }
 
         // Foreign key property
         public int UserId { get; set; }

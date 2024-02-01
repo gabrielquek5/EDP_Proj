@@ -95,6 +95,10 @@ function AddSchedule() {
         .min(6, "Description must be at least 6 characters")
         .max(100, "Description must be at most 100 characters")
         .required("Description is required"),
+        price: yup
+        .number()
+        .min(0, "Price must be a non-negative number")
+        .required("Price is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
@@ -231,11 +235,25 @@ function AddSchedule() {
                 timezone="Asia/Singapore"
                 required
               />
+              <TextField
+                fullWidth
+                margin="dense"
+                autoComplete="off"
+                label="Price"
+                name="price"
+                type="number"
+                value={formik.values.price}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.price && Boolean(formik.errors.price)}
+                helperText={formik.touched.price && formik.errors.price}
+              />
               <FormControl fullWidth margin="dense">
-                <InputLabel htmlFor="postalCode">Postal Code</InputLabel>
+
                 <TextField
                   id="postalCode"
                   name="postalCode"
+                  label="Postal Code"
                   value={postalCode}
                   onChange={handlePostalCodeChange}
                 />
@@ -243,6 +261,7 @@ function AddSchedule() {
               <Button variant="contained" onClick={handleSearchLocation}>
                 Search Location
               </Button>
+
 
               {location && (
                 <div>

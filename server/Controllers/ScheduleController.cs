@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using WebApplication1.Migrations;
+
 
 namespace WebApplication1.Controllers
 {
@@ -30,12 +30,13 @@ namespace WebApplication1.Controllers
             var list = result.OrderByDescending(x => x.CreatedAt).ToList();
             var data = list.Select(t => new
             {
-                t.Id,
+                t.ScheduleId,
                 t.Title,
                 t.Description,
                 t.SelectedDate,
                 t.SelectedTime,
                 t.ImageFile,
+                t.Price,
                 t.CreatedAt,
                 t.UpdatedAt,
                 t.UserId,
@@ -51,18 +52,19 @@ namespace WebApplication1.Controllers
         public IActionResult GetSchedule(int id)
         {
             Schedule? schedule = _context.Schedules.Include(t => t.User)
-                .FirstOrDefault(t => t.Id == id);
+                .FirstOrDefault(t => t.ScheduleId == id);
             if (schedule == null)
             {
                 return NotFound();
             }
             var data = new
             {
-                schedule.Id,
+                schedule.ScheduleId,
                 schedule.Title,
                 schedule.Description,
                 schedule.SelectedDate,
                 schedule.SelectedTime,
+                schedule.Price,
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
@@ -86,6 +88,7 @@ namespace WebApplication1.Controllers
                 SelectedDate = schedule.SelectedDate,
                 SelectedTime = schedule.SelectedTime,
                 ImageFile = schedule.ImageFile,
+                Price = schedule.Price,
                 CreatedAt = now,
                 UpdatedAt = now,
                 UserId = userId
@@ -116,6 +119,7 @@ namespace WebApplication1.Controllers
             mySchedule.SelectedDate = schedule.SelectedDate;
             mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
+            mySchedule.Price = schedule.Price;
             mySchedule.UpdatedAt = DateTime.Now;
 
             _context.SaveChanges();
