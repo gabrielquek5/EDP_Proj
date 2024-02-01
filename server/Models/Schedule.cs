@@ -13,6 +13,12 @@ namespace WebApplication1.Models
         [Required, MinLength(3), MaxLength(500)]
         public string Description { get; set; } = string.Empty;
 
+        [Required, Column(TypeName = "datetime")]
+        public DateTime SelectedDate { get; set; }
+
+        [Required, Column(TypeName = "datetime")]
+        public DateTime SelectedTime { get; set; }
+
         [MaxLength(20)]
         public string? ImageFile { get; set; }
 

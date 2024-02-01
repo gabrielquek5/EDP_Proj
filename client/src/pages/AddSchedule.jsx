@@ -43,37 +43,37 @@ function AddSchedule() {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${postalCode}&region=SG&key=AIzaSyA3dZPJdXKjR22pktSERq2kfFWrOuP-78I`
       );
-  
+
       if (response.data.results.length > 0) {
         const addressComponents = response.data.results[0].address_components;
-  
+
         // Find components based on type
-        const blockComponent = addressComponents.find(
-          (component) => component.types.includes('street_number')
+        const blockComponent = addressComponents.find((component) =>
+          component.types.includes("street_number")
         );
-  
-        const neighborhoodComponent = addressComponents.find(
-          (component) => component.types.includes('neighborhood')
+
+        const neighborhoodComponent = addressComponents.find((component) =>
+          component.types.includes("neighborhood")
         );
 
         const last3DigitsOfPostalCode = postalCode.slice(-3);
-  
+
         const formattedAddress =
-          (neighborhoodComponent ? neighborhoodComponent.long_name : '') + `, Block${last3DigitsOfPostalCode} `+ `, SG${postalCode}`;
-  
+          (neighborhoodComponent ? neighborhoodComponent.long_name : "") +
+          `, Block${last3DigitsOfPostalCode} ` +
+          `, SG${postalCode}`;
+
         setLocation({ formattedAddress });
       } else {
         setLocation(null);
-        toast.error('Location not found for the given postal code');
+        toast.error("Location not found for the given postal code");
       }
     } catch (error) {
-      console.error('Error fetching location:', error);
+      console.error("Error fetching location:", error);
       setLocation(null);
-      toast.error('Error fetching location. Please try again.');
+      toast.error("Error fetching location. Please try again.");
     }
   };
-  
-  
 
   const formik = useFormik({
     initialValues: {
@@ -97,9 +97,9 @@ function AddSchedule() {
         .required("Description is required"),
     }),
     onSubmit: (data) => {
-      // if (imageFile) {
-      //   data.imageFile = imageFile;
-      // }
+      if (imageFile) {
+        data.imageFile = imageFile;
+      }
       if (imageFile === null) {
         return;
       }
@@ -269,9 +269,14 @@ function AddSchedule() {
                 {imageFile && (
                   <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                     <img
-                      alt="schedule"
+                      alt="uploaded-schedule"
                       src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}
-                    ></img>
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
                   </Box>
                 )}
               </Box>

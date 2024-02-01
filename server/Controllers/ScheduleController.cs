@@ -33,6 +33,8 @@ namespace WebApplication1.Controllers
                 t.Id,
                 t.Title,
                 t.Description,
+                t.SelectedDate,
+                t.SelectedTime,
                 t.ImageFile,
                 t.CreatedAt,
                 t.UpdatedAt,
@@ -59,6 +61,8 @@ namespace WebApplication1.Controllers
                 schedule.Id,
                 schedule.Title,
                 schedule.Description,
+                schedule.SelectedDate,
+                schedule.SelectedTime,
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
@@ -79,6 +83,8 @@ namespace WebApplication1.Controllers
             {
                 Title = schedule.Title.Trim(),
                 Description = schedule.Description.Trim(),
+                SelectedDate = schedule.SelectedDate,
+                SelectedTime = schedule.SelectedTime,
                 ImageFile = schedule.ImageFile,
                 CreatedAt = now,
                 UpdatedAt = now,
@@ -107,6 +113,8 @@ namespace WebApplication1.Controllers
 
             mySchedule.Title = schedule.Title.Trim();
             mySchedule.Description = schedule.Description.Trim();
+            mySchedule.SelectedDate = schedule.SelectedDate;
+            mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.UpdatedAt = DateTime.Now;
 
