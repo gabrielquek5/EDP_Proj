@@ -16,15 +16,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import timezone from "dayjs/plugin/timezone";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 function EditSchedule() {
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
+
 
   const { id } = useParams();
   const navigate = useNavigate();

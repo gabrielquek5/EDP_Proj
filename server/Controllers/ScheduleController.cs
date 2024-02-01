@@ -75,6 +75,7 @@ namespace WebApplication1.Controllers
                 schedule.PostalCode,
                 schedule.SelectedDate,
                 schedule.SelectedTime,
+                schedule.ImageFile,
                 schedule.Price,
                 schedule.IsDeleted,
                 schedule.CreatedAt,
