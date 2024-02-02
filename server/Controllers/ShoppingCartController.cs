@@ -1,4 +1,4 @@
-﻿using EDP_Project.Models;
+﻿using WebApplication1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
@@ -7,9 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebApplication1;
-using WebApplication1.Models;
 
-namespace EDP_Project.Controllers
+namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("[controller]")]

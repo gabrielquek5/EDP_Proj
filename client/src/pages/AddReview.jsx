@@ -22,6 +22,7 @@ function AddReview() {
             Comments: yup.string().trim()
                 .min(5, 'Review must be at least 5 characters long')
                 .max(200, 'Review must be less than 200 characters long')
+                .required('Review is required'),
 
         }),
         onSubmit: (data) => {

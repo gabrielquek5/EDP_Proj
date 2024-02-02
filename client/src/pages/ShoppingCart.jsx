@@ -11,6 +11,11 @@ import {
   ListItemText,
   Divider,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
 } from "@mui/material";
 import http from "../http";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,15 +25,18 @@ function ShoppingCart() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const [message, setMessage] = useState("");
+  const [rewardName, setRewardName] = useState(""); // State to store the applied reward name
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
 
-    // Check to see if this is a redirect back from Checkout
+
     const query = new URLSearchParams(window.location.search);
 
     if (query.get("success")) {
       setMessage("Order placed! You will receive an email confirmation.");
+      setOpenDialog(true);
     }
 
     if (query.get("canceled")) {
@@ -122,6 +130,11 @@ function ShoppingCart() {
       .toFixed(2);
   };
 
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+
 
   return (
     <Container maxWidth="lg" sx={{ background: "#00000", minHeight: "100vh", paddingY: 4 }}>
@@ -132,7 +145,7 @@ function ShoppingCart() {
             <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
               MY CART
             </Typography>
-            <hr />
+            <hr />  
             <List>
               {cartItems.map((cart) => (
                 <React.Fragment key={cart.itemID}>
@@ -157,6 +170,16 @@ function ShoppingCart() {
               TOTAL
             </Typography>
             <hr />
+            {rewardName && (
+              <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+                Reward Applied: {rewardName}
+              </Typography>
+            )}
+
+            <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+              Reward Applied: {rewardName}
+            </Typography>
+
 
             <Typography variant="h6" sx={{ marginBottom: 2, mt: 3 }}>
               Total: ${calculateSubtotal()}
@@ -168,6 +191,21 @@ function ShoppingCart() {
           </Paper>
         </Grid>
       </Grid>
+      
+      {/* Redemption Successful Dialog */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Redemption Successful</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your reward has been applied!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

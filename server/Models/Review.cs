@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WebApplication1.Models;
 
-namespace EDP_Project.Models
+namespace WebApplication1.Models
 {
     public class Review
     {
