@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+
 function EditBooking() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -63,28 +64,16 @@ function EditBooking() {
     }
 
     return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Box>
             <Typography variant="h5" sx={{ my: 2 }}>
                 Reschedule Booking
             </Typography>
             {!loading && (
                 <Box component="form" onSubmit={formik.handleSubmit}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            format="DD/MM/YYYY"
-                            label="Select New Date"
-                            name="BookingDate"
-                            value={formik.values.BookingDate}
-                            onChange={(date) => formik.setFieldValue('BookingDate', date)}
-                            onBlur={() => formik.setFieldTouched('BookingDate', true)}
-                            slotProps={{
-                                textField: {
-                                    error: formik.touched.BookingDate && Boolean(formik.errors.BookingDate),
-                                    helperText: formik.touched.BookingDate && formik.errors.BookingDate,
-                                },
-                            }}
-                        />
-                    </LocalizationProvider>
+                    
+                        
+                    
                     <Box sx={{ mt: 2 }}>
                         <Button variant="contained" type="submit">
                             Update
@@ -102,22 +91,23 @@ function EditBooking() {
             )}
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Delete Booking</DialogTitle>
+                <DialogTitle>Cancel Booking</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this booking?
+                        Are you sure you want to cancel this booking?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" color="inherit" onClick={handleClose}>
-                        Cancel
+                        No
                     </Button>
                     <Button variant="contained" color="error" onClick={deleteBooking}>
-                        Delete
+                        Yes
                     </Button>
                 </DialogActions>
             </Dialog>
         </Box>
+        </LocalizationProvider>
     );
 }
 

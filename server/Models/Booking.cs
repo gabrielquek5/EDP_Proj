@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WebApplication1.Models;
 
-namespace EDP_Project.Models
+namespace WebApplication1.Models
 {
     public class Booking
     {
@@ -24,6 +24,9 @@ namespace EDP_Project.Models
 
         [Column(TypeName = "datetime")]
         public DateTime updatedAt { get; set; } = DateTime.Now;
+
+        [Required]
+        public string BookingTitle { get; set; }
 
 
         // Foreign key property

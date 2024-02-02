@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using EDP_Project.Models;
+using WebApplication1.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace WebApplication1.Models
 {
