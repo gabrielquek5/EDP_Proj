@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1;
 
@@ -10,16 +11,18 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240202032258_notifications")]
+    partial class notifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("WebApplication1.Models.Booking", b =>
+            modelBuilder.Entity("EDP_Project.Models.Booking", b =>
                 {
                     b.Property<int>("BookingID")
                         .ValueGeneratedOnAdd()
@@ -27,10 +30,6 @@ namespace WebApplication1.Migrations
 
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("BookingTitle")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<int>("Pax")
                         .HasColumnType("int");
@@ -59,7 +58,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Review", b =>
+            modelBuilder.Entity("EDP_Project.Models.Review", b =>
                 {
                     b.Property<int>("ReviewID")
                         .ValueGeneratedOnAdd()
@@ -101,45 +100,31 @@ namespace WebApplication1.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Reward", b =>
+            modelBuilder.Entity("EDP_Project.Models.ShoppingCart", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("itemID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("DateCart")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Duration")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<string>("ImageFile")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<int>("ScheduleId")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("itemID");
+
+                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Rewards");
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Notification", b =>
@@ -230,33 +215,6 @@ namespace WebApplication1.Migrations
                     b.ToTable("Schedules");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.ShoppingCart", b =>
-                {
-                    b.Property<int>("itemID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCart")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("itemID");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ShoppingCarts");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -299,7 +257,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Booking", b =>
+            modelBuilder.Entity("EDP_Project.Models.Booking", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("Bookings")
@@ -318,7 +276,7 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Review", b =>
+            modelBuilder.Entity("EDP_Project.Models.Review", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("Reviews")
@@ -337,29 +295,7 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Reward", b =>
-                {
-                    b.HasOne("WebApplication1.Models.User", "User")
-                        .WithMany("Rewards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
-                {
-                    b.HasOne("WebApplication1.Models.User", "User")
-                        .WithMany("Schedules")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.ShoppingCart", b =>
+            modelBuilder.Entity("EDP_Project.Models.ShoppingCart", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("ShoppingCart")
@@ -387,6 +323,17 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
                 {
+                    b.HasOne("WebApplication1.Models.User", "User")
+                        .WithMany("Schedules")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
+                {
                     b.Navigation("Bookings");
 
                     b.Navigation("Reviews");
@@ -401,8 +348,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("Notifications");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("Rewards");
 
                     b.Navigation("Schedules");
 

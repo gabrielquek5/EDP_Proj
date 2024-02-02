@@ -1,4 +1,4 @@
-﻿using WebApplication1.Models;
+using WebApplication1.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -40,8 +40,12 @@ namespace WebApplication1.Models
         [JsonIgnore]
         public List<Review>? Reviews { get; set; }
         [JsonIgnore]
-		public List<Reward>? Rewards { get; set; }
-		[JsonIgnore]
-		public List<Schedule>? Schedules { get; set; }
+        public List<Schedule>? Schedules { get; set; }
+        [JsonIgnore]
+        public List<Notification>? Notifications { get; set; }
+        [JsonIgnore]
+    		public List<Reward>? Rewards { get; set; }
+		    [JsonIgnore]
+		    public List<Schedule>? Schedules { get; set; }
     }
 }
