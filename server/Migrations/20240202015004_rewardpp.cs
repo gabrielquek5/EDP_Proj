@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class supermigration : Migration
+    public partial class rewardpp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,32 @@ namespace WebApplication1.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Rewards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
+                    Duration = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
+                    ImageFile = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rewards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rewards_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
@@ -45,10 +71,12 @@ namespace WebApplication1.Migrations
                     Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
                     SelectedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     SelectedTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PostalCode = table.Column<string>(type: "varchar(6)", maxLength: 6, nullable: false),
                     ImageFile = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     Price = table.Column<float>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -178,6 +206,11 @@ namespace WebApplication1.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Rewards_UserId",
+                table: "Rewards",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Schedules_UserId",
                 table: "Schedules",
                 column: "UserId");
@@ -201,6 +234,9 @@ namespace WebApplication1.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "Rewards");
 
             migrationBuilder.DropTable(
                 name: "ShoppingCarts");

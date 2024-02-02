@@ -34,6 +34,9 @@ import AddSchedule from "./pages/AddSchedule";
 import EditSchedule from "./pages/EditSchedule";
 import IndividualSchedules from "./pages/IndividualSchedules";
 import ViewEvent from "./pages/ViewEvent";
+import Rewards from './pages/Rewards';
+import AddReward from './pages/AddReward';
+import EditReward from './pages/EditReward';
 
 function App() {
   const logout = () => {
@@ -102,6 +105,7 @@ function App() {
                     <Link to="/reviews">
                       <Typography>Reviews</Typography>
                     </Link>
+                    <Link to="/rewards" ><Typography>Rewards</Typography></Link>
                     <Link to="/shoppingcart">
                       <Button>
                         <MdOutlineShoppingCart class="cart-btn" size={24} />
@@ -152,6 +156,10 @@ function App() {
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+              <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+              <Route path={"/rewards"} element={<Rewards />} />
+              <Route path={"/addreward"} element={<AddReward />} />
+              <Route path={"/editreward/:id"} element={<EditReward />} />
             </Routes>
           </Container>
         </ThemeProvider>

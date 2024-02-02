@@ -1,8 +1,8 @@
-﻿using EDP_Project.Models;
+﻿using WebApplication1.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1;
 
-namespace EDP_Project.Controllers
+namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("[controller]")]

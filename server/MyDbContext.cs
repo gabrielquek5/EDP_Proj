@@ -1,6 +1,5 @@
 ﻿using WebApplication1.Models;
 using Microsoft.EntityFrameworkCore;
-using EDP_Project.Models;
 
 namespace WebApplication1
 {
@@ -25,6 +24,7 @@ namespace WebApplication1
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<User> Users { get; set; }
+		public DbSet<Reward> Rewards { get; set; }
 	}
 }
 
