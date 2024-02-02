@@ -44,8 +44,6 @@ namespace WebApplication1.Models
         [JsonIgnore]
         public List<Notification>? Notifications { get; set; }
         [JsonIgnore]
-    		public List<Reward>? Rewards { get; set; }
-		    [JsonIgnore]
-		    public List<Schedule>? Schedules { get; set; }
+		public List<Reward>? Rewards { get; set; }
     }
 }

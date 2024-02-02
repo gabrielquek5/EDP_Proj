@@ -59,6 +59,41 @@ namespace WebApplication1.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Review", b =>
                 {
                     b.Property<int>("ReviewID")
@@ -140,41 +175,6 @@ namespace WebApplication1.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Rewards");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
@@ -318,6 +318,13 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
+                {
+                    b.HasOne("WebApplication1.Models.User", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Review", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
@@ -376,13 +383,6 @@ namespace WebApplication1.Migrations
                     b.Navigation("Schedule");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
-                {
-                    b.HasOne("WebApplication1.Models.User", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
