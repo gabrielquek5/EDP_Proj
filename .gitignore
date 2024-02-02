@@ -543,4 +543,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,node
 *.jpg
 
-server\Migrations\*
+server/Migrations/*.cs
