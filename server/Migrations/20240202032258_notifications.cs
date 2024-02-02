@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class supermigration : Migration
+    public partial class notifications : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +36,30 @@ namespace WebApplication1.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
+                    EndDate = table.Column<DateTime>(type: "date", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
@@ -45,10 +69,12 @@ namespace WebApplication1.Migrations
                     Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
                     SelectedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     SelectedTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PostalCode = table.Column<string>(type: "varchar(6)", maxLength: 6, nullable: false),
                     ImageFile = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     Price = table.Column<float>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -168,6 +194,11 @@ namespace WebApplication1.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ScheduleId",
                 table: "Reviews",
                 column: "ScheduleId");
@@ -198,6 +229,9 @@ namespace WebApplication1.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

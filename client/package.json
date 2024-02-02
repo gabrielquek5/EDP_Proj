@@ -20,6 +20,7 @@
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.4.0",
     "axios": "^1.2.6",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "formik": "^2.2.9",
     "mui": "^0.0.1",

@@ -11,8 +11,8 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240201161342_postal")]
-    partial class postal
+    [Migration("20240202032258_notifications")]
+    partial class notifications
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -127,6 +127,41 @@ namespace WebApplication1.Migrations
                     b.ToTable("ShoppingCarts");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
                 {
                     b.Property<int>("ScheduleId")
@@ -144,6 +179,9 @@ namespace WebApplication1.Migrations
                     b.Property<string>("ImageFile")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -276,10 +314,17 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Notification", b =>
+                {
+                    b.HasOne("WebApplication1.Models.User", null)
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
                 {
                     b.HasOne("WebApplication1.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Schedules")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -300,7 +345,11 @@ namespace WebApplication1.Migrations
                 {
                     b.Navigation("Bookings");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Reviews");
+
+                    b.Navigation("Schedules");
 
                     b.Navigation("ShoppingCarts");
                 });

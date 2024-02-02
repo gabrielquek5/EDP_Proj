@@ -34,12 +34,15 @@ namespace WebApplication1.Models
         // Navigation property to represent the one-to-many relationship
 
 		[JsonIgnore]
-		public List<ShoppingCart> ShoppingCarts { get; set;}
+		public List<ShoppingCart>? ShoppingCarts { get; set;}
         [JsonIgnore]
-        public List<Booking> Bookings { get; set; }
+        public List<Booking>? Bookings { get; set; }
         [JsonIgnore]
-        public List<Review> Reviews { get; set; }
+        public List<Review>? Reviews { get; set; }
         [JsonIgnore]
         public List<Schedule>? Schedules { get; set; }
+
+        [JsonIgnore]
+        public List<Notification>? Notifications { get; set; }
     }
 }

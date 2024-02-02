@@ -34,6 +34,10 @@ import AddSchedule from "./pages/AddSchedule";
 import EditSchedule from "./pages/EditSchedule";
 import IndividualSchedules from "./pages/IndividualSchedules";
 import ViewEvent from "./pages/ViewEvent";
+import Notifications from './pages/Notifications';
+import AddNotification from './pages/AddNotification';
+import EditNotification from './pages/EditNotification';
+import ViewNotifications from './pages/ViewNotifications';
 
 function App() {
   const logout = () => {
@@ -102,6 +106,12 @@ function App() {
                     <Link to="/reviews">
                       <Typography>Reviews</Typography>
                     </Link>
+                    <Link to="/notifications" >
+                      <Typography>Notifications</Typography>
+                    </Link>
+                    <Link to="/viewnotifications" >
+                      <Typography>View Notifications</Typography>
+                    </Link>
                     <Link to="/shoppingcart">
                       <Button>
                         <MdOutlineShoppingCart class="cart-btn" size={24} />
@@ -152,6 +162,12 @@ function App() {
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+              <Route path={"/"} element={<Notifications />} />
+              <Route path={"/notifications"} element={<Notifications />} />
+              <Route path={"/addnotification"} element={<AddNotification />} />
+              <Route path={"/editnotification/:id"} element={<EditNotification />} />
+              <Route path={"/viewnotifications"} element={<ViewNotifications />} />
+              <Route path={"/form"} element={<MyForm />} />
             </Routes>
           </Container>
         </ThemeProvider>
