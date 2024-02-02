@@ -25,6 +25,9 @@ namespace EDP_Project.Models
         [Column(TypeName = "datetime")]
         public DateTime updatedAt { get; set; } = DateTime.Now;
 
+        [Required]
+        public string BookingTitle { get; set; }
+
 
         // Foreign key property
         public int UserId { get; set; }

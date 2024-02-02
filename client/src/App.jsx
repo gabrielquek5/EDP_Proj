@@ -18,7 +18,6 @@ import Delete from "./pages/Delete";
 import http from "./http";
 import { useState, useEffect } from "react";
 import Bookings from "./pages/Bookings";
-import AddBooking from "./pages/AddBooking";
 import EditBooking from "./pages/EditBooking";
 import ShoppingCart from "./pages/ShoppingCart";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -137,7 +136,6 @@ function App() {
               <Route path={"/update"} element={<Update />} />
               <Route path={"/delete"} element={<Delete />} />
               <Route path={"/bookings"} element={<Bookings />} />
-              <Route path={"/addbooking"} element={<AddBooking />} />
               <Route path={"/editbooking/:id"} element={<EditBooking />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/shoppingcart"} element={<ShoppingCart />} />

@@ -48,8 +48,8 @@ namespace EDP_Project.Controllers
             return Ok(booking);
         }
 
-        [HttpPost]
-        public IActionResult AddBooking(Booking booking)
+        [HttpPost("{id}")]
+        public IActionResult AddBooking(int id,Booking booking)
         {
             var now = DateTime.Now;
             var myBooking = new Booking()
@@ -57,8 +57,11 @@ namespace EDP_Project.Controllers
                 BookingDate = booking.BookingDate,
                 Pax = booking.Pax,
                 Price = booking.Price,
+                BookingTitle = booking.BookingTitle,
                 createdAt = now,
-                updatedAt = now
+                updatedAt = now,
+                ScheduleId=id,
+                UserId=1,
             };
             _context.Bookings.Add(myBooking);
             _context.SaveChanges();
