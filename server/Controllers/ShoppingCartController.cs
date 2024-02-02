@@ -31,6 +31,7 @@ namespace EDP_Project.Controllers
             {
                 var result = _context.ShoppingCarts
                     .Include(s => s.Schedule)
+                    .Where(s => s.Schedule.IsDeleted == false)
                     .OrderByDescending(x => x.itemID)
                     .Select(cart => new
                     {
@@ -114,31 +115,34 @@ namespace EDP_Project.Controllers
     }
 
 
-    [HttpPost("create-checkout-session")]
+        [HttpPost("create-checkout-session")]
         public IActionResult CreateCheckoutSession()
         {
             var domain = "http://localhost:7051"; //changed from 7104 
 
-            // Retrieve cart items from the database
-            List<ShoppingCart> cartItems = _context.ShoppingCarts.ToList();
-
-            // Build line items for the session
-            var lineItems = cartItems.Select(item => new SessionLineItemOptions
-            {
-                Price = "price_1Of3R1E7dlDzSq3b86JsC0QX", // Price ID for the product
-                Quantity = item.Quantity
-            }).ToList();
-
-            var options = new SessionCreateOptions
-            {
-                LineItems = lineItems,
-                Mode = "payment",
-                SuccessUrl = "http://localhost:3000/successfulpayment",
-                CancelUrl = "http://localhost:3000/shoppingcart"
-            };
-
             try
             {
+                // Retrieve cart items from the database where associated event is not deleted
+                List<ShoppingCart> cartItems = _context.ShoppingCarts
+                    .Include(s => s.Schedule)
+                    .Where(s => !s.Schedule.IsDeleted) // Filter by IsDeleted property of the associated event
+                    .ToList();
+
+                // Build line items for the session
+                var lineItems = cartItems.Select(item => new SessionLineItemOptions
+                {
+                    Price = "price_1OfBk0E7dlDzSq3b3wIjyDuf", // Price ID for the product
+                    Quantity = item.Quantity
+                }).ToList();
+
+                var options = new SessionCreateOptions
+                {
+                    LineItems = lineItems,
+                    Mode = "payment",
+                    SuccessUrl = "http://localhost:3000/successfulpayment",
+                    CancelUrl = "http://localhost:3000/shoppingcart"
+                };
+
                 var service = new SessionService();
                 Session session = service.Create(options);
 
@@ -151,6 +155,7 @@ namespace EDP_Project.Controllers
                 return BadRequest(new { error = "Failed to create checkout session", message = ex.Message });
             }
         }
+
 
 
 
