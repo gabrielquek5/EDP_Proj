@@ -18,7 +18,6 @@ import Delete from "./pages/Delete";
 import http from "./http";
 import { useState, useEffect } from "react";
 import Bookings from "./pages/Bookings";
-import AddBooking from "./pages/AddBooking";
 import EditBooking from "./pages/EditBooking";
 import ShoppingCart from "./pages/ShoppingCart";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -34,6 +33,14 @@ import AddSchedule from "./pages/AddSchedule";
 import EditSchedule from "./pages/EditSchedule";
 import IndividualSchedules from "./pages/IndividualSchedules";
 import ViewEvent from "./pages/ViewEvent";
+import Rewards from './pages/Rewards';
+import AddReward from './pages/AddReward';
+import EditReward from './pages/EditReward';
+import Notifications from './pages/Notifications';
+import AddNotification from './pages/AddNotification';
+import EditNotification from './pages/EditNotification';
+import ViewNotifications from './pages/ViewNotifications';
+
 
 function App() {
   const logout = () => {
@@ -102,6 +109,14 @@ function App() {
                     <Link to="/reviews">
                       <Typography>Reviews</Typography>
                     </Link>
+                    <Link to="/rewards" ><Typography>Rewards</Typography></Link>
+
+                    <Link to="/notifications" >
+                      <Typography>Notifications</Typography>
+                    </Link>
+                    <Link to="/viewnotifications" >
+                      <Typography>View Notifications</Typography>
+                    </Link>
                     <Link to="/shoppingcart">
                       <Button>
                         <MdOutlineShoppingCart class="cart-btn" size={24} />
@@ -137,7 +152,6 @@ function App() {
               <Route path={"/update"} element={<Update />} />
               <Route path={"/delete"} element={<Delete />} />
               <Route path={"/bookings"} element={<Bookings />} />
-              <Route path={"/addbooking"} element={<AddBooking />} />
               <Route path={"/editbooking/:id"} element={<EditBooking />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/shoppingcart"} element={<ShoppingCart />} />
@@ -152,6 +166,13 @@ function App() {
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+              <Route path={"/rewards"} element={<Rewards />} />
+              <Route path={"/addreward"} element={<AddReward />} />
+              <Route path={"/editreward/:id"} element={<EditReward />} />
+              <Route path={"/notifications"} element={<Notifications />} />
+              <Route path={"/addnotification"} element={<AddNotification />} />
+              <Route path={"/editnotification/:id"} element={<EditNotification />} />
+              <Route path={"/viewnotifications"} element={<ViewNotifications />} />
             </Routes>
           </Container>
         </ThemeProvider>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Container,
   Grid,
@@ -10,6 +11,11 @@ import {
   ListItemText,
   Divider,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
 } from "@mui/material";
 import http from "../http";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,16 +23,20 @@ import DeleteIcon from "@mui/icons-material/Delete";
 function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { id } = useParams();
   const [message, setMessage] = useState("");
+  const [rewardName, setRewardName] = useState(""); // State to store the applied reward name
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
 
-    // Check to see if this is a redirect back from Checkout
+
     const query = new URLSearchParams(window.location.search);
 
     if (query.get("success")) {
       setMessage("Order placed! You will receive an email confirmation.");
+      setOpenDialog(true);
     }
 
     if (query.get("canceled")) {
@@ -62,6 +72,7 @@ function ShoppingCart() {
       const checkoutData = checkoutResponse.data;
       
       // Check if the response contains the URL
+      
       if (checkoutData && checkoutData.url) {
         console.log("Session URL:", checkoutData.url);
         window.location.href = checkoutData.url; // Redirect to Stripe Checkout
@@ -70,29 +81,32 @@ function ShoppingCart() {
       }
   
       // Assuming you have the event ID from the shopping cart
-      const eventId = 1; // Adjust as per your data structure
+      const id = 1; // Adjust as per your data structure
   
       // Extracting the first element of the cartArray
       const cart = cartArray[0];
   
       // Fetch event details including price
-      const eventResponse = await http.get(`/eventcontrollerplaceholder/${eventId}`);
+      const eventResponse = await http.get(`/Schedule/${id}`);
       const eventData = eventResponse.data;
-  
+      console.log(eventData);
       // Extract price from event details
-      const eventPrice = eventData.eventPrice;
-      const dateCart = cart.dateCart;
+      const eventName = eventData.title
+      const eventPrice = eventData.price;
+      const eventDate = eventData.selectedDate
   
       // Create the booking data object with the appropriate values
       const bookingData = {
-        bookingDate: dateCart, // Assuming DateCart is correct
+        bookingDate: eventDate, // Assuming DateCart is correct
         pax: cart.quantity,
-        price: eventPrice // Set the price from the event
+        price: eventPrice, // Set the price from the event
+        bookingTitle: eventName,
+        ScheduleId: id
       };
       console.log(bookingData)
   
       // Make the HTTP POST request to create a booking
-      const bookingResponse = await http.post("/bookings", bookingData);
+      const bookingResponse = await http.post(`/bookings/${id}`, bookingData);
   
       console.log("Booking created:", bookingResponse.data);
     } catch (error) {
@@ -116,6 +130,11 @@ function ShoppingCart() {
       .toFixed(2);
   };
 
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+
 
   return (
     <Container maxWidth="lg" sx={{ background: "#00000", minHeight: "100vh", paddingY: 4 }}>
@@ -126,7 +145,7 @@ function ShoppingCart() {
             <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
               MY CART
             </Typography>
-            <hr />
+            <hr />  
             <List>
               {cartItems.map((cart) => (
                 <React.Fragment key={cart.itemID}>
@@ -151,17 +170,42 @@ function ShoppingCart() {
               TOTAL
             </Typography>
             <hr />
+            {rewardName && (
+              <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+                Reward Applied: {rewardName}
+              </Typography>
+            )}
+
+            <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+              Reward Applied: {rewardName}
+            </Typography>
+
 
             <Typography variant="h6" sx={{ marginBottom: 2, mt: 3 }}>
               Total: ${calculateSubtotal()}
             </Typography>
             
-            <Button onClick={() => handleCheckout(cartItems)} variant="contained" color="primary">
+            <Button onClick={async() => handleCheckout(cartItems)} variant="contained" color="primary">
             CHECKOUT
           </Button>
           </Paper>
         </Grid>
       </Grid>
+      
+      {/* Redemption Successful Dialog */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Redemption Successful</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your reward has been applied!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
