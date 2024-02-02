@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class rewardpp : Migration
+    public partial class all : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -102,6 +102,7 @@ namespace WebApplication1.Migrations
                     Price = table.Column<float>(type: "float", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    BookingTitle = table.Column<string>(type: "longtext", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ScheduleId = table.Column<int>(type: "int", nullable: false)
                 },

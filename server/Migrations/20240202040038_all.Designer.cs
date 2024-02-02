@@ -11,7 +11,7 @@ using WebApplication1;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240202034942_all")]
+    [Migration("20240202040038_all")]
     partial class all
     {
         /// <inheritdoc />
@@ -22,7 +22,7 @@ namespace WebApplication1.Migrations
                 .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("EDP_Project.Models.Booking", b =>
+            modelBuilder.Entity("WebApplication1.Models.Booking", b =>
                 {
                     b.Property<int>("BookingID")
                         .ValueGeneratedOnAdd()
@@ -62,7 +62,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("EDP_Project.Models.Review", b =>
+            modelBuilder.Entity("WebApplication1.Models.Review", b =>
                 {
                     b.Property<int>("ReviewID")
                         .ValueGeneratedOnAdd()
@@ -104,31 +104,45 @@ namespace WebApplication1.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("EDP_Project.Models.ShoppingCart", b =>
+            modelBuilder.Entity("WebApplication1.Models.Reward", b =>
                 {
-                    b.Property<int>("itemID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateCart")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
-                    b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ImageFile")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("itemID");
-
-                    b.HasIndex("ScheduleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ShoppingCarts");
+                    b.ToTable("Rewards");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
@@ -184,6 +198,33 @@ namespace WebApplication1.Migrations
                     b.ToTable("Schedules");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.ShoppingCart", b =>
+                {
+                    b.Property<int>("itemID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCart")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("itemID");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ShoppingCarts");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -226,7 +267,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("EDP_Project.Models.Booking", b =>
+            modelBuilder.Entity("WebApplication1.Models.Booking", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("Bookings")
@@ -245,7 +286,7 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EDP_Project.Models.Review", b =>
+            modelBuilder.Entity("WebApplication1.Models.Review", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("Reviews")
@@ -264,7 +305,29 @@ namespace WebApplication1.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EDP_Project.Models.ShoppingCart", b =>
+            modelBuilder.Entity("WebApplication1.Models.Reward", b =>
+                {
+                    b.HasOne("WebApplication1.Models.User", "User")
+                        .WithMany("Rewards")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
+                {
+                    b.HasOne("WebApplication1.Models.User", "User")
+                        .WithMany("Schedules")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.ShoppingCart", b =>
                 {
                     b.HasOne("WebApplication1.Models.Schedule", "Schedule")
                         .WithMany("ShoppingCart")
@@ -285,17 +348,6 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
                 {
-                    b.HasOne("WebApplication1.Models.User", "User")
-                        .WithMany("Schedules")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
-                {
                     b.Navigation("Bookings");
 
                     b.Navigation("Reviews");
@@ -308,6 +360,8 @@ namespace WebApplication1.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Rewards");
 
                     b.Navigation("Schedules");
 
