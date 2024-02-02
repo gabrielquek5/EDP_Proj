@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class supermigration : Migration
+    public partial class all : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,10 +45,12 @@ namespace WebApplication1.Migrations
                     Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false),
                     SelectedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     SelectedTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PostalCode = table.Column<string>(type: "varchar(6)", maxLength: 6, nullable: false),
                     ImageFile = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     Price = table.Column<float>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -74,6 +76,7 @@ namespace WebApplication1.Migrations
                     Price = table.Column<float>(type: "float", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    BookingTitle = table.Column<string>(type: "longtext", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ScheduleId = table.Column<int>(type: "int", nullable: false)
                 },

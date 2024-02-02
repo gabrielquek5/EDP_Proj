@@ -73,7 +73,7 @@ function ShoppingCart() {
       }
   
       // Assuming you have the event ID from the shopping cart
-      const id = 3; // Adjust as per your data structure
+      const id = 1; // Adjust as per your data structure
   
       // Extracting the first element of the cartArray
       const cart = cartArray[0];
