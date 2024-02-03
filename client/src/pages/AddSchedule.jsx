@@ -32,6 +32,7 @@ function AddSchedule() {
 
   const [postalCode, setPostalCode] = useState("");
   const [location, setLocation] = useState(null);
+  const [eventType, seteventType] = useState("");
 
   const handleSearchLocation = async (postalCode) => {
     // Check if postal code has at least 6 digits before making the API call
@@ -75,6 +76,15 @@ function AddSchedule() {
     handleSearchLocation(e.target.value);
   };
 
+  const options = [
+    { label: "Sports", id: "Sport" },
+    { label: "Gathering", id: "Gathering" },
+    { label: "Dine & Wine", id: "Dine & Wine" },
+    { label: "Family Bonding", id: "Family Bonding" },
+    { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
+    { label: "Travel", id: "Travel" },
+  ];
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -82,6 +92,8 @@ function AddSchedule() {
       selectedDate: dayjs(),
       selectedTime: dayjs(),
       postalCode: "",
+      price: "",
+      eventType: "",
     },
     validationSchema: yup.object({
       title: yup
@@ -106,6 +118,7 @@ function AddSchedule() {
         .min(6, "Postal code must be 6 digits!")
         .max(6, "Postal code must be 6 digits only!")
         .required("Postal Code is required"),
+      eventType: yup.string().required("Event Type is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
@@ -295,6 +308,29 @@ function AddSchedule() {
                 error={formik.touched.price && Boolean(formik.errors.price)}
                 helperText={formik.touched.price && formik.errors.price}
               />
+              {options && (
+                <Box>
+                  <InputLabel id="event-type-label">Event Type</InputLabel>
+                  <Select
+                    labelId="event-type-label"
+                    id="event-type"
+                    name="eventType"
+                    value={formik.values.eventType}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.eventType &&
+                      Boolean(formik.errors.eventType)
+                    }
+                  >
+                    {options.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              )}
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Box sx={{ textAlign: "center", mt: 2 }}>

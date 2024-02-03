@@ -9,7 +9,6 @@ import {
   Input,
   IconButton,
   Button,
-
 } from "@mui/material";
 import {
   AccountCircle,
@@ -17,12 +16,12 @@ import {
   Search,
   Clear,
   Edit,
-  DateRangeOutlined
+  DateRangeOutlined,
 } from "@mui/icons-material";
 import http from "../http";
 import dayjs from "dayjs";
 import global from "../global";
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 function Schedules() {
   const [scheduleList, setScheduleList] = useState([]);
@@ -34,14 +33,18 @@ function Schedules() {
 
   const getSchedules = () => {
     http.get("/schedule").then((res) => {
-      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
+      const filteredSchedules = res.data.filter(
+        (schedule) => !schedule.isDeleted
+      );
       setScheduleList(filteredSchedules);
     });
   };
 
   const searchSchedules = () => {
     http.get(`/schedule?search=${search}`).then((res) => {
-      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
+      const filteredSchedules = res.data.filter(
+        (schedule) => !schedule.isDeleted
+      );
       setScheduleList(filteredSchedules);
     });
   };
@@ -64,70 +67,188 @@ function Schedules() {
     setSearch("");
     getSchedules();
   };
-
-
+  const eventTypes = [
+    { label: "Sports", id: "Sport" },
+    { label: "Gathering", id: "Gathering" },
+    { label: "Dine & Wine", id: "Dine & Wine" },
+    { label: "Family Bonding", id: "Family Bonding" },
+    { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
+    { label: "Travel", id: "Travel" },
+  ];
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ my: 2 }}>
-        Events
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          mb: 2,
+          border: "1px solid #e3e3e3",
+          borderRadius: 8,
+          width: "fit-content",
+          paddingX: "20px",
+          paddingY: "10px",
+          margin: "20px auto",
+          className: "search-box-container",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
+          <Input
+            value={search}
+            placeholder="Enter keyword"
+            onChange={onSearchChange}
+            onKeyDown={onSearchKeyDown}
+            disableUnderline
+          />
 
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <Input
-          value={search}
-          placeholder="Search"
-          onChange={onSearchChange}
-          onKeyDown={onSearchKeyDown}
-        />
-        <IconButton color="primary" onClick={onClickSearch}>
-          <Search />
-        </IconButton>
-        <IconButton color="primary" onClick={onClickClear}>
-          <Clear />
-        </IconButton>
+          <IconButton
+            onClick={onClickSearch}
+            sx={{
+              left: "5px",
+              border: "1px solid #e8533f",
+              color: "#ffffff",
+              padding: "10px",
+              borderRadius: 8,
+              fontSize: "2px",
+              bgcolor: "#e8533f",
+              "&:hover": {
+                color: "black",
+                bgcolor: "#e8533f",
+              },
+            }}
+          >
+            <Search />
+            <Typography
+              variant="h6"
+              sx={{
+                flexGrow: 1,
+                fontSize: "18px",
+                paddingLeft: "10dp",
+                color: "inherit",
+              }}
+            >
+              Search
+            </Typography>
+          </IconButton>
+
+          <IconButton
+            color="primary"
+            onClick={onClickClear}
+            sx={{
+              left: "7px",
+              color: "black",
+              marginLeft: "10px",
+              border: "1px solid #ebebeb",
+              background: "#ebebeb",
+              padding: "5px",
+            }}
+          >
+            <Clear />
+          </IconButton>
+        </Box>
         <Box sx={{ flexGrow: 1 }} />
+      </Box>
+
+      <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}>
+        {eventTypes.map((eventType) => (
+          <Button
+            key={eventType.id}
+            sx={{ 
+              border: "1px solid #fddc02", 
+              color: "black",
+              bgcolor: "#fddc02",
+              "&:hover": {
+                color: "#e81515",
+                bgcolor: "#fddc02",
+              },
+              fontWeight: "bold",
+              borderRadius: 8,
+            }}
+          >
+            {eventType.label}
+          </Button>
+        ))}
       </Box>
 
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
           return (
             <Grid item xs={12} md={6} lg={4} key={schedule.scheduleId}>
-              <Link to={`/viewevent/${schedule.scheduleId}`} style={{ textDecoration: "none" }}>
+              <Link
+                to={`/viewevent/${schedule.scheduleId}`}
+                style={{ textDecoration: "none" }}
+              >
                 <Card>
                   {schedule.imageFile && (
                     <Box className="image-size">
                       <img
                         alt="tutorial"
-                        src={`${import.meta.env.VITE_FILE_BASE_URL}${schedule.imageFile}`}
+                        src={`${import.meta.env.VITE_FILE_BASE_URL}${
+                          schedule.imageFile
+                        }`}
                       ></img>
                     </Box>
                   )}
-                  
-                  <CardContent>
+
+                  <CardContent sx={{ position: "relative" }}>
                     <Box sx={{ display: "flex", mb: 1 }}>
                       <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         {schedule.title}
                       </Typography>
                     </Box>
+
                     <Box
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       color="text.secondary"
                     >
-                      <AccountCircle sx={{ mr: 1 }} />
-                      <Typography>{schedule.user?.firstName}</Typography>
-                    </Box>
-
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }} color="text.secondary" >
                       <DateRangeOutlined sx={{ mr: 1 }} />
-                      <Typography>Start Date: </Typography>
-                      <Typography>{dayjs(schedule.selectedDate).format("DD MMMM YYYY")}</Typography>
+                      <Typography sx={{ fontSize: "15px" }}>
+                        Start Date:{" "}
+                      </Typography>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
+                      </Typography>
                     </Box>
 
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }} color="text.secondary" >
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      color="text.secondary"
+                    >
                       <LocationOnIcon sx={{ mr: 1 }} />
-                      <Typography>Location: </Typography>
-                      <Typography>{schedule.postalCode}</Typography>
+                      <Typography sx={{ fontSize: "15px" }}>
+                        Location:{" "}
+                      </Typography>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        {schedule.postalCode}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ mt: 6 }}></Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      color="text.secondary"
+                    >
+                      <Typography>From $</Typography>
+                      <Typography sx={{ fontWeight: "bold", fontSize: "25px" }}>
+                        {schedule.price}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0,
+                        border: "1px solid #f5f5f5",
+                        backgroundColor: "#f5f5f5",
+                        color: "#999798",
+                        padding: "8px",
+                        borderRadius: 2,
+                        margin: 3,
+                        fontSize: "5px",
+                      }}
+                    >
+                      <Typography>{schedule.eventType}</Typography>
                     </Box>
                   </CardContent>
                 </Card>

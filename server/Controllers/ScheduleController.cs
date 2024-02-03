@@ -40,6 +40,7 @@ namespace WebApplication1.Controllers
                     t.SelectedTime,
                     t.ImageFile,
                     t.Price,
+                    t.EventType,
                     t.IsDeleted,
                     t.CreatedAt,
                     t.UpdatedAt,
@@ -77,6 +78,7 @@ namespace WebApplication1.Controllers
                 schedule.SelectedTime,
                 schedule.ImageFile,
                 schedule.Price,
+                schedule.EventType,
                 schedule.IsDeleted,
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
@@ -113,9 +115,9 @@ namespace WebApplication1.Controllers
                 Currency = "sgd", // Set the currency code (adjust if needed)
                 Product = product.Id, // Associate the Price with the Product
                 Metadata = new Dictionary<string, string>
-    {
-        { "schedule_id", schedule.ScheduleId.ToString() } // Optionally add metadata
-    }
+                {
+                    { "schedule_id", schedule.ScheduleId.ToString() } // Optionally add metadata
+                }
             };
 
             var priceService = new PriceService();
@@ -133,6 +135,7 @@ namespace WebApplication1.Controllers
                 SelectedTime = schedule.SelectedTime,
                 ImageFile = schedule.ImageFile,
                 Price = schedule.Price,
+                EventType = schedule.EventType,
                 IsDeleted = false,
                 CreatedAt = now,
                 UpdatedAt = now,
@@ -166,6 +169,7 @@ namespace WebApplication1.Controllers
             mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
+            mySchedule.EventType = schedule.EventType.Trim();
             mySchedule.IsDeleted = false;
             mySchedule.UpdatedAt = DateTime.Now;
 

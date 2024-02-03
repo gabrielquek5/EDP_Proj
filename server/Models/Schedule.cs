@@ -38,6 +38,9 @@ namespace WebApplication1.Models
         public float Price { get; set; }
 
         [Required]
+        public string EventType { get; set; } = string.Empty;
+
+        [Required]
         public bool IsDeleted { get; set; }
 
         [JsonIgnore]
