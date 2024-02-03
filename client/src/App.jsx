@@ -44,6 +44,7 @@ import Notifications from "./pages/Notifications";
 import AddNotification from "./pages/AddNotification";
 import EditNotification from "./pages/EditNotification";
 import ViewNotifications from "./pages/ViewNotifications";
+import HomePage from "./pages/HomePage";
 import uplayLogo from "./assets/logo_uplay.png";
 
 function App() {
@@ -89,11 +90,11 @@ function App() {
   const handleSchedulingClose = () => {
     setdropMenuScheduling(null);
   };
-
+  
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
-        <ThemeProvider theme={MyTheme}>
+        <ThemeProvider theme={MyTheme} >
           <AppBar
             position="static"
             elevation={0}
@@ -179,7 +180,7 @@ function App() {
 
                     <Link to="/shoppingcart">
                       <Button>
-                        <MdOutlineShoppingCart class="cart-btn" size={24} />
+                        <MdOutlineShoppingCart size={24} />
                       </Button>
                     </Link>
                     <Button onClick={handleMenuOpen}>
@@ -244,7 +245,7 @@ function App() {
 
           <Container>
             <Routes>
-              <Route path={"/"} element={<Schedules />} />
+              <Route path={"/"} element={<HomePage />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
@@ -259,15 +260,9 @@ function App() {
               <Route path={"/editreview/:id"} element={<EditReview />} />
               <Route path={"/adminreviews"} element={<AdminReviews />} />
               <Route path={"/checkout"} element={<Checkout />} />
-              <Route
-                path={"/successfulpayment"}
-                element={<SuccessfulPayment />}
-              />
+              <Route path={"/successfulpayment"} element={<SuccessfulPayment />} />
               <Route path={"/addschedule"} element={<AddSchedule />} />
-              <Route
-                path={"/individualschedule"}
-                element={<IndividualSchedules />}
-              />
+              <Route path={"/individualschedule"} element={<IndividualSchedules />} />
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
@@ -276,19 +271,14 @@ function App() {
               <Route path={"/editreward/:id"} element={<EditReward />} />
               <Route path={"/notifications"} element={<Notifications />} />
               <Route path={"/addnotification"} element={<AddNotification />} />
-              <Route
-                path={"/editnotification/:id"}
-                element={<EditNotification />}
-              />
-              <Route
-                path={"/viewnotifications"}
-                element={<ViewNotifications />}
-              />
+              <Route path={"/editnotification/:id"} element={<EditNotification />} />
+              <Route path={"/viewnotifications"} element={<ViewNotifications />} />
             </Routes>
-          </Container>
+          </Container>       
         </ThemeProvider>
       </Router>
     </UserContext.Provider>
+    
   );
 }
 

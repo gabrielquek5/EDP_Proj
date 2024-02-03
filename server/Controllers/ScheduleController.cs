@@ -27,7 +27,7 @@ namespace WebApplication1.Controllers
                 IQueryable<Schedule> result = _context.Schedules.Include(t => t.User);
                 if (search != null)
                 {
-                    result = result.Where(x => x.Title.Contains(search) || x.Description.Contains(search) || x.PostalCode.Contains(search));
+                    result = result.Where(x => x.Title.Contains(search) || x.Description.Contains(search) || x.PostalCode.Contains(search) || x.EventType.Contains(search));
                 }
                 var list = result.OrderByDescending(x => x.CreatedAt).ToList();
                 var data = list.Select(t => new

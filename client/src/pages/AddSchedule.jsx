@@ -23,10 +23,10 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import axios from "axios";
 
-function AddSchedule() {
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
+function AddSchedule() {
   const navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
 
@@ -35,7 +35,6 @@ function AddSchedule() {
   const [eventType, seteventType] = useState("");
 
   const handleSearchLocation = async (postalCode) => {
-    // Check if postal code has at least 6 digits before making the API call
     if (postalCode.length >= 6) {
       try {
         const response = await axios.get(
@@ -77,12 +76,13 @@ function AddSchedule() {
   };
 
   const options = [
-    { label: "Sports", id: "Sport" },
+    { label: "Sports", id: "Sports" },
     { label: "Gathering", id: "Gathering" },
     { label: "Dine & Wine", id: "Dine & Wine" },
     { label: "Family Bonding", id: "Family Bonding" },
     { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
     { label: "Travel", id: "Travel" },
+    { label: "Others", id: "Others" },
   ];
 
   const formik = useFormik({
@@ -132,6 +132,7 @@ function AddSchedule() {
       data.title = data.title.trim();
       data.description = data.description.trim();
       data.postalCode = data.postalCode.trim();
+
       const selectedDateTime = dayjs.tz(
         `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
           "HH:mm:ss"
@@ -183,10 +184,18 @@ function AddSchedule() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box>
-        <Typography variant="h5" sx={{ my: 2 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            my: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           Add Schedule
         </Typography>
-        <Box component="form" onSubmit={formik.handleSubmit}>
+        <Box component="form" onSubmit={formik.handleSubmit} sx={{ m: 5 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6} lg={8}>
               <TextField
@@ -220,49 +229,63 @@ function AddSchedule() {
                   formik.touched.description && formik.errors.description
                 }
               />
-              <DatePicker
-                label="Please Choose A Date"
-                defaultValue={formik.values.selectedDate}
-                minDate={dayjs()}
-                onChange={(newDate) =>
-                  formik.setFieldValue("selectedDate", newDate)
-                }
-                error={
-                  formik.touched.selectedDate &&
-                  Boolean(formik.errors.selectedDate)
-                }
-                helperText={
-                  formik.touched.selectedDate && formik.errors.selectedDate
-                }
-                slotProps={{
-                  textField: {
-                    disabled: true,
-                  },
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
                 }}
-                timezone="Asia/Singapore"
-                required
-              />
-              <TimePicker
-                label="Please Choose A Time"
-                defaultValue={formik.values.selectedTime}
-                onChange={(newTime) =>
-                  formik.setFieldValue("selectedTime", newTime)
-                }
-                error={
-                  formik.touched.selectedTime &&
-                  Boolean(formik.errors.selectedTime)
-                }
-                helperText={
-                  formik.touched.selectedTime && formik.errors.selectedTime
-                }
-                slotProps={{
-                  textField: {
-                    disabled: true,
-                  },
-                }}
-                timezone="Asia/Singapore"
-                required
-              />
+              >
+                {/* DatePicker */}
+                <DatePicker
+                  label="Please Choose A Date"
+                  defaultValue={formik.values.selectedDate}
+                  minDate={dayjs()}
+                  onChange={(newDate) =>
+                    formik.setFieldValue("selectedDate", newDate)
+                  }
+                  error={
+                    formik.touched.selectedDate &&
+                    Boolean(formik.errors.selectedDate)
+                  }
+                  helperText={
+                    formik.touched.selectedDate && formik.errors.selectedDate
+                  }
+                  slotProps={{
+                    textField: {
+                      disabled: true,
+                    },
+                  }}
+                  timezone="Asia/Singapore"
+                  required
+                  sx={{ width: "50%" }}
+                />
+
+                {/* TimePicker */}
+                <TimePicker
+                  label="Please Choose A Time"
+                  defaultValue={formik.values.selectedTime}
+                  onChange={(newTime) =>
+                    formik.setFieldValue("selectedTime", newTime)
+                  }
+                  error={
+                    formik.touched.selectedTime &&
+                    Boolean(formik.errors.selectedTime)
+                  }
+                  helperText={
+                    formik.touched.selectedTime && formik.errors.selectedTime
+                  }
+                  slotProps={{
+                    textField: {
+                      disabled: true,
+                    },
+                  }}
+                  timezone="Asia/Singapore"
+                  required
+                  sx={{ width: "50%" }}
+                />
+              </Box>
+
               <TextField
                 fullWidth
                 margin="dense"
@@ -282,13 +305,6 @@ function AddSchedule() {
                   formik.touched.postalCode && formik.errors.postalCode
                 }
               />
-
-              <Button
-                variant="contained"
-                onClick={() => handleSearchLocation(formik.values.postalCode)}
-              >
-                Search Location
-              </Button>
               {location && (
                 <div>
                   <h3>Location Details</h3>
@@ -334,7 +350,28 @@ function AddSchedule() {
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button variant="contained" component="label">
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{
+                    variant: "contained",
+                    textDecoration: "none",
+                    color: "black",
+                    bgcolor: "#e81515",
+                    "&:hover": {
+                      color: "#ffffff",
+                      bgcolor: "#e81515",
+                    },
+                    boxShadow: "none",
+                    borderRadius: 4,
+                    fontWeight: "bold",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    paddingX: "50px",
+                    paddingY: "10px",
+                  }}
+                >
                   Upload Image
                   <input
                     hidden
@@ -363,9 +400,37 @@ function AddSchedule() {
               </Box>
             </Grid>
           </Grid>
-          <Box sx={{ mt: 2 }}>
-            <Button variant="contained" type="submit">
-              Add
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              sx={{
+                variant: "contained",
+                textDecoration: "none",
+                background: "#fddc02",
+                color: "black",
+                bgcolor: "#fddc02",
+                "&:hover": {
+                  color: "#e8533f",
+                  bgcolor: "#fddc02",
+                },
+                boxShadow: "none",
+                borderRadius: 4,
+                fontWeight: "bold",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                paddingX: "50px",
+                paddingY: "10px",
+              }}
+              type="submit"
+            >
+              Submit
             </Button>
           </Box>
         </Box>

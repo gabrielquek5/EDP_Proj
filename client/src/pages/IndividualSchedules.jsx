@@ -33,15 +33,14 @@ function IndividualSchedules() {
     setSearch(e.target.value);
   };
 
-  const getSchedules = () => {
-    http.get("/schedule").then((res) => {
-      const filteredSchedules = res.data.filter(
-        (schedule) => !schedule.isDeleted
-      );
+  const getSchedules = async () => {
+    try {
+      const res = await http.get("/schedule");
+      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
       setScheduleList(filteredSchedules);
-      console.log("Before", res.data);
-      console.log(filteredSchedules);
-    });
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+    }
   };
 
   const searchSchedules = () => {
@@ -50,7 +49,6 @@ function IndividualSchedules() {
         (schedule) => !schedule.isDeleted
       );
       setScheduleList(filteredSchedules);
-      console.log(filteredSchedules);
     });
   };
 
@@ -179,6 +177,7 @@ function IndividualSchedules() {
                 },
                 boxShadow: "none",
                 borderRadius: 4,
+                fontWeight: "bold",
               }}
             >
               Add New Event
@@ -212,9 +211,25 @@ function IndividualSchedules() {
                       </Typography>
                       {user && user.id === schedule.userId && (
                         <Link to={`/editschedule/${schedule.scheduleId}`}>
-                          <IconButton color="primary" sx={{ padding: "4px" }}>
-                            <Edit />
-                          </IconButton>
+                          <Button
+                            variant="contained"
+                            sx={{
+                              textDecoration: "none",
+                              color: "#ffffff",
+                              bgcolor: "#ed7565",
+                              "&:hover": {
+                                color: "#ffffff",
+                                bgcolor: "#ed7565",
+                                boxShadow: "none",
+                                fontWeight: "bold",
+                              },
+                              boxShadow: "none",
+                              borderRadius: 4,
+                              fontWeight: "bold",
+                              fontSize: "12px"
+                            }}>
+                            Edit
+                          </Button>
                         </Link>
                       )}
                     </Box>

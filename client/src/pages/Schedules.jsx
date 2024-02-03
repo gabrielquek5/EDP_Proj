@@ -26,6 +26,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 function Schedules() {
   const [scheduleList, setScheduleList] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectedEventType, setSelectedEventType] = useState("");
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
@@ -68,13 +69,26 @@ function Schedules() {
     getSchedules();
   };
   const eventTypes = [
-    { label: "Sports", id: "Sport" },
-    { label: "Gathering", id: "Gathering" },
-    { label: "Dine & Wine", id: "Dine & Wine" },
-    { label: "Family Bonding", id: "Family Bonding" },
-    { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
+    { label: "All", id: "" },
+    { label: "Sports", id: "sport" },
+    { label: "Gathering", id: "gathering" },
+    { label: "Dine & Wine", id: "dine & wine" },
+    { label: "Family Bonding", id: "family bonding" },
+    { label: "Hobbies & Wellness", id: "hobbies & wellness" },
     { label: "Travel", id: "Travel" },
   ];
+
+  const handleEventTypeClick = (eventType) => {
+    const formattedEventType = eventType.toLowerCase().replace(/\s+/g, '');
+    setSelectedEventType(formattedEventType);
+    http.get(`/schedule?search=${formattedEventType}`).then((res) => {
+      const filteredSchedules = res.data.filter(
+        (schedule) => !schedule.isDeleted
+      );
+      setScheduleList(filteredSchedules);
+    });
+    console.log(`/schedules?search=${formattedEventType}`);
+  };
 
   return (
     <Box>
@@ -150,17 +164,22 @@ function Schedules() {
         <Box sx={{ flexGrow: 1 }} />
       </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}
+      >
         {eventTypes.map((eventType) => (
           <Button
             key={eventType.id}
-            sx={{ 
-              border: "1px solid #fddc02", 
+            onClick={() => handleEventTypeClick(eventType.id)}
+            sx={{
+              border: "1px solid #fddc02",
               color: "black",
-              bgcolor: "#fddc02",
+              bgcolor:
+                selectedEventType === eventType.id ? "#e81515" : "#fddc02",
               "&:hover": {
                 color: "#e81515",
-                bgcolor: "#fddc02",
+                bgcolor:
+                  selectedEventType === eventType.id ? "#e81515" : "#fddc02",
               },
               fontWeight: "bold",
               borderRadius: 8,

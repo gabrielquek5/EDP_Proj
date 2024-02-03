@@ -16,7 +16,7 @@ namespace WebApplication1.Models
         [Required, MinLength(3), MaxLength(500)]
         public string Description { get; set; } = string.Empty;
 
-        [Required, Column(TypeName = "datetime")]
+        [Required, Column(TypeName = "date")]
         public DateTime SelectedDate { get; set; }
 
         [Required, Column(TypeName = "datetime")]
