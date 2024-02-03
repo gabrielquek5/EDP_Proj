@@ -5,9 +5,12 @@ import * as yup from "yup";
 import http from "../http";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserContext from "../contexts/UserContext";
+import React, { useEffect, useState, useContext } from "react";
 
 function Login() {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
   const formik = useFormik({
     initialValues: {
       email: "",

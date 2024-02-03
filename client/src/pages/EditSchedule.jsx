@@ -7,6 +7,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import http from "../http";
 import { useFormik } from "formik";
@@ -16,8 +19,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
@@ -26,8 +29,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 function EditSchedule() {
-
-
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
@@ -38,13 +39,15 @@ function EditSchedule() {
     selectedDate: null,
     selectedTime: null,
     postalCode: "",
-    price: "",
+    eventType: "",
   });
+
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [postalCode, setPostalCode] = useState("");
   const [location, setLocation] = useState(null);
+  const [eventType, seteventType] = useState("");
 
   const [initialPrice, setInitialPrice] = useState("");
 
@@ -90,10 +93,45 @@ function EditSchedule() {
     }
   };
 
-  const handlePostalCodeChange = (e) => {
-    setPostalCode(e.target.value);
-    handleSearchLocation(e.target.value);
-  };
+  const options = [
+    { label: "Sports", id: "Sports" },
+    { label: "Gathering", id: "Gathering" },
+    { label: "Dine & Wine", id: "Dine & Wine" },
+    { label: "Family Bonding", id: "Family Bonding" },
+    { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
+    { label: "Travel", id: "Travel" },
+    { label: "Others", id: "Others" },
+  ];
+
+  useEffect(() => {
+    http.get(`/schedule/${id}`).then((res) => {
+      setSchedule(res.data);
+      setImageFile(res.data.imageFile);
+      seteventType(res.data.eventType);
+      setLoading(false);
+      formik.setFieldValue("eventType", res.data.eventType);
+
+      if (dayjs(res.data.selectedDate).isValid()) {
+        formik.setFieldValue("selectedDate", dayjs(res.data.selectedDate));
+      } else {
+        console.error("Invalid date format from the backend");
+      }
+
+      // Validate and set selectedTime
+      if (dayjs(res.data.selectedTime, "HH:mm:ss").isValid()) {
+        formik.setFieldValue(
+          "selectedTime",
+          dayjs(res.data.selectedTime, "HH:mm:ss")
+        );
+      } else {
+        console.error("Invalid time format from the backend");
+      }
+
+      if (!user || (res.data.userId && user.id !== res.data.userId)) {
+        navigate("/schedules");
+      }
+    });
+  }, [user, id]);
 
   const formik = useFormik({
     initialValues: schedule,
@@ -117,23 +155,22 @@ function EditSchedule() {
         .min(6, "Postal code must be 6 digits!")
         .max(6, "Postal code must be 6 digits only!")
         .required("Description is required"),
+      eventType: yup.string().required("Event Type is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
         data.imageFile = imageFile;
       }
 
+      const newDate = dayjs(data.selectedDate).format("YYYY-MM-DD");
+      const newTime = dayjs(data.selectedTime).format("HH:mm:ss");
+
       data.title = data.title.trim();
       data.description = data.description.trim();
       data.postalCode = data.postalCode.trim();
-      const selectedDateTime = dayjs.tz(
-        `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
-          "HH:mm:ss"
-        )}`,
-        "Asia/Singapore"
-      );
-      data.selectedDate = selectedDateTime.format();
-      data.selectedTime = selectedDateTime.format();
+      data.selectedTime = newDate;
+      data.selectedTime = newTime;
+
       data.price = initialPrice;
       http.put(`/schedule/${id}`, data).then((res) => {
         console.log(res.data);
@@ -141,19 +178,6 @@ function EditSchedule() {
       });
     },
   });
-
-  useEffect(() => {
-    http.get(`/schedule/${id}`).then((res) => {
-      console.log(res.data);
-      setSchedule(res.data);
-      setImageFile(res.data.imageFile);
-      setLoading(false);
-
-      if (!user || (res.data.userId && user.id !== res.data.userId)) {
-        navigate("/schedules");
-      }
-    });
-  }, [user, id]);
 
   useEffect(() => {
     if (user && schedule.userId && user.id !== schedule.userId) {
@@ -173,18 +197,15 @@ function EditSchedule() {
 
   const deleteSchedule = () => {
     http.delete(`/schedule/${id}`).then((res) => {
-      console.log(res.data);
       navigate("/schedules");
     });
   };
 
   const softdeleteSchedule = () => {
     http.put(`/schedule/${id}/soft-delete`).then((res) => {
-      console.log(res.data);
       navigate("/schedules");
     });
   };
-  
 
   const onFileChange = (e) => {
     let file = e.target.files[0];
@@ -289,49 +310,59 @@ function EditSchedule() {
                     formik.touched.description && formik.errors.description
                   }
                 />
-                <DatePicker
-                  label="Please Choose A Date"
-                  value={formik.values.selectedDate}
-                  minDate={dayjs()}
-                  onChange={(newDate) =>
-                    formik.setFieldValue("selectedDate", newDate)
-                  }
-                  error={
-                    formik.touched.selectedDate &&
-                    Boolean(formik.errors.selectedDate)
-                  }
-                  helperText={
-                    formik.touched.selectedDate && formik.errors.selectedDate
-                  }
-                  slotProps={{
-                    textField: {
-                      disabled: true,
-                    },
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
                   }}
-                  timezone="Asia/Singapore"
-                  required
-                />
-                <TimePicker
-                  label="Please Choose A Time"
-                  value={formik.values.selectedTime}
-                  onChange={(newTime) =>
-                    formik.setFieldValue("selectedTime", newTime)
-                  }
-                  error={
-                    formik.touched.selectedTime &&
-                    Boolean(formik.errors.selectedTime)
-                  }
-                  helperText={
-                    formik.touched.selectedTime && formik.errors.selectedTime
-                  }
-                  slotProps={{
-                    textField: {
-                      disabled: true,
-                    },
-                  }}
-                  timezone="Asia/Singapore"
-                  required
-                />
+                >
+                  <DatePicker
+                    label="Please Choose A Date"
+                    value={formik.values.selectedDate}
+                    minDate={dayjs()}
+                    onChange={(newDate) =>
+                      formik.setFieldValue("selectedDate", newDate)
+                    }
+                    error={
+                      formik.touched.selectedDate &&
+                      Boolean(formik.errors.selectedDate)
+                    }
+                    helperText={
+                      formik.touched.selectedDate && formik.errors.selectedDate
+                    }
+                    slotProps={{
+                      textField: {
+                        disabled: true,
+                      },
+                    }}
+                    timezone="Asia/Singapore"
+                    required
+                    sx={{ width: "50%" }}
+                  />
+                  <TimePicker
+                    label="Please Choose A Time"
+                    value={formik.values.selectedTime}
+                    onChange={(newTime) =>
+                      formik.setFieldValue("selectedTime", newTime)
+                    }
+                    error={
+                      formik.touched.selectedTime &&
+                      Boolean(formik.errors.selectedTime)
+                    }
+                    helperText={
+                      formik.touched.selectedTime && formik.errors.selectedTime
+                    }
+                    slotProps={{
+                      textField: {
+                        disabled: true,
+                      },
+                    }}
+                    timezone="Asia/Singapore"
+                    required
+                    sx={{ width: "50%" }}
+                  />
+                </Box>
                 <TextField
                   fullWidth
                   margin="dense"
@@ -352,23 +383,60 @@ function EditSchedule() {
                     formik.touched.postalCode && formik.errors.postalCode
                   }
                 />
-
-                <Button
-                  variant="contained"
-                  onClick={() => handleSearchLocation(formik.values.postalCode)}
-                >
-                  Search Location
-                </Button>
                 {location && (
                   <div>
                     <h3>Location Details</h3>
                     <p>{location.formattedAddress}</p>
                   </div>
                 )}
+                {options && (
+                  <Box>
+                    <InputLabel id="event-type-label">Event Type</InputLabel>
+                    <Select
+                      labelId="event-type-label"
+                      id="event-type"
+                      name="eventType"
+                      value={formik.values.eventType || ""}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.eventType &&
+                        Boolean(formik.errors.eventType)
+                      }
+                    >
+                      {options.map((option) => (
+                        <MenuItem key={option.id} value={option.id}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Box>
+                )}
               </Grid>
               <Grid item xs={12} md={6} lg={4}>
                 <Box sx={{ textAlign: "center", mt: 2 }}>
-                  <Button variant="contained" component="label">
+                  <Button
+                    variant="contained"
+                    component="label"
+                    sx={{
+                      variant: "contained",
+                      textDecoration: "none",
+                      color: "black",
+                      bgcolor: "#e81515",
+                      "&:hover": {
+                        color: "#ffffff",
+                        bgcolor: "#e81515",
+                      },
+                      boxShadow: "none",
+                      borderRadius: 4,
+                      fontWeight: "bold",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      paddingX: "50px",
+                      paddingY: "10px",
+                    }}
+                  >
                     Upload Image
                     <input
                       hidden
@@ -391,14 +459,54 @@ function EditSchedule() {
                 </Box>
               </Grid>
             </Grid>
-            <Box sx={{ mt: 2 }}>
-              <Button variant="contained" type="submit">
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                sx={{
+                  variant: "contained",
+                  textDecoration: "none",
+                  background: "#fddc02",
+                  color: "black",
+                  bgcolor: "#fddc02",
+                  "&:hover": {
+                    color: "#e8533f",
+                    bgcolor: "#fddc02",
+                  },
+                  boxShadow: "none",
+                  borderRadius: 4,
+                  fontWeight: "bold",
+                  paddingX: "50px",
+                  paddingY: "10px",
+                  margin: 10,
+                }}
+                type="submit"
+              >
                 Update
               </Button>
               <Button
-                variant="contained"
-                sx={{ ml: 2 }}
-                color="error"
+                sx={{
+                  variant: "contained",
+                  textDecoration: "none",
+                  color: "black",
+                  bgcolor: "#e81515",
+                  "&:hover": {
+                    color: "#ffffff",
+                    bgcolor: "#e81515",
+                  },
+                  boxShadow: "none",
+                  borderRadius: 4,
+                  fontWeight: "bold",
+                  paddingX: "50px",
+                  paddingY: "10px",
+                  margin: 10,
+                }}
                 onClick={handleOpen}
               >
                 Delete
@@ -418,7 +526,11 @@ function EditSchedule() {
             <Button variant="contained" color="inherit" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="contained" color="error" onClick={softdeleteSchedule}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={softdeleteSchedule}
+            >
               Delete
             </Button>
           </DialogActions>

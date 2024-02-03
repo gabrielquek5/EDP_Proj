@@ -6,18 +6,7 @@ import UserContext from "../contexts/UserContext";
 import global from "../global";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Input,
-  IconButton,
-  Button,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
+import { Box, Typography, Button, Autocomplete, TextField, } from "@mui/material";
 import axios from "axios";
 
 function ViewEvent() {
@@ -175,8 +164,7 @@ function ViewEvent() {
             {user && (
               <form onSubmit={formik.handleSubmit}>
                 <Box sx={{ my: 2 }}>
-                  <Autocomplete
-                    disablePortal
+                  <Autocomplete disablePortal
                     id="combo-box-demo"
                     options={options}
                     value={

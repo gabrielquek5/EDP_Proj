@@ -60,3 +60,7 @@ body {
   top: 0;
   object-fit: cover;
 }
+
+body {
+  min-height: 105vh;
+}

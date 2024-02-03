@@ -6,7 +6,11 @@ import {
   Typography,
   Box,
   Button,
+  Menu,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import MyTheme from "./themes/MyTheme";
@@ -33,14 +37,15 @@ import AddSchedule from "./pages/AddSchedule";
 import EditSchedule from "./pages/EditSchedule";
 import IndividualSchedules from "./pages/IndividualSchedules";
 import ViewEvent from "./pages/ViewEvent";
-import Rewards from './pages/Rewards';
-import AddReward from './pages/AddReward';
-import EditReward from './pages/EditReward';
-import Notifications from './pages/Notifications';
-import AddNotification from './pages/AddNotification';
-import EditNotification from './pages/EditNotification';
-import ViewNotifications from './pages/ViewNotifications';
-
+import Rewards from "./pages/Rewards";
+import AddReward from "./pages/AddReward";
+import EditReward from "./pages/EditReward";
+import Notifications from "./pages/Notifications";
+import AddNotification from "./pages/AddNotification";
+import EditNotification from "./pages/EditNotification";
+import ViewNotifications from "./pages/ViewNotifications";
+import HomePage from "./pages/HomePage";
+import uplayLogo from "./assets/logo_uplay.png";
 
 function App() {
   const logout = () => {
@@ -48,6 +53,9 @@ function App() {
     window.location = "/";
   };
   const [loading, setLoading] = useState(true);
+  const [dropMenu, setdropMenu] = useState(null);
+  const [dropMenuNoti, setdropMenuNoti] = useState(null);
+  const [dropMenuScheduling, setdropMenuScheduling] = useState(null);
 
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -58,71 +66,163 @@ function App() {
       });
     }
   }, []);
+
+  const handleMenuOpen = (event) => {
+    setdropMenu(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setdropMenu(null);
+  };
+
+  const handleNotiOpen = (event) => {
+    setdropMenuNoti(event.currentTarget);
+  };
+
+  const handleNotiClose = () => {
+    setdropMenuNoti(null);
+  };
+
+  const handleSchedulingOpen = (event) => {
+    setdropMenuScheduling(event.currentTarget);
+  };
+
+  const handleSchedulingClose = () => {
+    setdropMenuScheduling(null);
+  };
+  
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <Router>
-        <ThemeProvider theme={MyTheme}>
+        <ThemeProvider theme={MyTheme} >
           <AppBar
             position="static"
-            sx={{ backgroundColor: "#FFA500", fontFamily: "Poppins" }}
+            elevation={0}
+            sx={{
+              backgroundColor: "white",
+              fontFamily: "Poppins",
+              color: "black",
+              boxShadow: "none",
+            }}
             className="AppBar"
           >
             <Container>
               <Toolbar disableGutters={true}>
                 <Link to="/">
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{ fontFamily: "Poppins" }}
-                  >
-                    Uplay
-                  </Typography>
+                  <img
+                    src={uplayLogo}
+                    alt="Uplay Logo"
+                    style={{ height: "40px", marginRight: "16px" }}
+                  />
                 </Link>
                 <Link to="/schedules">
-                  <Typography>All Events</Typography>
+                  <Typography>All Experiences</Typography>
                 </Link>
-                {user && (
-                  <>
-                    <Link to="/individualschedule">
-                      <Typography>Your Schedules</Typography>
-                    </Link>
-                  </>
-                )}
                 <Box sx={{ flexGrow: 1 }}></Box>
 
                 {user && (
                   <>
-                    <Typography
-                      style={{ marginRight: "8px", fontFamily: "Poppins" }}
+                    <Button
+                      onClick={handleSchedulingOpen}
+                      variant="text"
+                      sx={{ textTransform: "none", fontSize: "15px" }}
                     >
-                      {user.name}{" "}
-                    </Typography>
-                    <Link to="/Update">
-                      <Typography>Update</Typography>
-                    </Link>
-                    <Link to="/Delete">
-                      <Typography>Delete</Typography>
-                    </Link>
-                    <Link to="/bookings">
-                      <Typography>Bookings</Typography>
-                    </Link>
-                    <Link to="/reviews">
-                      <Typography>Reviews</Typography>
-                    </Link>
-                    <Link to="/rewards" ><Typography>Rewards</Typography></Link>
+                      Scheduling
+                    </Button>
+                    <Menu
+                      anchorEl={dropMenuScheduling}
+                      open={Boolean(dropMenuScheduling)}
+                      onClose={handleSchedulingClose}
+                    >
+                      <MenuItem
+                        component={Link}
+                        to="/individualschedule"
+                        onClick={handleSchedulingClose}
+                      >
+                        My Schedules
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
+                        to="/bookings"
+                        onClick={handleSchedulingClose}
+                      >
+                        My Bookings
+                      </MenuItem>
+                    </Menu>
 
-                    <Link to="/notifications" >
-                      <Typography>Notifications</Typography>
-                    </Link>
-                    <Link to="/viewnotifications" >
-                      <Typography>View Notifications</Typography>
-                    </Link>
+                    <Button
+                      onClick={handleNotiOpen}
+                      variant="text"
+                      sx={{ textTransform: "none", fontSize: "15px" }}
+                    >
+                      Notifications
+                    </Button>
+                    <Menu
+                      anchorEl={dropMenuNoti}
+                      open={Boolean(dropMenuNoti)}
+                      onClose={handleNotiClose}
+                    >
+                      <MenuItem
+                        component={Link}
+                        to="/viewnotifications"
+                        onClick={handleNotiClose}
+                      >
+                        View Notifications
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
+                        to="/notifications"
+                        onClick={handleNotiClose}
+                      >
+                        Notifications
+                      </MenuItem>
+                    </Menu>
+
                     <Link to="/shoppingcart">
                       <Button>
-                        <MdOutlineShoppingCart class="cart-btn" size={24} />
+                        <MdOutlineShoppingCart size={24} />
                       </Button>
                     </Link>
-                    <Button onClick={logout}>Logout</Button>
+                    <Button onClick={handleMenuOpen}>
+                      <AccountCircleIcon />
+                    </Button>
+                    <Menu
+                      anchorEl={dropMenu}
+                      open={Boolean(dropMenu)}
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem
+                        component={Link}
+                        to="/Update"
+                        onClick={handleMenuClose}
+                      >
+                        Update
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
+                        to="/Delete"
+                        onClick={handleMenuClose}
+                      >
+                        Delete
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
+                        to="/reviews"
+                        onClick={handleMenuClose}
+                      >
+                        My Reviews
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
+                        to="/rewards"
+                        onClick={handleMenuClose}
+                      >
+                        My Rewards
+                      </MenuItem>
+                      <MenuItem>
+                        <Button onClick={logout}>Logout</Button>
+                      </MenuItem>
+                    </Menu>
                   </>
                 )}
                 {!user && (
@@ -145,7 +245,7 @@ function App() {
 
           <Container>
             <Routes>
-              <Route path={"/"} element={<Schedules />} />
+              <Route path={"/"} element={<HomePage />} />
               <Route path={"/form"} element={<MyForm />} />
               <Route path={"/register"} element={<Register />} />
               <Route path={"/login"} element={<Login />} />
@@ -160,9 +260,9 @@ function App() {
               <Route path={"/editreview/:id"} element={<EditReview />} />
               <Route path={"/adminreviews"} element={<AdminReviews />} />
               <Route path={"/checkout"} element={<Checkout />} />
-              <Route path={"/successfulpayment"} element={<SuccessfulPayment />}/>
+              <Route path={"/successfulpayment"} element={<SuccessfulPayment />} />
               <Route path={"/addschedule"} element={<AddSchedule />} />
-              <Route path={"/individualschedule"} element={<IndividualSchedules />}/>
+              <Route path={"/individualschedule"} element={<IndividualSchedules />} />
               <Route path={"/editschedule/:id"} element={<EditSchedule />} />
               <Route path={"/schedules"} element={<Schedules />} />
               <Route path={"/viewevent/:id"} element={<ViewEvent />} />
@@ -174,10 +274,11 @@ function App() {
               <Route path={"/editnotification/:id"} element={<EditNotification />} />
               <Route path={"/viewnotifications"} element={<ViewNotifications />} />
             </Routes>
-          </Container>
+          </Container>       
         </ThemeProvider>
       </Router>
     </UserContext.Provider>
+    
   );
 }
 
