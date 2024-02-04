@@ -35,7 +35,7 @@ function Schedules() {
   const getSchedules = () => {
     http.get("/schedule").then((res) => {
       const filteredSchedules = res.data.filter(
-        (schedule) => !schedule.isDeleted
+        (schedule) => !schedule.isDeleted && !schedule.isCompleted
       );
       setScheduleList(filteredSchedules);
     });
@@ -44,7 +44,10 @@ function Schedules() {
   const searchSchedules = () => {
     http.get(`/schedule?search=${search}`).then((res) => {
       const filteredSchedules = res.data.filter(
-        (schedule) => !schedule.isDeleted
+        (schedule) =>
+          !schedule.isDeleted &&
+          !schedule.isCompleted &&
+          schedule.eventType.toLowerCase().includes(selectedEventType)
       );
       setScheduleList(filteredSchedules);
     });
@@ -73,21 +76,29 @@ function Schedules() {
     { label: "Sports", id: "sport" },
     { label: "Gathering", id: "gathering" },
     { label: "Dine & Wine", id: "dine & wine" },
-    { label: "Family Bonding", id: "family bonding" },
+    { label: "Family Bonding", id: "family & bonding" },
     { label: "Hobbies & Wellness", id: "hobbies & wellness" },
     { label: "Travel", id: "Travel" },
+    { label: "Others", id: "Others" },
   ];
 
   const handleEventTypeClick = (eventType) => {
-    const formattedEventType = eventType.toLowerCase().replace(/\s+/g, '');
+    const formattedEventType = eventType.toLowerCase().replace(/\s+/g, "");
+
     setSelectedEventType(formattedEventType);
-    http.get(`/schedule?search=${formattedEventType}`).then((res) => {
-      const filteredSchedules = res.data.filter(
-        (schedule) => !schedule.isDeleted
-      );
-      setScheduleList(filteredSchedules);
-    });
-    console.log(`/schedules?search=${formattedEventType}`);
+
+    if (formattedEventType === "") {
+      // If All is selected, fetch all schedules
+      getSchedules();
+    } else {
+      // Fetch schedules based on the selected event type
+      http.get(`/schedule?search=${formattedEventType}`).then((res) => {
+        const filteredSchedules = res.data.filter(
+          (schedule) => !schedule.isDeleted
+        );
+        setScheduleList(filteredSchedules);
+      });
+    }
   };
 
   return (

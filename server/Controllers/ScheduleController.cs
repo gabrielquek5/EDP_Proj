@@ -25,9 +25,15 @@ namespace WebApplication1.Controllers
             try
             {
                 IQueryable<Schedule> result = _context.Schedules.Include(t => t.User);
-                if (search != null)
+                if (!string.IsNullOrEmpty(search))
                 {
-                    result = result.Where(x => x.Title.Contains(search) || x.Description.Contains(search) || x.PostalCode.Contains(search) || x.EventType.Contains(search));
+                    result = result.Where(x =>
+                        (x.Title.Contains(search) ||
+                         x.Description.Contains(search) ||
+                         x.PostalCode.Contains(search) ||
+                         x.EventType.Contains(search)) &&
+                        !x.IsCompleted
+                    );
                 }
                 var list = result.OrderByDescending(x => x.CreatedAt).ToList();
                 var data = list.Select(t => new
@@ -42,6 +48,7 @@ namespace WebApplication1.Controllers
                     t.Price,
                     t.EventType,
                     t.IsDeleted,
+                    t.IsCompleted,
                     t.CreatedAt,
                     t.UpdatedAt,
                     t.UserId,
@@ -80,6 +87,7 @@ namespace WebApplication1.Controllers
                 schedule.Price,
                 schedule.EventType,
                 schedule.IsDeleted,
+                schedule.IsCompleted,
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
@@ -137,6 +145,7 @@ namespace WebApplication1.Controllers
                 Price = schedule.Price,
                 EventType = schedule.EventType,
                 IsDeleted = false,
+                IsCompleted = false,
                 CreatedAt = now,
                 UpdatedAt = now,
                 UserId = userId
@@ -171,6 +180,7 @@ namespace WebApplication1.Controllers
             mySchedule.Price = schedule.Price;
             mySchedule.EventType = schedule.EventType.Trim();
             mySchedule.IsDeleted = false;
+            mySchedule.IsCompleted = false;
             mySchedule.UpdatedAt = DateTime.Now;
 
             _context.SaveChanges();
@@ -214,6 +224,28 @@ namespace WebApplication1.Controllers
             }
 
             mySchedule.IsDeleted = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{id}/end-event"), Authorize]
+        public IActionResult EndEvent(int id)
+        {
+            var mySchedule = _context.Schedules.Find(id);
+            if (mySchedule == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (mySchedule.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            mySchedule.IsCompleted = true;
+            mySchedule.UpdatedAt = DateTime.Now;
+
             _context.SaveChanges();
             return Ok();
         }
