@@ -43,6 +43,10 @@ namespace WebApplication1.Models
         [Required]
         public bool IsDeleted { get; set; }
 
+        [Required]
+        public bool IsCompleted { get; set; }
+
+
         [JsonIgnore]
         public List<Booking>? Bookings { get; set; }
         [JsonIgnore]
