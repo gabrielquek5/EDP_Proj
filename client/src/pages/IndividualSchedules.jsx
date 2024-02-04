@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -9,6 +9,11 @@ import {
   Input,
   IconButton,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import {
   AccountCircle,
@@ -25,9 +30,13 @@ import UserContext from "../contexts/UserContext";
 import global from "../global";
 
 function IndividualSchedules() {
+  const navigate = useNavigate();
   const [scheduleList, setScheduleList] = useState([]);
   const [search, setSearch] = useState("");
   const { user } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [endEventId, setEndEventId] = useState(null);
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
@@ -36,7 +45,9 @@ function IndividualSchedules() {
   const getSchedules = async () => {
     try {
       const res = await http.get("/schedule");
-      const filteredSchedules = res.data.filter((schedule) => !schedule.isDeleted);
+      const filteredSchedules = res.data.filter(
+        (schedule) => !schedule.isDeleted
+      );
       setScheduleList(filteredSchedules);
     } catch (error) {
       console.error("Error fetching schedules:", error);
@@ -69,6 +80,21 @@ function IndividualSchedules() {
   const onClickClear = () => {
     setSearch("");
     getSchedules();
+  };
+
+  const handleEndEventOpen = (id) => {
+    setEndEventId(id);
+    setOpen(true);
+  };
+
+  const handleEndEventClose = () => {
+    setOpen(false);
+  };
+
+  const endEvent = (id) => {
+    http.put(`/schedule/${id}/end-event`).then((res) => {
+      navigate("/schedules");
+    });
   };
 
   return (
@@ -186,7 +212,6 @@ function IndividualSchedules() {
         )}
       </Box>
       <Box sx={{ mb: 3 }} />
-
       <Grid container spacing={2}>
         {scheduleList
           .filter((schedule) => !user || user.id === schedule.userId)
@@ -215,22 +240,49 @@ function IndividualSchedules() {
                             variant="contained"
                             sx={{
                               textDecoration: "none",
-                              color: "#ffffff",
-                              bgcolor: "#ed7565",
+                              color: "#000000",
+                              bgcolor: "#fddc02",
                               "&:hover": {
-                                color: "#ffffff",
-                                bgcolor: "#ed7565",
+                                color: "#e8533f",
+                                bgcolor: "#fddc02",
                                 boxShadow: "none",
                                 fontWeight: "bold",
                               },
                               boxShadow: "none",
                               borderRadius: 4,
                               fontWeight: "bold",
-                              fontSize: "12px"
-                            }}>
+                              fontSize: "12px",
+                            }}
+                          >
                             Edit
                           </Button>
                         </Link>
+                      )}
+                      <Box sx={{ marginX: 1 }}></Box>
+                      {user && user.id === schedule.userId && (
+                        <Button
+                          variant="contained"
+                          sx={{
+                            textDecoration: "none",
+                            color: "#ffffff",
+                            bgcolor: "#ed7565",
+                            "&:hover": {
+                              color: "#ffffff",
+                              bgcolor: "#ed7565",
+                              boxShadow: "none",
+                              fontWeight: "bold",
+                            },
+                            boxShadow: "none",
+                            borderRadius: 4,
+                            fontWeight: "bold",
+                            fontSize: "12px",
+                          }}
+                          onClick={() =>
+                            handleEndEventOpen(schedule.scheduleId)
+                          }
+                        >
+                          End
+                        </Button>
                       )}
                     </Box>
                     <Box
@@ -272,12 +324,49 @@ function IndividualSchedules() {
                         {dayjs(schedule.updateAt).format(global.datetimeFormat)}
                       </Typography>
                     </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      color="text.secondary"
+                    >
+                      <AccessTime sx={{ mr: 1 }} />
+                      <Typography>Event Status: </Typography>
+                      {schedule.isCompleted ? (
+                        <Typography color="error" sx={{marginX: 1}}>Completed</Typography>
+                      ) : (
+                        <Typography color="primary" sx={{marginX: 1}}>Ongoing</Typography>
+                      )}
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
             );
           })}
       </Grid>
+
+      <Dialog open={open} onClose={handleEndEventClose}>
+        <DialogTitle>Conclude Event</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to end this event?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={handleEndEventClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => endEvent(endEventId)}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

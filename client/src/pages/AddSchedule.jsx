@@ -79,7 +79,7 @@ function AddSchedule() {
     { label: "Sports", id: "Sports" },
     { label: "Gathering", id: "Gathering" },
     { label: "Dine & Wine", id: "Dine & Wine" },
-    { label: "Family Bonding", id: "Family Bonding" },
+    { label: "Family Bonding", id: "Family & Bonding" },
     { label: "Hobbies & Wellness", id: "Hobbies & Wellness" },
     { label: "Travel", id: "Travel" },
     { label: "Others", id: "Others" },
