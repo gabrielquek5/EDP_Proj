@@ -363,7 +363,7 @@ function IndividualSchedules() {
             color="error"
             onClick={() => endEvent(endEventId)}
           >
-            Delete
+            End Event
           </Button>
         </DialogActions>
       </Dialog>
