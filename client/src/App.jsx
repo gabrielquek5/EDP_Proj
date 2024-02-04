@@ -45,7 +45,9 @@ import AddNotification from "./pages/AddNotification";
 import EditNotification from "./pages/EditNotification";
 import ViewNotifications from "./pages/ViewNotifications";
 import HomePage from "./pages/HomePage";
+import AdminPanel from "./pages/AdminPanel";
 import uplayLogo from "./assets/logo_uplay.png";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const logout = () => {
@@ -207,6 +209,13 @@ function App() {
                       </MenuItem>
                       <MenuItem
                         component={Link}
+                        to="/adminpanel"
+                        onClick={handleMenuClose}
+                      >
+                        Admin Panel
+                      </MenuItem>
+                      <MenuItem
+                        component={Link}
                         to="/reviews"
                         onClick={handleMenuClose}
                       >
@@ -273,6 +282,8 @@ function App() {
               <Route path={"/addnotification"} element={<AddNotification />} />
               <Route path={"/editnotification/:id"} element={<EditNotification />} />
               <Route path={"/viewnotifications"} element={<ViewNotifications />} />
+              <Route path={"/adminpanel"} element={<AdminPanel />}/>
+              <Route path={"*"} element={<NotFound />} />
             </Routes>
           </Container>       
         </ThemeProvider>
