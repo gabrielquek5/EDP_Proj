@@ -47,6 +47,7 @@ namespace WebApplication1.Controllers
                     t.ImageFile,
                     t.Price,
                     t.EventType,
+                    t.RequestDelete,
                     t.IsDeleted,
                     t.IsCompleted,
                     t.CreatedAt,
@@ -86,6 +87,7 @@ namespace WebApplication1.Controllers
                 schedule.ImageFile,
                 schedule.Price,
                 schedule.EventType,
+                schedule.RequestDelete,
                 schedule.IsDeleted,
                 schedule.IsCompleted,
                 schedule.CreatedAt,
@@ -144,6 +146,7 @@ namespace WebApplication1.Controllers
                 ImageFile = schedule.ImageFile,
                 Price = schedule.Price,
                 EventType = schedule.EventType,
+                RequestDelete = false,
                 IsDeleted = false,
                 IsCompleted = false,
                 CreatedAt = now,
@@ -179,6 +182,7 @@ namespace WebApplication1.Controllers
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
             mySchedule.EventType = schedule.EventType.Trim();
+            mySchedule.RequestDelete = false;
             mySchedule.IsDeleted = false;
             mySchedule.IsCompleted = false;
             mySchedule.UpdatedAt = DateTime.Now;
@@ -207,6 +211,27 @@ namespace WebApplication1.Controllers
             _context.SaveChanges();
             return Ok();
         }
+
+        [HttpPut("{id}/request-delete"), Authorize]
+        public IActionResult RquestSoftDeleteSchedule(int id)
+        {
+            var mySchedule = _context.Schedules.Find(id);
+            if (mySchedule == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (mySchedule.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            mySchedule.RequestDelete = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
 
         [HttpPut("{id}/soft-delete"), Authorize]
         public IActionResult SoftDeleteSchedule(int id)

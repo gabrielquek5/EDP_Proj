@@ -41,6 +41,9 @@ namespace WebApplication1.Models
         public string EventType { get; set; } = string.Empty;
 
         [Required]
+        public bool RequestDelete { get; set; }
+
+        [Required]
         public bool IsDeleted { get; set; }
 
         [Required]

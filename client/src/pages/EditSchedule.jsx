@@ -50,6 +50,7 @@ function EditSchedule() {
   const [eventType, seteventType] = useState("");
 
   const [initialPrice, setInitialPrice] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleSearchLocation = async (postalCode) => {
     if (postalCode.length >= 6) {
@@ -185,7 +186,6 @@ function EditSchedule() {
     }
   }, [user, schedule]);
 
-  const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -195,14 +195,8 @@ function EditSchedule() {
     setOpen(false);
   };
 
-  const deleteSchedule = () => {
-    http.delete(`/schedule/${id}`).then((res) => {
-      navigate("/schedules");
-    });
-  };
-
   const softdeleteSchedule = () => {
-    http.put(`/schedule/${id}/soft-delete`).then((res) => {
+    http.put(`/schedule/${id}/request-delete`).then((res) => {
       navigate("/schedules");
     });
   };
