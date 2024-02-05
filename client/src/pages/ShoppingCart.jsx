@@ -30,6 +30,7 @@ function ShoppingCart() {
 
   useEffect(() => {
     fetchCartItems();
+    console.log(cartItems)
 
 
     const query = new URLSearchParams(window.location.search);
@@ -56,6 +57,7 @@ function ShoppingCart() {
     try {
       const response = await http.get("/shoppingcart");
       setCartItems(response.data);
+      console.log(cartItems)
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -81,34 +83,35 @@ function ShoppingCart() {
       }
   
       // Assuming you have the event ID from the shopping cart
-      const id = 1; // Adjust as per your data structure
+    //   const id = 1; // Adjust as per your data structure
   
-      // Extracting the first element of the cartArray
-      const cart = cartArray[0];
+    //   // Extracting the first element of the cartArray
+    //   const cart = cartArray[0];
   
-      // Fetch event details including price
-      const eventResponse = await http.get(`/Schedule/${id}`);
-      const eventData = eventResponse.data;
-      console.log(eventData);
-      // Extract price from event details
-      const eventName = eventData.title
-      const eventPrice = eventData.price;
-      const eventDate = eventData.selectedDate
+    //   // Fetch event details including price
+    //   const eventResponse = await http.get(`/Schedule/${id}`);
+    //   const eventData = eventResponse.data;
+    //   console.log(eventData);
+    //   // Extract price from event details
+    //   const eventName = eventData.title
+    //   const eventPrice = eventData.price;
+    //   const eventDate = eventData.selectedDate
   
-      // Create the booking data object with the appropriate values
-      const bookingData = {
-        bookingDate: eventDate, // Assuming DateCart is correct
-        pax: cart.quantity,
-        price: eventPrice, // Set the price from the event
-        bookingTitle: eventName,
-        ScheduleId: id
-      };
-      console.log(bookingData)
+    //   // Create the booking data object with the appropriate values
+    //   const bookingData = {
+    //     bookingDate: eventDate, // Assuming DateCart is correct
+    //     pax: cart.quantity,
+    //     price: eventPrice, // Set the price from the event
+    //     bookingTitle: eventName,
+    //     ScheduleId: id,
+    //     IsCancelled: false
+    //   };
+    //   console.log(bookingData)
   
-      // Make the HTTP POST request to create a booking
-      const bookingResponse = await http.post(`/bookings/${id}`, bookingData);
+    //   // Make the HTTP POST request to create a booking
+    //   const bookingResponse = await http.post(`/bookings/${id}`, bookingData);
   
-      console.log("Booking created:", bookingResponse.data);
+    //   console.log("Booking created:", bookingResponse.data);
     } catch (error) {
       console.error("Error during checkout and booking:", error);
     }

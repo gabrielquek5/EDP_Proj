@@ -28,6 +28,7 @@ namespace WebApplication1.Models
         [Required]
         public string BookingTitle { get; set; }
 
+        public bool IsCancelled { get; set; } = false;
 
         // Foreign key property
         public int UserId { get; set; }

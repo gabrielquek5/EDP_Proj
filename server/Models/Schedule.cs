@@ -46,8 +46,14 @@ namespace WebApplication1.Models
         [Required]
         public bool IsDeleted { get; set; }
 
+
         [Required]
         public bool IsCompleted { get; set; }
+
+
+        public string? PriceID {  get; set; }
+
+        public string? StripeID {  get; set; }
 
 
         [JsonIgnore]

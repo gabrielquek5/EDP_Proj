@@ -1,104 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {React, useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Grid,
   Card,
   CardContent,
-  Input,
-  IconButton,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  FormControlLabel,
-  FormControl,
-  InputLabel,
-  FormHelperText,
-  Select,
-  MenuItem,
+  Tab,
+  Tabs,
+  Input
 } from "@mui/material";
-import { AccessTime, Search, Clear, Edit, WindowSharp } from "@mui/icons-material";
+import { AccessTime, Search, Clear } from "@mui/icons-material";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import http from "../http";
 import dayjs from "dayjs";
 import global from "../global";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 function Bookings() {
   const [bookingsList, setBookingsList] = useState([]);
+  const [activeBookings, setActiveBookings] = useState([]);
+  const [cancelledBookings, setCancelledBookings] = useState([]);
   const [search, setSearch] = useState("");
-  const [id, setid] = useState([]);
-  const navigate = useNavigate();
-
+  const [id, setId] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState("active");
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const [open, setOpen] = useState(false);
-
   const handleOpen = (id) => {
     setOpen(true);
-    setid(id);
+    setId(id);
   };
-
-
-  const deleteBooking = () => {
-    http.delete(`/bookings/${id}`)
-        .then((res) => {
-            console.log("THE BOOKING ID IS",id);
-            console.log(res.data);
-            handleClose();
-        })
-        .catch((error) => {
-            console.error('Error deleting booking:', error);
-            handleClose();
-        });
-}
-
 
   const handleClose = () => {
     setOpen(false);
-    navigate("/bookings");
   };
 
   const getBookings = () => {
     http.get("/bookings").then((res) => {
-      setBookingsList(res.data);
+      const bookings = res.data;
+      setBookingsList(bookings);
+      console.log("bookings data",bookings)
+
+      const activeBookingsFiltered = bookings.filter((booking) => booking.isCancelled !== true);
+        
+      setActiveBookings(activeBookingsFiltered);
+    //   setActiveBookings(bookings.filter(booking => booking.isCancelled !== true));
+      console.log("Active bookings after update:", activeBookingsFiltered);
+    
+      const cancelledBookingsFiltered = bookings.filter((booking) => booking.isCancelled === true)
+
+    //   setActiveBookings(bookings.filter((booking) => !booking.isCancelled));
+    setCancelledBookings(cancelledBookingsFiltered);
+      console.log("Cancelled bookings after update:", cancelledBookingsFiltered);
+
     });
   };
 
-  const searchBookings = () => {
-    http.get(`/bookings?search=${search}`).then((res) => {
-      setBookingsList(res.data);
-    });
-  };
 
   useEffect(() => {
     getBookings();
   }, []);
 
-  const onSearchKeyDown = (e) => {
-    if (e.key === "Enter") {
-      searchBookings();
-    }
+  const cancelBooking = () => {
+    http.put(`/bookings/${id}`)
+      .then((res) => {
+        console.log("Booking cancelled successfully:", id);
+        handleClose();
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error cancelling booking:', error);
+        handleClose();
+      });
   };
+  
 
-  const onClickSearch = () => {
-    searchBookings();
-  };
-
-  const onClickClear = () => {
-    setSearch("");
-    getBookings();
+  const filterBookings = (bookings) => {
+    return bookings.filter((booking) => booking.isCancelled === (currentTab === "cancelled"));
   };
 
   return (
@@ -107,48 +94,53 @@ function Bookings() {
         My Bookings
       </Typography>
 
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      {/* Tabs */}
+      <Tabs value={currentTab} onChange={(e, newValue) => setCurrentTab(newValue)}>
+        <Tab label="Active Bookings" value="active" />
+        <Tab label="Cancelled Bookings" value="cancelled" />
+      </Tabs>
+
+      {/* Search Box */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt:3 }}>
+        <Search />
         <Input
           value={search}
           placeholder="Search"
           onChange={onSearchChange}
-          onKeyDown={onSearchKeyDown}
         />
-        <IconButton color="primary" onClick={onClickSearch}>
-          <Search />
-        </IconButton>
-        <IconButton color="primary" onClick={onClickClear}>
-          <Clear />
-        </IconButton>
-        <Box sx={{ flexGrow: 1 }} />
+        <Clear onClick={() => setSearch("")} />
       </Box>
 
+      {/* Bookings */}
       <Grid container spacing={2}>
-        {bookingsList.map((bookings, i) => {
-          //console.log(bookings);
-          return (
-            <Grid item xs={12} md={6} lg={4} key={bookings.bookingID}>
+        {filterBookings(currentTab === "active" ? activeBookings : cancelledBookings).length === 0 ? (
+          <Typography mt={5} fontFamily={'Poppins'} variant="body1">You currently do not have any {currentTab === "active" ? "active" : "cancelled"} bookings.</Typography>
+        ) : (
+          filterBookings(currentTab === "active" ? activeBookings : cancelledBookings).map((booking) => (
+            <Grid item xs={12} md={6} lg={4} key={booking.bookingID}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: "flex", mb: 1 }}>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                      {bookings.bookingTitle}
+                      {booking.bookingTitle}
                     </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{ ml: 2 }}
-                      color="error"
-                      onClick={() => handleOpen(bookings.bookingID)} // Pass bookingID to handleOpen
-                    >
-                      Cancel
-                    </Button>
+                    {currentTab === "active" && (
+                      <Button
+                        variant="contained"
+                        sx={{ ml: 2 }}
+                        color="error"
+                        onClick={() => handleOpen(booking.bookingID)}
+                      >
+                        Cancel
+                      </Button>
+                    )}
                   </Box>
                   <Box
                     sx={{ display: "flex", alignItems: "center", mb: 1 }}
                     color="text.primary"
                   >
                     <PeopleAltIcon sx={{ mr: 1, mt: 0.5 }} />
-                    <Typography>Pax: {bookings.pax}</Typography>
+                    <Typography>Pax: {booking.pax}</Typography>
                   </Box>
                   <Box
                     sx={{ display: "flex", alignItems: "center", mb: 1 }}
@@ -157,40 +149,36 @@ function Bookings() {
                     <AccessTime sx={{ mr: 1 }} />
                     <Typography>
                       Date booked:{" "}
-                      {dayjs(bookings.bookingDate).format(
-                        global.datetimeFormat
-                      )}
+                      {dayjs(booking.bookingDate).format(global.datetimeFormat)}
                     </Typography>
                   </Box>
                   <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                    {bookings.description}
+                    {booking.description}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
-          );
-        })}
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Cancel Booking</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to cancel this booking?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" color="inherit" onClick={handleClose}>
-              No
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => deleteBooking()}
-            >
-              Yes
-            </Button>
-          </DialogActions>
-        </Dialog>
+          ))
+        )}
       </Grid>
+
+      {/* Cancel Booking Dialog */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Cancel Booking</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to cancel this booking?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="inherit" onClick={handleClose}>
+            No
+          </Button>
+          <Button variant="contained" color="error" onClick={cancelBooking}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

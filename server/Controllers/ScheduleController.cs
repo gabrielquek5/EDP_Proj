@@ -151,7 +151,9 @@ namespace WebApplication1.Controllers
                 IsCompleted = false,
                 CreatedAt = now,
                 UpdatedAt = now,
-                UserId = userId
+                UserId = userId,
+                PriceID = price.Id,
+                StripeID = product.Id,
             };
 
             _context.Schedules.Add(mySchedule);
