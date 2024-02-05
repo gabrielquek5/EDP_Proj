@@ -68,6 +68,7 @@ function AdminPanel() {
   const softdeleteSchedule = (id) => {
     http.put(`/schedule/${id}/soft-delete`).then((res) => {
       getAllEvents();
+      setEventOpen(false);
     });
   };
 
