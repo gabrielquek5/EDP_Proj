@@ -9,6 +9,7 @@ import {
   Input,
   IconButton,
   Button,
+  Rating,
 } from "@mui/material";
 import {
   AccountCircle,
@@ -251,6 +252,17 @@ function Schedules() {
                       </Typography>
                       <Typography sx={{ fontWeight: "bold" }}>
                         {schedule.postalCode}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      color="text.secondary"
+                    >
+                      
+                      <Rating></Rating>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        5.0
                       </Typography>
                     </Box>
 

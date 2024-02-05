@@ -1,6 +1,10 @@
+
 ﻿using WebApplication1.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplication1;
+using Stripe;
 
 namespace WebApplication1.Controllers
 {
@@ -69,16 +73,21 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateBooking(int id, Booking booking)
+        public IActionResult SoftDeleteBooking(int id)
         {
             var myBooking = _context.Bookings.Find(id);
             if (myBooking == null)
             {
                 return NotFound();
             }
-            myBooking.BookingDate = booking.BookingDate;
-            myBooking.updatedAt= DateTime.Now;
 
+            int userId = GetUserId();
+            if (myBooking.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            myBooking.IsCancelled = true;
             _context.SaveChanges();
             return Ok();
         }
@@ -94,6 +103,13 @@ namespace WebApplication1.Controllers
             _context.Bookings.Remove(myBooking);
             _context.SaveChanges();
             return Ok();
+        }
+
+        private int GetUserId()
+        {
+            return Convert.ToInt32(User.Claims
+                .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                .Select(c => c.Value).SingleOrDefault());
         }
 
     }
