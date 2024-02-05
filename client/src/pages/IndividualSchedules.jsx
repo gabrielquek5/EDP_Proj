@@ -216,6 +216,37 @@ function IndividualSchedules() {
         {scheduleList
           .filter((schedule) => !user || user.id === schedule.userId)
           .map((schedule, i) => {
+            const eventStatus = () => {
+              if (schedule.isCompleted) {
+                if (schedule.requestDelete) {
+                  return (
+                    <Typography color="error" sx={{ marginX: 1 }}>
+                      Completed | Waiting Deletion Approval
+                    </Typography>
+                  );
+                } else {
+                  return (
+                    <Typography color="error" sx={{ marginX: 1 }}>
+                      Completed
+                    </Typography>
+                  );
+                }
+              } else {
+                if (schedule.requestDelete) {
+                  return (
+                    <Typography color="primary" sx={{ marginX: 1 }}>
+                      Ongoing | Waiting Deletion Approval
+                    </Typography>
+                  );
+                } else {
+                  return (
+                    <Typography color="primary" sx={{ marginX: 1 }}>
+                      Ongoing
+                    </Typography>
+                  );
+                }
+              }
+            };
             return (
               <Grid item xs={12} md={6} lg={4} key={schedule.id}>
                 <Card>
@@ -234,30 +265,32 @@ function IndividualSchedules() {
                       <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         {schedule.title}
                       </Typography>
-                      {user && user.id === schedule.userId && (
-                        <Link to={`/editschedule/${schedule.scheduleId}`}>
-                          <Button
-                            variant="contained"
-                            sx={{
-                              textDecoration: "none",
-                              color: "#000000",
-                              bgcolor: "#fddc02",
-                              "&:hover": {
-                                color: "#e8533f",
+                      {user &&
+                        user.id === schedule.userId &&
+                        !schedule.isCompleted && (
+                          <Link to={`/editschedule/${schedule.scheduleId}`}>
+                            <Button
+                              variant="contained"
+                              sx={{
+                                textDecoration: "none",
+                                color: "#000000",
                                 bgcolor: "#fddc02",
+                                "&:hover": {
+                                  color: "#e8533f",
+                                  bgcolor: "#fddc02",
+                                  boxShadow: "none",
+                                  fontWeight: "bold",
+                                },
                                 boxShadow: "none",
+                                borderRadius: 4,
                                 fontWeight: "bold",
-                              },
-                              boxShadow: "none",
-                              borderRadius: 4,
-                              fontWeight: "bold",
-                              fontSize: "12px",
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </Link>
-                      )}
+                                fontSize: "12px",
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </Link>
+                        )}
                       <Box sx={{ marginX: 1 }}></Box>
                       {user && user.id === schedule.userId && (
                         <Button
@@ -330,11 +363,7 @@ function IndividualSchedules() {
                     >
                       <AccessTime sx={{ mr: 1 }} />
                       <Typography>Event Status: </Typography>
-                      {schedule.isCompleted ? (
-                        <Typography color="error" sx={{marginX: 1}}>Completed</Typography>
-                      ) : (
-                        <Typography color="primary" sx={{marginX: 1}}>Ongoing</Typography>
-                      )}
+                      {eventStatus()}
                     </Box>
                   </CardContent>
                 </Card>

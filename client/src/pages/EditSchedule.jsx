@@ -104,36 +104,6 @@ function EditSchedule() {
     { label: "Others", id: "Others" },
   ];
 
-  useEffect(() => {
-    http.get(`/schedule/${id}`).then((res) => {
-      setSchedule(res.data);
-      setImageFile(res.data.imageFile);
-      seteventType(res.data.eventType);
-      setLoading(false);
-      formik.setFieldValue("eventType", res.data.eventType);
-
-      if (dayjs(res.data.selectedDate).isValid()) {
-        formik.setFieldValue("selectedDate", dayjs(res.data.selectedDate));
-      } else {
-        console.error("Invalid date format from the backend");
-      }
-
-      // Validate and set selectedTime
-      if (dayjs(res.data.selectedTime, "HH:mm:ss").isValid()) {
-        formik.setFieldValue(
-          "selectedTime",
-          dayjs(res.data.selectedTime, "HH:mm:ss")
-        );
-      } else {
-        console.error("Invalid time format from the backend");
-      }
-
-      if (!user || (res.data.userId && user.id !== res.data.userId)) {
-        navigate("/schedules");
-      }
-    });
-  }, [user, id]);
-
   const formik = useFormik({
     initialValues: schedule,
     enableReinitialize: true,
@@ -163,16 +133,22 @@ function EditSchedule() {
         data.imageFile = imageFile;
       }
 
-      const newDate = dayjs(data.selectedDate).format("YYYY-MM-DD");
-      const newTime = dayjs(data.selectedTime).format("HH:mm:ss");
-
       data.title = data.title.trim();
       data.description = data.description.trim();
       data.postalCode = data.postalCode.trim();
-      data.selectedTime = newDate;
-      data.selectedTime = newTime;
+
+      const selectedDateTime = dayjs.tz(
+        `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
+          "HH:mm:ss"
+        )}`,
+        "Asia/Singapore"
+      );
+
+      data.selectedDate = selectedDateTime.format();
+      data.selectedTime = selectedDateTime.format();
 
       data.price = initialPrice;
+
       http.put(`/schedule/${id}`, data).then((res) => {
         console.log(res.data);
         navigate("/schedules");
@@ -185,7 +161,6 @@ function EditSchedule() {
       navigate("/schedules");
     }
   }, [user, schedule]);
-
 
   const handleOpen = () => {
     setOpen(true);
@@ -226,22 +201,29 @@ function EditSchedule() {
     }
   };
 
-  // Fetch schedule data based on the id
   const fetchScheduleData = async () => {
     try {
       const res = await http.get(`/schedule/${id}`);
       const scheduleData = res.data;
 
-      // Set schedule data as initial values for formik form
+      var eventTypeUpdated = "";
+
+      if (scheduleData.eventType == "Family & Bonding") {
+        eventTypeUpdated = "Family Bonding";
+      } else {
+        eventTypeUpdated = scheduleData.eventType;
+      }
+
       formik.setValues({
         title: scheduleData.title,
         description: scheduleData.description,
         selectedDate: dayjs(scheduleData.selectedDate),
         selectedTime: dayjs(scheduleData.selectedTime),
         postalCode: scheduleData.postalCode,
+        eventType: eventTypeUpdated,
       });
 
-      setInitialPrice(scheduleData.price); // Store the initial price
+      setInitialPrice(scheduleData.price);
       setImageFile(scheduleData.imageFile);
       setLoading(false);
 
@@ -255,7 +237,7 @@ function EditSchedule() {
 
   useEffect(() => {
     fetchScheduleData();
-  }, [user, id]);
+  }, [user, id, schedule]);
 
   useEffect(() => {
     if (user && schedule.userId && user.id !== schedule.userId) {
