@@ -354,7 +354,7 @@ function IndividualSchedules() {
                       <AccessTime sx={{ mr: 1 }} />
                       <Typography>Updated Date: </Typography>
                       <Typography>
-                        {dayjs(schedule.updateAt).format(global.datetimeFormat)}
+                        {dayjs(schedule.updatedAt).format(global.datetimeFormat)}
                       </Typography>
                     </Box>
                     <Box
