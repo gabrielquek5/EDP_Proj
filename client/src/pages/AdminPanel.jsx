@@ -19,7 +19,15 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import http from "../http";
-import axios from "axios";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 import UserContext from "../contexts/UserContext";
 
 function AdminPanel() {
@@ -54,6 +62,29 @@ function AdminPanel() {
       navigate("/schedules");
     }
   }, [user]);
+
+  const countEventsByType = () => {
+    const eventCounts = {};
+
+    scheduleList.forEach((schedule) => {
+      const eventType = schedule.eventType;
+      if (eventCounts[eventType]) {
+        eventCounts[eventType]++;
+      } else {
+        eventCounts[eventType] = 1;
+      }
+    });
+
+    return eventCounts;
+  };
+
+  const prepareChartData = () => {
+    const eventCounts = countEventsByType();
+    return Object.keys(eventCounts).map((eventType) => ({
+      eventType,
+      count: eventCounts[eventType],
+    }));
+  };
 
   const handleEventDeletionOpen = (id) => {
     setSelectedSchedule(id);
@@ -157,6 +188,33 @@ function AdminPanel() {
               </TableBody>
             </Table>
           </TableContainer>
+          <Box
+            style={{
+              height: 400,
+              display: "flex",
+              marginTop: 4,
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h5" sx={{ my: 2 }}>
+              Event Distribution
+            </Typography>
+            <BarChart width={600} height={360} data={prepareChartData()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="eventType"
+                angle={-10}
+                textAnchor="end"
+                interval={0}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis interval={1} />
+              <Tooltip />
+              <Legend wrapperStyle={{ display: "none", marginTop: "150px" }} />
+              <Bar dataKey="count" fill="#8884d8" />
+            </BarChart>
+          </Box>
         </>
       )}
       <Dialog open={openEvent} onClose={handleEventDeletionClose}>
