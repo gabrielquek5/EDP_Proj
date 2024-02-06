@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Stripe;
+using WebApplication1.EmailStuff;
+using System.Text;
 
 
 namespace WebApplication1.Controllers
@@ -13,10 +15,12 @@ namespace WebApplication1.Controllers
     public class ScheduleController : ControllerBase
     {
         private readonly MyDbContext _context;
+        private readonly EMAIL_Consts _emailConsts;
 
         public ScheduleController(MyDbContext context)
         {
             _context = context;
+            _emailConsts = new EMAIL_Consts();
         }
 
         [HttpGet]
@@ -53,6 +57,7 @@ namespace WebApplication1.Controllers
                     t.CreatedAt,
                     t.UpdatedAt,
                     t.UserId,
+                    t.UserEmail,
                     User = new
                     {
                         t.User?.FirstName
@@ -65,7 +70,6 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
-
 
         [HttpGet("{id}")]
         public IActionResult GetSchedule(int id)
@@ -93,6 +97,7 @@ namespace WebApplication1.Controllers
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
+                schedule.UserEmail,
                 User = new
                 {
                     schedule.User?.FirstName
@@ -102,7 +107,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost, Authorize]
-        public IActionResult AddSchedule(Schedule schedule)
+        public async Task<IActionResult> AddSchedule(Schedule schedule)
         {
 
             StripeConfiguration.ApiKey = "sk_test_51OPMIjE7dlDzSq3bdLinND1GsOB1umKYNwDgYOubmE9LyTupQQHt0cFKj5re4ucAl3E5PINgwPS74OJgWyxvaE3U00AYisjkJZ";
@@ -121,12 +126,12 @@ namespace WebApplication1.Controllers
             // Create a Price
             var priceOptions = new PriceCreateOptions
             {
-                UnitAmountDecimal = (long)(schedule.Price * 100), // Convert the price to cents if not already in cents
-                Currency = "sgd", // Set the currency code (adjust if needed)
-                Product = product.Id, // Associate the Price with the Product
+                UnitAmountDecimal = (long)(schedule.Price * 100),
+                Currency = "sgd",
+                Product = product.Id,
                 Metadata = new Dictionary<string, string>
                 {
-                    { "schedule_id", schedule.ScheduleId.ToString() } // Optionally add metadata
+                    { "schedule_id", schedule.ScheduleId.ToString() }
                 }
             };
 
@@ -134,7 +139,11 @@ namespace WebApplication1.Controllers
             var price = priceService.Create(priceOptions);
 
             //create in db
-            int userId = GetUserId();
+            int userId = GetUser().ID();
+
+            string userEmail = GetUser().Email();
+            string userName = GetUser().UserName();
+
             var now = DateTime.Now;
             var mySchedule = new Schedule()
             {
@@ -154,15 +163,21 @@ namespace WebApplication1.Controllers
                 UserId = userId,
                 PriceID = price.Id,
                 StripeID = product.Id,
+                UserEmail = userEmail,
+                UserName = userName,
             };
 
             _context.Schedules.Add(mySchedule);
             _context.SaveChanges();
+
+            //var emailService = new EmailService(_emailConsts.EMAIL_API());
+            //await emailService.SendEventAddedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+
             return Ok(mySchedule);
         }
 
         [HttpPut("{id}"), Authorize]
-        public IActionResult UpdateSchedule(int id, Schedule schedule)
+        public async Task<IActionResult> UpdateSchedule(int id, Schedule schedule)
         {
             var mySchedule = _context.Schedules.Find(id);
             if (mySchedule == null)
@@ -170,26 +185,82 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            int userId = GetUserId();
+            int userId = GetUser().ID();
+
             if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
 
-            mySchedule.Title = schedule.Title.Trim();
-            mySchedule.Description = schedule.Description.Trim();
-            mySchedule.PostalCode = schedule.PostalCode.Trim();
-            mySchedule.SelectedDate = schedule.SelectedDate;
-            mySchedule.SelectedTime = schedule.SelectedTime;
+            // Creating strings to store before and after values
+            var changes = new StringBuilder();
+            var beforeValues = new StringBuilder();
+            var afterValues = new StringBuilder();
+
+            void AppendChange(string propertyName, string before, string after)
+            {
+                beforeValues.AppendLine($"{propertyName}: {before}");
+                afterValues.AppendLine($"{propertyName}: {after}");
+                changes.AppendLine($"- {propertyName}: {before} => {after}");
+            }
+
+            if (mySchedule.Title != schedule.Title)
+            {
+                AppendChange("Title", mySchedule.Title, schedule.Title.Trim());
+                mySchedule.Title = schedule.Title.Trim();
+            }
+
+            if (mySchedule.Description != schedule.Description)
+            {
+                AppendChange("Description", mySchedule.Description, schedule.Description.Trim());
+                mySchedule.Description = schedule.Description.Trim();
+            }
+
+            if (mySchedule.EventType != schedule.EventType)
+            {
+                AppendChange("EventType", mySchedule.EventType, schedule.EventType.Trim());
+                mySchedule.EventType = schedule.EventType.Trim();
+            }
+
+            if (mySchedule.PostalCode != schedule.PostalCode)
+            {
+                AppendChange("PostalCode", mySchedule.PostalCode, schedule.PostalCode.Trim());
+                mySchedule.PostalCode = schedule.PostalCode.Trim();
+            }
+
+            if (mySchedule.SelectedDate != schedule.SelectedDate)
+            {
+                AppendChange("ScheduleDate", mySchedule.SelectedDate.ToString(), schedule.SelectedDate.ToString());
+                mySchedule.SelectedDate = schedule.SelectedDate;
+            }
+
+            if (mySchedule.SelectedTime != schedule.SelectedTime)
+            {
+                AppendChange("SelectedTime", mySchedule.SelectedTime.ToString(), schedule.SelectedTime.ToString());
+                mySchedule.SelectedTime = schedule.SelectedTime;
+            }
+
+            //mySchedule.Title = schedule.Title.Trim();
+            //mySchedule.Description = schedule.Description.Trim();
+            //mySchedule.PostalCode = schedule.PostalCode.Trim();
+            //mySchedule.SelectedDate = schedule.SelectedDate;
+            //mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
-            mySchedule.EventType = schedule.EventType.Trim();
+            //mySchedule.EventType = schedule.EventType.Trim();
             mySchedule.RequestDelete = false;
             mySchedule.IsDeleted = false;
             mySchedule.IsCompleted = false;
             mySchedule.UpdatedAt = DateTime.Now;
 
             _context.SaveChanges();
+
+            /*if (changes.Length > 0)
+            {
+                var emailService = new EmailService(_emailConsts.EMAIL_API());
+                await emailService.SendScheduleUpdateEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title,  changes.ToString(), beforeValues.ToString(), afterValues.ToString());
+            }*/
+
             return Ok();
         }
 
@@ -202,12 +273,11 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            int userId = GetUserId();
+            int userId = GetUser().ID();
             if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
-
 
             _context.Schedules.Remove(mySchedule);
             _context.SaveChanges();
@@ -215,7 +285,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPut("{id}/request-delete"), Authorize]
-        public IActionResult RquestSoftDeleteSchedule(int id)
+        public async Task<IActionResult> RquestSoftDeleteSchedule(int id)
         {
             var mySchedule = _context.Schedules.Find(id);
             if (mySchedule == null)
@@ -223,20 +293,25 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            int userId = GetUserId();
+            int userId = GetUser().ID();
             if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
 
+            string userName = GetUser().UserName();
+
             mySchedule.RequestDelete = true;
             _context.SaveChanges();
+
+            //var emailService = new EmailService(_emailConsts.EMAIL_API());
+            //await emailService.SendEventRequestDeleteEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+
             return Ok();
         }
 
-
         [HttpPut("{id}/soft-delete"), Authorize]
-        public IActionResult SoftDeleteSchedule(int id)
+        public async Task<IActionResult> SoftDeleteSchedule(int id)
         {
             var mySchedule = _context.Schedules.Find(id);
             if (mySchedule == null)
@@ -244,19 +319,24 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            int userId = GetUserId();
+            int userId = GetUser().ID();
             if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
 
             mySchedule.IsDeleted = true;
+            mySchedule.UpdatedAt = DateTime.Now;
             _context.SaveChanges();
+
+            //var emailService = new EmailService(_emailConsts.EMAIL_API());
+            //await emailService.SendEventDeleteApprovedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+
             return Ok();
         }
 
         [HttpPut("{id}/end-event"), Authorize]
-        public IActionResult EndEvent(int id)
+        public async Task<IActionResult> EndEvent(int id)
         {
             var mySchedule = _context.Schedules.Find(id);
             if (mySchedule == null)
@@ -264,7 +344,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            int userId = GetUserId();
+            int userId = GetUser().ID();
             if (mySchedule.UserId != userId)
             {
                 return Forbid();
@@ -272,16 +352,82 @@ namespace WebApplication1.Controllers
 
             mySchedule.IsCompleted = true;
             mySchedule.UpdatedAt = DateTime.Now;
-
             _context.SaveChanges();
+
+            //var emailService = new EmailService(_emailConsts.EMAIL_API());
+            //await emailService.SendEventEndedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+
             return Ok();
         }
 
-        private int GetUserId()
+        private class UserCreds
+        {
+            public int UserId { get; set; }
+            public string UserEmail { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+
+            public UserCreds(int userId, string userEmail, string firstName, string lastName)
+            {
+                UserId = userId;
+                UserEmail = userEmail;
+                FirstName = firstName;
+                LastName = lastName;
+            }
+
+            public int ID()
+            {
+                return UserId;
+            }
+
+            public string Email()
+            {
+                return UserEmail;
+            }
+            public string UserName()
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
+
+        private UserCreds GetUser()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            var emailClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+
+            if (userIdClaim != null && emailClaim != null)
+            {
+                int userId = Convert.ToInt32(userIdClaim.Value);
+                string email = emailClaim.Value;
+                var user = _context.Users.FirstOrDefault(u => u.Email == email);
+
+                if (user != null)
+                {
+                    string firstName = user.FirstName;
+                    string lastName = user.LastName;
+                    return new UserCreds(userId, email, firstName, lastName);
+                }
+            }
+            return new UserCreds(-1, null, null, null);
+        }
+
+        /*private int GetUserId()
         {
             return Convert.ToInt32(User.Claims
                 .Where(c => c.Type == ClaimTypes.NameIdentifier)
                 .Select(c => c.Value).SingleOrDefault());
+        }*/
+
+        /* private string GetUserName(int userId)
+        {
+            var user = _context.Users.Find(userId);
+            return user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
         }
+
+        private string GetUserEmail(int userId)
+        {
+            var user = _context.Users.Find(userId);
+            return user != null ? user.Email : string.Empty;
+        }*/
     }
 }
