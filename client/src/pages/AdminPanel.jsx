@@ -11,11 +11,6 @@ import {
   TableRow,
   Paper,
   Button,
-  Grid,
-  Card,
-  CardContent,
-  Input,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -95,9 +90,8 @@ function AdminPanel() {
     }));
   };
 
-  const handleEventDeletionOpen = (id) => {
-    setSelectedSchedule(id);
-    console.log(id);
+  const handleEventDeletionOpen = (schedule) => {
+    setSelectedSchedule(schedule);
     setEventOpen(true);
   };
 
@@ -107,6 +101,13 @@ function AdminPanel() {
 
   const softdeleteSchedule = (id) => {
     http.put(`/schedule/${id}/soft-delete`).then((res) => {
+      getAllEvents();
+      setEventOpen(false);
+    });
+  };
+
+  const rejectdeleteSchedule = (id) => {
+    http.put(`/schedule/${id}/reject-soft-delete`).then((res) => {
       getAllEvents();
       setEventOpen(false);
     });
@@ -153,9 +154,9 @@ function AdminPanel() {
       ]
     : [...scheduleList];
 
-    const handleRedirectToAdminReviews = () =>  {
-      navigate("/adminreviews");
-    }
+  const handleRedirectToAdminReviews = () => {
+    navigate("/adminreviews");
+  };
 
   return (
     <Box>
@@ -183,7 +184,7 @@ function AdminPanel() {
       <Button
         onClick={handleRedirectToAdminReviews}
         sx={{
-          ml:10,
+          ml: 10,
           variant: "contained",
           textDecoration: "none",
           background: "#fddc02",
@@ -201,7 +202,7 @@ function AdminPanel() {
       >
         View Reported Reviews
       </Button>
-      
+
       {showEventTable && (
         <>
           <Typography
@@ -228,7 +229,7 @@ function AdminPanel() {
                 <TableRow>
                   <TableCell>Event ID</TableCell>
                   <TableCell>Event Title</TableCell>
-                  <TableCell>Event Description</TableCell>
+                  <TableCell>Event Type</TableCell>
                   <TableCell>Event Price</TableCell>
                   <TableCell>Host</TableCell>
                   <TableCell>Last Updated</TableCell>
@@ -237,7 +238,7 @@ function AdminPanel() {
                     onClick={toggleSortByDeleteStatus}
                     style={{ cursor: "pointer" }}
                   >
-                    Event Deleted/Request
+                    Deleted/Request {sortByDeleteStatus ? "▲" : "▼"}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -246,10 +247,13 @@ function AdminPanel() {
                   <TableRow key={schedule.scheduleId}>
                     <TableCell>{schedule.scheduleId}</TableCell>
                     <TableCell>{schedule.title}</TableCell>
-                    <TableCell>{schedule.description}</TableCell>
+                    <TableCell>{schedule.eventType}</TableCell>
                     <TableCell>${schedule.price}.00</TableCell>
                     <TableCell>{schedule.user.firstName}</TableCell>
-                    <TableCell>{schedule.updatedAt}</TableCell>
+                    <TableCell>
+                      {dayjs(schedule.updatedAt).format("YYYY-MM-DD HH:mm:ss")}
+                    </TableCell>
+
                     <TableCell>
                       {schedule.isCompleted && !schedule.isDeleted
                         ? "Ended"
@@ -267,9 +271,7 @@ function AdminPanel() {
                           <Button
                             variant="contained"
                             color="secondary"
-                            onClick={() =>
-                              handleEventDeletionOpen(schedule.scheduleId)
-                            }
+                            onClick={() => handleEventDeletionOpen(schedule)}
                           >
                             Deletion Request
                           </Button>
@@ -322,11 +324,17 @@ function AdminPanel() {
       )}
       <Dialog open={openEvent} onClose={handleEventDeletionClose}>
         <DialogTitle>Delete Schedule</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete {selectedSchedule?.title}?
-          </DialogContentText>
-        </DialogContent>
+        {selectedSchedule && (
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this schedule "
+              {selectedSchedule.title}"?
+            </DialogContentText>
+            <Typography>User: {selectedSchedule.user.firstName}</Typography>
+            <Typography>Title: {selectedSchedule.title}</Typography>
+            <Typography>Price: ${selectedSchedule.price}.00</Typography>
+          </DialogContent>
+        )}
         <DialogActions>
           <Button
             variant="contained"
@@ -337,8 +345,14 @@ function AdminPanel() {
           </Button>
           <Button
             variant="contained"
+            onClick={() => rejectdeleteSchedule(selectedSchedule.scheduleId)}
+          >
+            Reject
+          </Button>
+          <Button
+            variant="contained"
             color="error"
-            onClick={() => softdeleteSchedule(selectedSchedule)}
+            onClick={() => softdeleteSchedule(selectedSchedule.scheduleId)}
           >
             Delete
           </Button>
