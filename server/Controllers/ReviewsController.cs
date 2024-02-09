@@ -173,6 +173,28 @@ namespace WebApplication1.Controllers
             return Ok();
         }
 
+        [HttpPut("{id}/report-review")]
+        public IActionResult ReportReview(int id)
+        {
+            try
+            {
+                var review = _context.Reviews.Find(id);
+                if (review == null)
+                {
+                    return NotFound();
+                }
+
+                review.Reported = true;
+                _context.SaveChanges();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteReview(int id)
         {

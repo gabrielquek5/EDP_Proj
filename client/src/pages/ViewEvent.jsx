@@ -11,13 +11,20 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { Box, Typography, Button, Autocomplete, TextField,List, ListItem,Rating, Card, CardContent, Grid } from "@mui/material";
+import { Box, Typography, Button, Autocomplete, TextField,List, ListItem,Rating, Card, CardContent, Grid, IconButton,  Dialog,
+  DialogContentText,
+  DialogTitle,
+  DialogContent,
+  DialogActions } from "@mui/material";
+  import FlagIcon from '@mui/icons-material/Flag';
 import axios from "axios";
 import { right } from "@popperjs/core";
 
 function ViewEvent() {
   const { user, setUser } = useContext(UserContext);
   const { id } = useParams();
+  const [open, setOpen] = useState(false); 
+  const [dialogId, setDialogId] = useState(null);
   const navigate = useNavigate();
 
   const [schedule, setSchedule] = useState({
@@ -27,6 +34,35 @@ function ViewEvent() {
     times: "",
     postalCode: "",
   });
+
+  const reportReview = (dialogId) => {
+    if (!dialogId) {
+      console.error('No review ID provided',dialogId);
+      return;
+    }
+    console.log(dialogId)
+
+    http.put(`/reviews/${dialogId}/report-review`)
+      .then((res) => {
+        console.log("Review reported successfully:", dialogId);
+        handleClose();
+      })
+      .catch((error) => {
+        console.error('Error reporting review:', error);
+        handleClose();
+      });
+  };
+
+  const handleOpen = (dialogId) => {
+    setOpen(true);
+    setDialogId(dialogId);
+    console.log("dialogId",dialogId)
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   const [reviews, setReviews] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -104,7 +140,7 @@ function ViewEvent() {
     validationSchema: yup.object({
       Quantity: yup.number().required("Quantity is required"),
       cartSelectedDate: yup.date()
-        // .min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
+        .min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
         .required("Date is required"),
 
       cartSelectedTime: yup.date()
@@ -217,7 +253,7 @@ function ViewEvent() {
                 ) : (
                   <Grid container spacing={2}>
                     {reviews.map((review) => (
-                      <Grid item xs={12} key={review.id}>
+                      <Grid item xs={12} key={review.reviewID}>
                         <Card variant="outlined">
                           <CardContent>
                           <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
@@ -226,10 +262,17 @@ function ViewEvent() {
 
                             <Rating value={review.rating} readOnly />
                             <Typography>{review.comments}</Typography>
+                            <IconButton onClick={() => handleOpen(review.reviewID)}> {/* Open the dialog on icon click */}
+               <FlagIcon />
+              </IconButton>
                           </CardContent>
                         </Card>
                       </Grid>
-                    ))}
+                      
+                    ))
+                    
+                    
+                    }
                   </Grid>
                 )}
               </div>
@@ -282,6 +325,8 @@ function ViewEvent() {
                             formik.errors.Quantity
                           }
                         />
+
+                        
                       )}
                     />
                   </Box>
@@ -352,8 +397,27 @@ function ViewEvent() {
             </Grid>
           </Grid>
         )}
+                          {/* Cancel Booking Dialog */}
+                          <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Report Review</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to report this review?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained" color="inherit" onClick={handleClose}>
+              No
+            </Button>
+            <Button variant="contained" color="error" onClick={() => reportReview(dialogId)}>
+  Yes
+</Button>
+
+          </DialogActions>
+        </Dialog>
     </UserContext.Provider>
     </LocalizationProvider>
+    
   );
 }
 
