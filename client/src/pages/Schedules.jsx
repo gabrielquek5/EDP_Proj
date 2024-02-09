@@ -206,8 +206,10 @@ function Schedules() {
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       color="text.secondary"
                     >
-                      <Rating></Rating>
-                      <Typography sx={{ fontWeight: "bold" }}>5.0</Typography>
+                      <Rating value={averageRating} readOnly />
+                      <Typography sx={{ ml: 1, mt: 0.5, fontSize: "1.1rem" }}>
+                        ({averageRating})
+                      </Typography>
                     </Box>
                     <Box>
                       <Typography sx={{ fontWeight: "bold" }}>
@@ -225,6 +227,7 @@ function Schedules() {
                         {schedule.price}
                       </Typography>
                     </Box>
+
                     <Box
                       sx={{
                         position: "absolute",
