@@ -28,6 +28,7 @@ function Schedules() {
   const [scheduleList, setScheduleList] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedEventType, setSelectedEventType] = useState("");
+  const [reviews, setReviews] = useState([]);
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
@@ -56,6 +57,9 @@ function Schedules() {
 
   useEffect(() => {
     getSchedules();
+    http.get(`/reviews`).then((res) => {
+      setReviews(res.data);
+    });
   }, []);
 
   const onSearchKeyDown = (e) => {
@@ -204,6 +208,13 @@ function Schedules() {
 
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
+          const scheduleReviews = reviews.filter(review => review.scheduleId === schedule.scheduleId);
+  
+          // Calculate average rating
+          const totalRatings = scheduleReviews.reduce((acc, review) => acc + review.rating, 0);
+          const averageRating = scheduleReviews.length > 0 ? totalRatings / scheduleReviews.length.toFixed(1) : 0;
+          const reviewText = scheduleReviews.length === 1 ? "review" : "reviews";
+
           return (
             <Grid item xs={12} md={6} lg={4} key={schedule.scheduleId}>
               <Link
@@ -260,11 +271,15 @@ function Schedules() {
                       color="text.secondary"
                     >
                       
-                      <Rating></Rating>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {/* {averageRating} */}
-                      </Typography>
+                      <Rating value={averageRating} readOnly />
+                      <Typography sx={{ ml: 1, mt: 0.5, fontSize:'1.1rem' }}>
+                ({averageRating})
+              </Typography>
+
                     </Box>
+                    <Box><Typography sx={{ fontWeight: "bold" }}>
+                ({scheduleReviews.length} {reviewText})
+              </Typography></Box>
 
                     <Box sx={{ mt: 6 }}></Box>
                     <Box
