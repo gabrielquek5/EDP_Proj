@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text.Json.Serialization;
 using WebApplication1.Models;
 
 namespace WebApplication1.Models
@@ -12,6 +13,9 @@ namespace WebApplication1.Models
 
         [Required]
         public DateTime BookingDate { get; set; }
+
+        [Required]
+        public DateTime BookingTime { get; set; }
 
         [Required]
         public int Pax { get; set; }
@@ -30,6 +34,10 @@ namespace WebApplication1.Models
 
         public bool IsCancelled { get; set; } = false;
 
+        public bool HasReview { get; set; } = false;
+        public bool IsCompleted { get; set; } = false;
+
+
         // Foreign key property
         public int UserId { get; set; }
         public int ScheduleId { get; set; }
@@ -37,6 +45,8 @@ namespace WebApplication1.Models
         // Navigation property to represent the one-to-many relationship
         public User? User { get; set; }
         public Schedule? Schedule { get; set; }
+
+        public Review? Review { get; set; }
     }
 
 }

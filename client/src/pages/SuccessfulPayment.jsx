@@ -86,7 +86,8 @@ const deleteShoppingCart = async (cartItems) => {
       
               // Create the booking data object with the appropriate values
               const bookingData = {
-                  bookingDate: eventDate, // Assuming DateCart is correct
+                  bookingDate: cart.cartSelectedDate,
+                  bookingTime: cart.cartSelectedTime, // Assuming DateCart is correct
                   pax: cart.quantity,
                   price: eventPrice, // Set the price from the event
                   bookingTitle: eventName,

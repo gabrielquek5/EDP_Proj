@@ -3,8 +3,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApplication1;
-using Stripe;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Controllers
 {
@@ -13,6 +12,7 @@ namespace WebApplication1.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly MyDbContext _context;
+
         public BookingsController(MyDbContext context)
         {
             _context = context;
@@ -24,14 +24,32 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                IQueryable<Booking> result = _context.Bookings;
-                if (search != null)
-                {
-                    result = result.Where(x => x.BookingDate.ToString().Contains(search)
-                    || x.BookingID.ToString().Contains(search));
-                }
-                var list = result.ToList().OrderByDescending(x => x.createdAt).ToList();
-                return Ok(list);
+                int userId = GetUserId();
+
+                var result = _context.Bookings
+                    .Include(s => s.Schedule)
+                    
+              
+                    .Select(booking => new
+                    {
+                        booking.BookingID,
+                        booking.BookingDate,
+                        booking.BookingTime,
+                        booking.Pax,
+                        booking.BookingTitle,
+                        booking.IsCancelled,
+                        EventType = booking.Schedule.EventType,
+                        IsCompleted = booking.Schedule.IsCompleted,
+                        HasReview = booking.HasReview,
+                        ScheduleId = booking.Schedule.ScheduleId,
+                        userId = userId
+                        // Include other properties you need
+                    })
+                    .ToList();
+
+                
+               
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -59,21 +77,22 @@ namespace WebApplication1.Controllers
             var myBooking = new Booking()
             {
                 BookingDate = booking.BookingDate,
+                BookingTime = booking.BookingTime,
                 Pax = booking.Pax,
                 Price = booking.Price,
                 BookingTitle = booking.BookingTitle,
                 createdAt = now,
                 updatedAt = now,
                 ScheduleId=id,
-                UserId=1,
+                UserId=GetUserId(), //might cause problems, havent tested
             };
             _context.Bookings.Add(myBooking);
             _context.SaveChanges();
             return Ok(myBooking);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult SoftDeleteBooking(int id)
+        [HttpPut("{id}/cancel-booking")]
+        public IActionResult CancelBooking(int id)
         {
             var myBooking = _context.Bookings.Find(id);
             if (myBooking == null)
@@ -88,6 +107,66 @@ namespace WebApplication1.Controllers
             }
 
             myBooking.IsCancelled = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{id}/complete-booking")]
+        public IActionResult CompleteBooking(int id)
+        {
+            var myBooking = _context.Bookings.Find(id);
+            if (myBooking == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (myBooking.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            myBooking.IsCompleted = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{id}/has-review")]
+        public IActionResult HasReview(int id)
+        {
+            var myBooking = _context.Bookings.Find(id);
+            if (myBooking == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (myBooking.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            myBooking.HasReview = true;
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{id}/remove-review")]
+        public IActionResult RemoveReview(int id)
+        {
+            var myBooking = _context.Bookings.Find(id);
+            if (myBooking == null)
+            {
+                return NotFound();
+            }
+
+            int userId = GetUserId();
+            if (myBooking.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            myBooking.HasReview = false;
             _context.SaveChanges();
             return Ok();
         }

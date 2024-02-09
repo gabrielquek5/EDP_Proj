@@ -30,6 +30,7 @@ import AddReview from "./pages/AddReview";
 import Reviews from "./pages/Reviews";
 import EditReview from "./pages/EditReview";
 import AdminReviews from "./pages/AdminReviews";
+import AdminBookings from "./pages/AdminBookings";
 import Checkout from "./pages/Checkout";
 import SuccessfulPayment from "./pages/SuccessfulPayment";
 import UserContext from "./contexts/UserContext";
@@ -137,7 +138,7 @@ function App() {
                           variant="text"
                           sx={{ textTransform: "none", fontSize: "15px" }}
                         >
-                          Scheduling
+                          Bookings
                         </Button>
                         <Menu
                           anchorEl={dropMenuScheduling}
@@ -159,6 +160,10 @@ function App() {
                             My Bookings
                           </MenuItem>
                         </Menu>
+
+                        <Link to="/reviews">
+                      <Typography>Reviews</Typography>
+                    </Link>
 
                         <Button
                           onClick={handleNotiOpen}
@@ -272,7 +277,7 @@ function App() {
                   <Route path={"/editbooking/:id"} element={<EditBooking />} />
                   <Route path={"/form"} element={<MyForm />} />
                   <Route path={"/shoppingcart"} element={<ShoppingCart />} />
-                  <Route path={"/addreview"} element={<AddReview />} />
+                  <Route path={"/addreview/:id"} element={<AddReview />} />
                   <Route path={"/reviews"} element={<Reviews />} />
                   <Route path={"/editreview/:id"} element={<EditReview />} />
                   <Route path={"/adminreviews"} element={<AdminReviews />} />

@@ -14,10 +14,13 @@ function EditReview() {
     const [Review, setReview] = useState([]);
     const [loading, setLoading] = useState(true);
     const [picture, setpicture] = useState(null);
+    const [bookingId, setBookingId] = useState(null);
 
     useEffect(() => {
         http.get(`/reviews/${id}`).then((res) => {
+            console.log("res.data",res.data)
             setReview(res.data);
+            setBookingId(res.data.bookingId);
             setLoading(false);
         });
     }, [id]);
@@ -86,6 +89,7 @@ function EditReview() {
     const deleteReview = async () => {
         try {
             await http.delete(`/reviews/${id}`);
+            await http.put(`/bookings/${bookingId}/remove-review`)
             navigate("/reviews");
         } catch (error) {
             console.error("Error deleting review:", error);
