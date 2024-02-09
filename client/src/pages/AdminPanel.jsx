@@ -11,12 +11,18 @@ import {
   TableRow,
   Paper,
   Button,
+  Grid,
+  Card,
+  CardContent,
+  Input,
+  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+
 import dayjs from "dayjs";
 import http from "../http";
 import {
@@ -29,6 +35,7 @@ import {
   Legend,
 } from "recharts";
 import UserContext from "../contexts/UserContext";
+import SearchComponent from "./Components/SearchComponent";
 
 function AdminPanel() {
   const { user } = useContext(UserContext);
@@ -37,10 +44,12 @@ function AdminPanel() {
   const [openEvent, setEventOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [showEventTable, setShowEventTable] = useState(false);
+  const [searchSche, setSearchSche] = useState("");
+  const [sortByDeleteStatus, setSortByDeleteStatus] = useState(false);
 
   const getAllEvents = () => {
     http
-      .get("/schedule")
+      .get("/adminschedule")
       .then((res) => {
         const sortedScheduleList = res.data.sort((a, b) =>
           a.scheduleId > b.scheduleId ? 1 : -1
@@ -107,6 +116,43 @@ function AdminPanel() {
     setShowEventTable(!showEventTable);
   };
 
+  const searchSchedules = () => {
+    http.get(`/adminschedule?search=${searchSche}`).then((res) => {
+      const filteredSchedules = res.data;
+      setScheduleList(filteredSchedules);
+    });
+  };
+
+  const onSearchChangeSchedules = (e) => {
+    setSearchSche(e.target.value);
+  };
+
+  const onSearchKeyDownSchedules = (e) => {
+    if (e.key === "Enter") {
+      searchSchedules();
+    }
+  };
+
+  const onClickSearchSchedules = () => {
+    searchSchedules();
+  };
+
+  const onClickClearSchedules = () => {
+    setSearchSche("");
+    getAllEvents();
+  };
+
+  const toggleSortByDeleteStatus = () => {
+    setSortByDeleteStatus(!sortByDeleteStatus);
+  };
+
+  const sortedScheduleList = sortByDeleteStatus
+    ? [
+        ...scheduleList.filter((schedule) => schedule.requestDelete),
+        ...scheduleList.filter((schedule) => !schedule.requestDelete),
+      ]
+    : [...scheduleList];
+
   return (
     <Box>
       <Button
@@ -131,9 +177,24 @@ function AdminPanel() {
       </Button>
       {showEventTable && (
         <>
-          <Typography variant="h5" sx={{ my: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              my: 2,
+            }}
+          >
             Event Schedules
           </Typography>
+          <SearchComponent
+            search={searchSche}
+            onSearchChange={onSearchChangeSchedules}
+            onSearchKeyDown={onSearchKeyDownSchedules}
+            onClickSearch={onClickSearchSchedules}
+            onClickClear={onClickClearSchedules}
+          />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -145,11 +206,16 @@ function AdminPanel() {
                   <TableCell>Host</TableCell>
                   <TableCell>Last Updated</TableCell>
                   <TableCell>Event Status</TableCell>
-                  <TableCell>Event Deleted</TableCell>
+                  <TableCell
+                    onClick={toggleSortByDeleteStatus}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Event Deleted/Request
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {scheduleList.map((schedule) => (
+                {sortedScheduleList.map((schedule) => (
                   <TableRow key={schedule.scheduleId}>
                     <TableCell>{schedule.scheduleId}</TableCell>
                     <TableCell>{schedule.title}</TableCell>
@@ -158,11 +224,13 @@ function AdminPanel() {
                     <TableCell>{schedule.user.firstName}</TableCell>
                     <TableCell>{schedule.updatedAt}</TableCell>
                     <TableCell>
-                      {schedule.isCompleted
+                      {schedule.isCompleted && !schedule.isDeleted
                         ? "Ended"
-                        : schedule.isDeleted
-                        ? "Deleted"
-                        : "Ongoing"}
+                        : !schedule.isCompleted && !schedule.isDeleted
+                        ? "Ongoing"
+                        : schedule.isCompleted && schedule.isDeleted
+                        ? "Ended/Deleted"
+                        : "Deleted"}
                     </TableCell>
                     <TableCell>
                       {schedule.requestDelete ? (
@@ -197,7 +265,15 @@ function AdminPanel() {
               alignItems: "center",
             }}
           >
-            <Typography variant="h5" sx={{ my: 2 }}>
+            <Typography
+              variant="h5"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                my: 2,
+              }}
+            >
               Event Distribution
             </Typography>
             <BarChart width={600} height={360} data={prepareChartData()}>
