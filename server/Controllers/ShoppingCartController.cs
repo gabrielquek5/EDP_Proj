@@ -38,7 +38,8 @@ namespace WebApplication1.Controllers
                     {
                         cart.itemID,
                         cart.Quantity,
-                        cart.DateCart,
+                        cart.CartSelectedDate,
+                        cart.CartSelectedTime,
                         EventName = cart.Schedule.Title,
                         EventPrice = cart.Schedule.Price,
                         ScheduleId = cart.Schedule.ScheduleId,
@@ -65,7 +66,8 @@ namespace WebApplication1.Controllers
             var myShoppingCart = new ShoppingCart()
             {
                 Quantity = shoppingCart.Quantity,
-                DateCart = DateTime.Now, // Use the current timestamp
+                CartSelectedDate = shoppingCart.CartSelectedDate,
+                CartSelectedTime = shoppingCart.CartSelectedTime,
                 ScheduleId = id,
                 UserId = userId
             };

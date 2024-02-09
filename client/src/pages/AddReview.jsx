@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, TextField, Button, Grid, Rating, IconButton } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -9,7 +9,16 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 function AddReview() {
     const navigate = useNavigate();
     const [picture, setpicture] = useState(null);
+    const { id } = useParams();
+    const [bookingId, setBookingId] = useState(null);
 
+    useEffect(() => {
+        http.get(`/bookings/${id}`).then((res) => {
+            console.log("res.data",res.data)
+            setBookingId(res.data.bookingID);
+            console.log(bookingId)
+        });
+    }, [id]);
 
     const formik = useFormik({
         initialValues: {
@@ -26,11 +35,13 @@ function AddReview() {
 
         }),
         onSubmit: (data) => {
-            console.log("button clicked")
+            console.log("data",data)
+            console.log("bookingId",id)
             if (picture) {
                 data.picture = picture;
             }
-            http.post("/reviews", data)
+            http.put(`/bookings/${bookingId}/has-review`)
+            http.post(`/reviews/${id}`, data) // Send review data along with booking ID
                 .then((res) => {
                     console.log(res.data);
                     navigate("/reviews");

@@ -13,8 +13,11 @@ namespace WebApplication1.Models
         [Required]
         public int Quantity { get; set; }
 
-        [Required]
-        public DateTime DateCart { get; set; }
+        [Required, Column(TypeName = "date")]
+        public DateTime CartSelectedDate { get; set; }
+
+        [Required, Column(TypeName = "datetime")]
+        public DateTime CartSelectedTime { get; set; }
 
         // Foreign key property
         public int ScheduleId { get; set; }
