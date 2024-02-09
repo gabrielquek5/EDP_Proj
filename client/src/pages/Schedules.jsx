@@ -262,7 +262,7 @@ function Schedules() {
                       
                       <Rating></Rating>
                       <Typography sx={{ fontWeight: "bold" }}>
-                        5.0
+                        {/* {averageRating} */}
                       </Typography>
                     </Box>
 

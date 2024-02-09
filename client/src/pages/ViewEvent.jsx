@@ -11,8 +11,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { Box, Typography, Button, Autocomplete, TextField, } from "@mui/material";
+import { Box, Typography, Button, Autocomplete, TextField,List, ListItem,Rating, Card, CardContent, Grid } from "@mui/material";
 import axios from "axios";
+import { right } from "@popperjs/core";
 
 function ViewEvent() {
   const { user, setUser } = useContext(UserContext);
@@ -27,9 +28,9 @@ function ViewEvent() {
     postalCode: "",
   });
 
+  const [reviews, setReviews] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [location, setLocation] = useState(null);
 
   const handleSearchLocation = async (postalCode) => {
@@ -72,7 +73,12 @@ function ViewEvent() {
       handleSearchLocation(res.data.postalCode);
       console.log(res.data);
     });
+    http.get(`/reviews/${id}/schedules`).then((res) => {
+      setReviews(res.data);
+      console.log("review data", reviews)
+    });
   }, []);
+
 
   const [quantity, setQuantity] = useState();
 
@@ -138,10 +144,12 @@ function ViewEvent() {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <UserContext.Provider value={{ user, setUser }}>
         {!loading && (
-          <div>
-            <Typography variant="h4" sx={{ my: 2, fontWeight: "bold" }}>
-              {schedule.title}
-            </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={8}>
+              <div>
+                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                  {schedule.title}
+                </Typography>
             <Typography
               variant="h7"
               sx={{ my: 2, textDecoration: "underline" }}
@@ -172,14 +180,13 @@ function ViewEvent() {
                 </Box>
               )}
             </Box>
-
-            <Typography
-              variant="subtitle1"
-              sx={{ my: 2, fontWeight: "bold", textDecoration: "underline" }}
-            >
-              Event Information:
-            </Typography>
-            <Typography>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontWeight: "bold", textDecoration: "underline" }}
+                >
+                  Event Information:
+                </Typography>
+                            <Typography>
               Date: {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
             </Typography>
             <Typography>
@@ -195,94 +202,145 @@ function ViewEvent() {
               Description:
             </Typography>
             <Typography>{schedule.description}</Typography>
-            {user && (
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    my: 2,
+                    fontWeight: "bold",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Reviews:
+                </Typography>
+                {reviews.length === 0 ? (
+                  <Typography>No reviews found for this event.</Typography>
+                ) : (
+                  <Grid container spacing={2}>
+                    {reviews.map((review) => (
+                      <Grid item xs={12} key={review.id}>
+                        <Card variant="outlined">
+                          <CardContent>
+                          <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+  {review.firstname} {review.lastname}
+</Typography>
 
-              <form onSubmit={formik.handleSubmit}>
-                <Box sx={{ my: 2 }}>
-                <Autocomplete
-  disablePortal
-  id="combo-box-demo"
-  options={options}
-  value={
-    options.find(
-      (option) => option.id === formik.values.Quantity
-    ) || null
-  }
-  onChange={(event, newValue) => {
-    formik.setFieldValue("Quantity", newValue?.id || null);
-    setQuantity(newValue?.id);
-  }}
-  onBlur={() => formik.setFieldTouched("Quantity", true)}
-  slotProps={{
-    textField: {
-      error:
-        formik.touched.Quantity && Boolean(formik.errors.Quantity),
-      helperText:
-        formik.touched.Quantity && formik.errors.Quantity,
-    },
-  }}
-  sx={{ width: 300 }}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      label="Quantity"
-      error={formik.touched.Quantity && Boolean(formik.errors.Quantity)}
-      helperText={formik.touched.Quantity && formik.errors.Quantity}
-    />
-  )}
-/>
-
-                </Box>
-<Box sx={{ my: 2 }}>
-  {/* DatePicker */}
-  <Box sx={{ width: "100%" }}>
-    <DatePicker
-      label="Please Choose A Date"
-      value={formik.values.cartSelectedDate}
-      minDate={dayjs(schedule.selectedDate)}
-      onChange={(newDate) => formik.setFieldValue("cartSelectedDate", newDate)}
-      slotProps={{
-        textField: {
-          error:
-            formik.touched.cartSelectedDate && Boolean(formik.errors.cartSelectedDate),
-          helperText:
-            formik.touched.cartSelectedDate && formik.errors.cartSelectedDate,
-        },
-      }}
-
-    />
-  </Box>
-
-  {/* TimePicker */}
-  <Box sx={{ mt: 2, width: "100%" }}>
-    <TimePicker
-      label="Please Choose A Time"
-      value={formik.values.cartSelectedTime}
-      onChange={(newTime) => formik.setFieldValue("cartSelectedTime", newTime)}
-      slotProps={{
-        textField: {
-          error:
-            formik.touched.cartSelectedTime && Boolean(formik.errors.cartSelectedTime),
-          helperText:
-            formik.touched.cartSelectedTime && formik.errors.cartSelectedTime,
-        },
-      }}
-
-    />
-  </Box>
-</Box>
-
-
-                <Box sx={{ mt: 3 }}>
-                  <Button type="submit" variant="contained">
-                    Add to Cart
-                  </Button>
-                </Box>
-              </form>
-
-            )}
-            {!user && (
-              <>
+                            <Rating value={review.rating} readOnly />
+                            <Typography>{review.comments}</Typography>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={4}>
+              {user && (
+                <form onSubmit={formik.handleSubmit}>
+                  <Box sx={{ my: 2, boxShadow: 3, p: 2, borderRadius: 4,  alignItems: 'center' }}>
+                  <Box sx={{ my: 2 }}>
+                    <Autocomplete
+                      disablePortal
+                      id="combo-box-demo"
+                      options={options}
+                      value={
+                        options.find(
+                          (option) => option.id === formik.values.Quantity
+                        ) || null
+                      }
+                      onChange={(event, newValue) => {
+                        formik.setFieldValue(
+                          "Quantity",
+                          newValue?.id || null
+                        );
+                        setQuantity(newValue?.id);
+                      }}
+                      onBlur={() =>
+                        formik.setFieldTouched("Quantity", true)
+                      }
+                      slotProps={{
+                        textField: {
+                          error:
+                            formik.touched.Quantity &&
+                            Boolean(formik.errors.Quantity),
+                          helperText:
+                            formik.touched.Quantity &&
+                            formik.errors.Quantity,
+                        },
+                      }}
+                      sx={{ width: 300 }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Quantity"
+                          error={
+                            formik.touched.Quantity &&
+                            Boolean(formik.errors.Quantity)
+                          }
+                          helperText={
+                            formik.touched.Quantity &&
+                            formik.errors.Quantity
+                          }
+                        />
+                      )}
+                    />
+                  </Box>
+                  <Box sx={{ my: 2 }}>
+                    <Box sx={{ width: "100%" }}>
+                      <DatePicker
+                        label="Please Choose A Date"
+                        value={formik.values.cartSelectedDate}
+                        minDate={dayjs(schedule.selectedDate)}
+                        onChange={(newDate) =>
+                          formik.setFieldValue(
+                            "cartSelectedDate",
+                            newDate
+                          )
+                        }
+                        slotProps={{
+                          textField: {
+                            error:
+                              formik.touched.cartSelectedDate &&
+                              Boolean(formik.errors.cartSelectedDate),
+                            helperText:
+                              formik.touched.cartSelectedDate &&
+                              formik.errors.cartSelectedDate,
+                          },
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ mt: 2, width: "100%" }}>
+                      <TimePicker
+                        label="Please Choose A Time"
+                        value={formik.values.cartSelectedTime}
+                        onChange={(newTime) =>
+                          formik.setFieldValue(
+                            "cartSelectedTime",
+                            newTime
+                          )
+                        }
+                        slotProps={{
+                          textField: {
+                            error:
+                              formik.touched.cartSelectedTime &&
+                              Boolean(formik.errors.cartSelectedTime),
+                            helperText:
+                              formik.touched.cartSelectedTime &&
+                              formik.errors.cartSelectedTime,
+                          },
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box sx={{ mt: 3 }}>
+                    <Button type="submit" variant="contained">
+                      Add to Cart
+                    </Button>
+                  </Box>
+                  </Box>
+                </form>
+              )}
+              {!user && (
                 <Box sx={{ mt: 3 }}>
                   <Link to="/login">
                     <Typography style={{ fontFamily: "Poppins" }}>
@@ -290,9 +348,9 @@ function ViewEvent() {
                     </Typography>
                   </Link>
                 </Box>
-              </>
-            )}
-          </div>
+              )}
+            </Grid>
+          </Grid>
         )}
     </UserContext.Provider>
     </LocalizationProvider>

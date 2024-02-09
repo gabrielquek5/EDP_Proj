@@ -58,7 +58,8 @@ namespace WebApplication1.Controllers
                         review.Picture,
                         EventTitle = review.Schedule.Title,
                         ScheduleId = review.Schedule.ScheduleId,
-                        userId = userId
+                        userId = userId,
+                        username = review.User.FirstName,
                         // Include other properties you need
                     })
                     .ToList();
@@ -82,6 +83,35 @@ namespace WebApplication1.Controllers
             }
             return Ok(review);
         }
+
+        [HttpGet("{id}/schedules")]
+        public IActionResult GetReviewsForSchedule(int id)
+        {
+            // Retrieve reviews with matching ScheduleId
+            var reviewsForSchedule = _context.Reviews
+                .Where(r => r.ScheduleId == id)
+                .Select(review => new
+                {
+                    review.ReviewID,
+                    review.Rating,
+                    review.Comments,
+                    review.Picture,
+                    EventTitle = review.Schedule.Title,
+                    ScheduleId = review.Schedule.ScheduleId,
+                    userId = GetUserId(),
+                    firstname = review.User.FirstName,
+                    lastname = review.User.LastName,
+                    // Include other properties you need
+                });
+
+            if (!reviewsForSchedule.Any())
+            {
+                return NotFound("No reviews found for this event.");
+            }
+
+            return Ok(reviewsForSchedule);
+        }
+
 
         [HttpPost("{id}")]
         public IActionResult AddReview(int id, Review review)
