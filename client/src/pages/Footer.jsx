@@ -1,16 +1,8 @@
 import React from "react";
 import {
-  Container,
-  AppBar,
-  Toolbar,
   Typography,
   Box,
-  Button,
-  Menu,
-  MenuItem,
-  IconButton,
 } from "@mui/material";
-
 function Footer() {
   return (
     <Box
@@ -30,7 +22,8 @@ function Footer() {
           padding: "20px",
         }}
       >
-        <Typography>Copyright &copy; {new Date().getFullYear()} IT2166 - EDP Uplay </Typography>
+        <Typography>Copyright &copy; {new Date().getFullYear()} IT2166 - EDP </Typography>
+        <Typography>Credits: <a href="https://www.uplay.com.sg/" target="_blank">Uplay Singapore</a></Typography>
         <Typography>All rights reserved.</Typography>
       </Box>
     </Box>

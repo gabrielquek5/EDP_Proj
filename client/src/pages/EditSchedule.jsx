@@ -248,7 +248,15 @@ function EditSchedule() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box>
-        <Typography variant="h5" sx={{ my: 2 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            my: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           Edit Schedule
         </Typography>
         {!loading && (
@@ -495,8 +503,16 @@ function EditSchedule() {
           <DialogTitle>Delete Schedule</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Are you sure you want to delete this schedule?
+              Are you sure you want to request deletion for this schedule?
             </DialogContentText>
+            <Box sx={{ m: 2 }}></Box>
+            <Typography>
+              You will{" "}
+              <Typography sx={{ color: "red", fontWeight: "bold" }}>
+                NOT
+              </Typography>{" "}
+              be able to edit this event!
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button variant="contained" color="inherit" onClick={handleClose}>

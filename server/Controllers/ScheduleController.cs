@@ -368,6 +368,7 @@ namespace WebApplication1.Controllers
 			}
 
 			mySchedule.IsDeleted = false;
+            mySchedule.RequestDelete = false;
 			mySchedule.UpdatedAt = DateTime.Now;
 			_context.SaveChanges();
 

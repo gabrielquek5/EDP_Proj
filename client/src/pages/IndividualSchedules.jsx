@@ -205,7 +205,7 @@ function IndividualSchedules() {
                       </Typography>
                       {user &&
                         user.id === schedule.userId &&
-                        !schedule.isCompleted && (
+                        !schedule.isCompleted && !schedule.requestDelete && (
                           <Link to={`/editschedule/${schedule.scheduleId}`}>
                             <Button
                               variant="contained"
