@@ -153,6 +153,10 @@ function AdminPanel() {
       ]
     : [...scheduleList];
 
+    const handleRedirectToAdminReviews = () =>  {
+      navigate("/adminreviews");
+    }
+
   return (
     <Box>
       <Button
@@ -175,6 +179,29 @@ function AdminPanel() {
       >
         Toggle Event Details
       </Button>
+
+      <Button
+        onClick={handleRedirectToAdminReviews}
+        sx={{
+          ml:10,
+          variant: "contained",
+          textDecoration: "none",
+          background: "#fddc02",
+          color: "black",
+          bgcolor: "#fddc02",
+          "&:hover": {
+            color: "#e8533f",
+            bgcolor: "#fddc02",
+          },
+          boxShadow: "none",
+          borderRadius: 4,
+          fontWeight: "bold",
+          paddingX: "20px",
+        }}
+      >
+        View Reported Reviews
+      </Button>
+      
       {showEventTable && (
         <>
           <Typography
