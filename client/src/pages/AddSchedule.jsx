@@ -113,9 +113,7 @@ function AddSchedule() {
         .min(6, "Postal code must be 6 digits!")
         .max(6, "Postal code must be 6 digits only!")
         .required("Postal Code is required"),
-      eventType: yup
-      .string()
-      .required("Event Type is required"),
+      eventType: yup.string().required("Event Type is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
@@ -233,7 +231,6 @@ function AddSchedule() {
                   width: "100%",
                 }}
               >
-                {/* DatePicker */}
                 <DatePicker
                   label="Please Choose A Date"
                   defaultValue={formik.values.selectedDate}
@@ -255,10 +252,9 @@ function AddSchedule() {
                   }}
                   timezone="Asia/Singapore"
                   required
-                  sx={{ width: "50%" }}
+                  sx={{ width: "50%", opacity: 1 }}
                 />
 
-                {/* TimePicker */}
                 <TimePicker
                   label="Please Choose A Time"
                   defaultValue={formik.values.selectedTime}
@@ -378,9 +374,11 @@ function AddSchedule() {
                     onChange={onFileChange}
                   />
                 </Button>
-                <Typography color="error" sx={{ mt: 1 }}>
-                  Image is required
-                </Typography>
+                {!imageFile && (
+                  <Typography color="error" sx={{ mt: 1 }}>
+                    Image is required
+                  </Typography>
+                )}
                 {imageFile && (
                   <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
                     <img

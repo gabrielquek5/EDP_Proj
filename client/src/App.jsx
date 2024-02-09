@@ -97,12 +97,15 @@ function App() {
   };
 
   return (
-    <Box className="page-container" sx={{
-      display: "flex",
-      flexDirection: "column",
-      minHeight: "100vh",
-    }}>
-      <Box className="content-wrap" sx={{flex: 1}}>
+    <Box
+      className="page-container"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
+      <Box className="content-wrap" sx={{ flex: 1 }}>
         <UserContext.Provider value={{ user, setUser }}>
           <Router>
             <ThemeProvider theme={MyTheme}>
@@ -162,14 +165,10 @@ function App() {
                         </Menu>
 
                         <Link to="/reviews">
-                      <Typography>Reviews</Typography>
-                    </Link>
+                          <Typography>Reviews</Typography>
+                        </Link>
 
-                        <Button
-                          onClick={handleNotiOpen}
-                          // variant="text"
-                          // sx={{ textTransform: "none", fontSize: "15px" }}
-                        >
+                        <Button onClick={handleNotiOpen}>
                           <NotificationsNoneOutlinedIcon />
                         </Button>
                         <Menu
