@@ -544,3 +544,5 @@ FodyWeavers.xsd
 *.jpg
 
 server/Migrations/*.cs
+server/wwwroot/uploads/*.jpeg
+server/wwwroot/uploads/*.png

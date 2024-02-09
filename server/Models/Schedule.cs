@@ -55,10 +55,6 @@ namespace WebApplication1.Models
 
         public string? StripeID {  get; set; }
 
-        public string? UserEmail { get; set; }
-
-        public string? UserName  { get; set; }
-
 
         [JsonIgnore]
         public List<Booking>? Bookings { get; set; }

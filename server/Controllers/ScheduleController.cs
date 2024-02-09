@@ -16,11 +16,13 @@ namespace WebApplication1.Controllers
     {
         private readonly MyDbContext _context;
         private readonly EMAIL_Consts _emailConsts;
+        private readonly EmailService _emailService;
 
         public ScheduleController(MyDbContext context)
         {
             _context = context;
             _emailConsts = new EMAIL_Consts();
+            _emailService = new EmailService(_emailConsts.EMAIL_API());
         }
 
         [HttpGet]
@@ -57,7 +59,6 @@ namespace WebApplication1.Controllers
                     t.CreatedAt,
                     t.UpdatedAt,
                     t.UserId,
-                    t.UserEmail,
                     User = new
                     {
                         t.User?.FirstName
@@ -71,7 +72,52 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+		[HttpGet("/adminschedule")]
+		public IActionResult GetAllAdmin(string? search)
+		{
+			try
+			{
+				IQueryable<Schedule> result = _context.Schedules.Include(t => t.User);
+				if (!string.IsNullOrEmpty(search))
+				{
+					result = result.Where(x =>
+						(x.Title.Contains(search) ||
+						 x.Description.Contains(search) ||
+						 x.PostalCode.Contains(search) ||
+						 x.EventType.Contains(search))
+					);
+				}
+				var list = result.OrderByDescending(x => x.CreatedAt).ToList();
+				var data = list.Select(t => new
+				{
+					t.ScheduleId,
+					t.Title,
+					t.Description,
+					t.PostalCode,
+					t.SelectedDate,
+					t.SelectedTime,
+					t.ImageFile,
+					t.Price,
+					t.EventType,
+					t.RequestDelete,
+					t.IsDeleted,
+					t.IsCompleted,
+					t.CreatedAt,
+					t.UpdatedAt,
+					t.UserId,
+					User = new
+					{
+						t.User?.FirstName
+					}
+				});
+				return Ok(data);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+		}
+		[HttpGet("{id}")]
         public IActionResult GetSchedule(int id)
         {
             Schedule? schedule = _context.Schedules.Include(t => t.User)
@@ -97,7 +143,6 @@ namespace WebApplication1.Controllers
                 schedule.CreatedAt,
                 schedule.UpdatedAt,
                 schedule.UserId,
-                schedule.UserEmail,
                 User = new
                 {
                     schedule.User?.FirstName
@@ -163,15 +208,12 @@ namespace WebApplication1.Controllers
                 UserId = userId,
                 PriceID = price.Id,
                 StripeID = product.Id,
-                UserEmail = userEmail,
-                UserName = userName,
             };
 
             _context.Schedules.Add(mySchedule);
             _context.SaveChanges();
 
-            //var emailService = new EmailService(_emailConsts.EMAIL_API());
-            //await emailService.SendEventAddedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+            //await _emailService.SendEventAddedEmail(userEmail, userName, mySchedule.Title);
 
             return Ok(mySchedule);
         }
@@ -192,8 +234,11 @@ namespace WebApplication1.Controllers
                 return Forbid();
             }
 
-            // Creating strings to store before and after values
-            var changes = new StringBuilder();
+			string userEmail = GetUser().Email();
+			string userName = GetUser().UserName();
+
+			// Creating strings to store before and after values
+			var changes = new StringBuilder();
             var beforeValues = new StringBuilder();
             var afterValues = new StringBuilder();
 
@@ -239,15 +284,11 @@ namespace WebApplication1.Controllers
                 AppendChange("SelectedTime", mySchedule.SelectedTime.ToString(), schedule.SelectedTime.ToString());
                 mySchedule.SelectedTime = schedule.SelectedTime;
             }
-
-            //mySchedule.Title = schedule.Title.Trim();
-            //mySchedule.Description = schedule.Description.Trim();
-            //mySchedule.PostalCode = schedule.PostalCode.Trim();
+            
             //mySchedule.SelectedDate = schedule.SelectedDate;
             //mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
-            //mySchedule.EventType = schedule.EventType.Trim();
             mySchedule.RequestDelete = false;
             mySchedule.IsDeleted = false;
             mySchedule.IsCompleted = false;
@@ -257,8 +298,7 @@ namespace WebApplication1.Controllers
 
             /*if (changes.Length > 0)
             {
-                var emailService = new EmailService(_emailConsts.EMAIL_API());
-                await emailService.SendScheduleUpdateEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title,  changes.ToString(), beforeValues.ToString(), afterValues.ToString());
+                await _emailService.SendScheduleUpdateEmail(userEmail, userName, mySchedule.Title,  changes.ToString(), beforeValues.ToString(), afterValues.ToString());
             }*/
 
             return Ok();
@@ -299,18 +339,44 @@ namespace WebApplication1.Controllers
                 return Forbid();
             }
 
-            string userName = GetUser().UserName();
+			string userEmail = GetUser().Email();
+			string userName = GetUser().UserName();
 
-            mySchedule.RequestDelete = true;
+			mySchedule.RequestDelete = true;
             _context.SaveChanges();
 
-            //var emailService = new EmailService(_emailConsts.EMAIL_API());
-            //await emailService.SendEventRequestDeleteEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+            //await _emailService.SendEventRequestDeleteEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }
 
-        [HttpPut("{id}/soft-delete"), Authorize]
+		[HttpPut("{id}/reject-soft-delete"), Authorize]
+		public async Task<IActionResult> RejectDeleteSchedule(int id)
+		{
+			var mySchedule = _context.Schedules.Find(id);
+			if (mySchedule == null)
+			{
+				return NotFound();
+			}
+
+			int userId = GetUser().ID();
+			string userEmail = GetUser().Email();
+			string userName = GetUser().UserName();
+			if (mySchedule.UserId != userId)
+			{
+				return Forbid();
+			}
+
+			mySchedule.IsDeleted = false;
+			mySchedule.UpdatedAt = DateTime.Now;
+			_context.SaveChanges();
+
+			//await _emailService.SendEventDeleteRejectedEmail(userEmail, userName, mySchedule.Title);
+
+			return Ok();
+		}
+
+		[HttpPut("{id}/soft-delete"), Authorize]
         public async Task<IActionResult> SoftDeleteSchedule(int id)
         {
             var mySchedule = _context.Schedules.Find(id);
@@ -320,7 +386,9 @@ namespace WebApplication1.Controllers
             }
 
             int userId = GetUser().ID();
-            if (mySchedule.UserId != userId)
+			string userEmail = GetUser().Email();
+			string userName = GetUser().UserName();
+			if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
@@ -329,8 +397,7 @@ namespace WebApplication1.Controllers
             mySchedule.UpdatedAt = DateTime.Now;
             _context.SaveChanges();
 
-            //var emailService = new EmailService(_emailConsts.EMAIL_API());
-            //await emailService.SendEventDeleteApprovedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+            //await _emailService.SendEventDeleteApprovedEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }
@@ -345,7 +412,9 @@ namespace WebApplication1.Controllers
             }
 
             int userId = GetUser().ID();
-            if (mySchedule.UserId != userId)
+			string userEmail = GetUser().Email();
+			string userName = GetUser().UserName();
+			if (mySchedule.UserId != userId)
             {
                 return Forbid();
             }
@@ -354,8 +423,7 @@ namespace WebApplication1.Controllers
             mySchedule.UpdatedAt = DateTime.Now;
             _context.SaveChanges();
 
-            //var emailService = new EmailService(_emailConsts.EMAIL_API());
-            //await emailService.SendEventEndedEmail(mySchedule.UserEmail, mySchedule.UserName, mySchedule.Title);
+            //await _emailService.SendEventEndedEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }
@@ -410,24 +478,5 @@ namespace WebApplication1.Controllers
             }
             return new UserCreds(-1, null, null, null);
         }
-
-        /*private int GetUserId()
-        {
-            return Convert.ToInt32(User.Claims
-                .Where(c => c.Type == ClaimTypes.NameIdentifier)
-                .Select(c => c.Value).SingleOrDefault());
-        }*/
-
-        /* private string GetUserName(int userId)
-        {
-            var user = _context.Users.Find(userId);
-            return user != null ? $"{user.FirstName} {user.LastName}" : string.Empty;
-        }
-
-        private string GetUserEmail(int userId)
-        {
-            var user = _context.Users.Find(userId);
-            return user != null ? user.Email : string.Empty;
-        }*/
     }
 }

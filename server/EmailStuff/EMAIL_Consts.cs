@@ -4,7 +4,7 @@
     {
         public string EMAIL_API()
         {
-            string api = "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";
+            string api = "";
             return api;
         }
 
@@ -17,7 +17,7 @@
         {
             var htmlBody = $"<body style='font-family: Arial, sans-serif;'>" +
                 $"<div style='border: 1px solid #ccc; border-radius: 10px; padding: 10px;'>" +
-                $"<h1>Dear {firstName},</h1><p>Thank you for using our website. You have successfully <p style='font-weight: bold; font-color: green;'>added</p> an event for <h2>{eventTitle}.</h2></p>" +
+                $"<h1>Dear {firstName},</h1><p>Thank you for using our website. You have successfully <p style='font-weight: bold; color: green;'>ADDED</p> an event for <h2>{eventTitle}.</h2></p>" +
                 $"<p>We hope you have a pleasant time.</p><p'>Best Regards,<br/>IT2166 - EDP Team</p>" +
                 $"</div>" +
                 $"</body>";
