@@ -104,7 +104,7 @@ function ViewEvent() {
     validationSchema: yup.object({
       Quantity: yup.number().required("Quantity is required"),
       cartSelectedDate: yup.date()
-        .min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
+        // .min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
         .required("Date is required"),
 
       cartSelectedTime: yup.date()
