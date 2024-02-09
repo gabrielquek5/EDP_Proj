@@ -138,7 +138,7 @@ function App() {
                           variant="text"
                           sx={{ textTransform: "none", fontSize: "15px" }}
                         >
-                          Bookings
+                          Schedules
                         </Button>
                         <Menu
                           anchorEl={dropMenuScheduling}
@@ -296,6 +296,7 @@ function App() {
                     element={<EditSchedule />}
                   />
                   <Route path={"/schedules"} element={<Schedules />} />
+                  <Route path={"/adminschedules"} />
                   <Route path={"/viewevent/:id"} element={<ViewEvent />} />
                   <Route path={"/rewards"} element={<Rewards />} />
                   <Route path={"/addreward"} element={<AddReward />} />

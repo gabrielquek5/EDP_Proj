@@ -6,23 +6,14 @@ import {
   Grid,
   Card,
   CardContent,
-  Input,
-  IconButton,
   Button,
   Rating,
 } from "@mui/material";
-import {
-  AccountCircle,
-  AccessTime,
-  Search,
-  Clear,
-  Edit,
-  DateRangeOutlined,
-} from "@mui/icons-material";
+import { DateRangeOutlined } from "@mui/icons-material";
 import http from "../http";
 import dayjs from "dayjs";
-import global from "../global";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import SearchComponent from "./Components/SearchComponent";
 
 function Schedules() {
   const [scheduleList, setScheduleList] = useState([]);
@@ -108,77 +99,13 @@ function Schedules() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          mb: 2,
-          border: "1px solid #e3e3e3",
-          borderRadius: 8,
-          width: "fit-content",
-          paddingX: "20px",
-          paddingY: "10px",
-          margin: "20px auto",
-          className: "search-box-container",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
-          <Input
-            value={search}
-            placeholder="Enter keyword"
-            onChange={onSearchChange}
-            onKeyDown={onSearchKeyDown}
-            disableUnderline
-          />
-
-          <IconButton
-            onClick={onClickSearch}
-            sx={{
-              left: "5px",
-              border: "1px solid #e8533f",
-              color: "#ffffff",
-              padding: "10px",
-              borderRadius: 8,
-              fontSize: "2px",
-              bgcolor: "#e8533f",
-              "&:hover": {
-                color: "black",
-                bgcolor: "#e8533f",
-              },
-            }}
-          >
-            <Search />
-            <Typography
-              variant="h6"
-              sx={{
-                flexGrow: 1,
-                fontSize: "18px",
-                paddingLeft: "10dp",
-                color: "inherit",
-              }}
-            >
-              Search
-            </Typography>
-          </IconButton>
-
-          <IconButton
-            color="primary"
-            onClick={onClickClear}
-            sx={{
-              left: "7px",
-              color: "black",
-              marginLeft: "10px",
-              border: "1px solid #ebebeb",
-              background: "#ebebeb",
-              padding: "5px",
-            }}
-          >
-            <Clear />
-          </IconButton>
-        </Box>
-        <Box sx={{ flexGrow: 1 }} />
-      </Box>
+      <SearchComponent
+        search={search}
+        onSearchChange={onSearchChange}
+        onSearchKeyDown={onSearchKeyDown}
+        onClickSearch={onClickSearch}
+        onClickClear={onClickClear}
+      />
 
       <Box
         sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}
@@ -208,12 +135,21 @@ function Schedules() {
 
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
-          const scheduleReviews = reviews.filter(review => review.scheduleId === schedule.scheduleId);
-  
+          const scheduleReviews = reviews.filter(
+            (review) => review.scheduleId === schedule.scheduleId
+          );
+
           // Calculate average rating
-          const totalRatings = scheduleReviews.reduce((acc, review) => acc + review.rating, 0);
-          const averageRating = scheduleReviews.length > 0 ? totalRatings / scheduleReviews.length.toFixed(1) : 0;
-          const reviewText = scheduleReviews.length === 1 ? "review" : "reviews";
+          const totalRatings = scheduleReviews.reduce(
+            (acc, review) => acc + review.rating,
+            0
+          );
+          const averageRating =
+            scheduleReviews.length > 0
+              ? totalRatings / scheduleReviews.length.toFixed(1)
+              : 0;
+          const reviewText =
+            scheduleReviews.length === 1 ? "review" : "reviews";
 
           return (
             <Grid item xs={12} md={6} lg={4} key={schedule.scheduleId}>
@@ -270,16 +206,14 @@ function Schedules() {
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       color="text.secondary"
                     >
-                      
-                      <Rating value={averageRating} readOnly />
-                      <Typography sx={{ ml: 1, mt: 0.5, fontSize:'1.1rem' }}>
-                ({averageRating})
-              </Typography>
-
+                      <Rating></Rating>
+                      <Typography sx={{ fontWeight: "bold" }}>5.0</Typography>
                     </Box>
-                    <Box><Typography sx={{ fontWeight: "bold" }}>
-                ({scheduleReviews.length} {reviewText})
-              </Typography></Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        ({scheduleReviews.length} {reviewText})
+                      </Typography>
+                    </Box>
 
                     <Box sx={{ mt: 6 }}></Box>
                     <Box

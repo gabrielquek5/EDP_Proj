@@ -70,11 +70,6 @@ function AddSchedule() {
     }
   };
 
-  const handlePostalCodeChange = (e) => {
-    setPostalCode(e.target.value);
-    handleSearchLocation(e.target.value);
-  };
-
   const options = [
     { label: "Sports", id: "Sports" },
     { label: "Gathering", id: "Gathering" },
@@ -118,7 +113,9 @@ function AddSchedule() {
         .min(6, "Postal code must be 6 digits!")
         .max(6, "Postal code must be 6 digits only!")
         .required("Postal Code is required"),
-      eventType: yup.string().required("Event Type is required"),
+      eventType: yup
+      .string()
+      .required("Event Type is required"),
     }),
     onSubmit: (data) => {
       if (imageFile) {
