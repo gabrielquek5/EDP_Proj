@@ -13,6 +13,12 @@ const imageStyle = {
   aspectRatio: "768 / 332",
 };
 
+const iconStyle = {
+  color: "white",
+  fontSize: "24px",
+};
+
+
 function HomePage() {
   return (
     <Box
@@ -20,55 +26,60 @@ function HomePage() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        fontFamily: "Poppins"
       }}
+      
     >
       <Carousel
-        showThumbs={false}
-        autoPlay={true}
-        infiniteLoop={true}
-        transitionTime={300}
-        transitionEffect="fade"
-        showStatus={false}
-      >
-        <Box>
-          <img
-            src="src/Images/uplay-corporate-engagements-banner.jpg"
-            alt="Image 1"
-            style={imageStyle}
-          />
-        </Box>
-        <Box>
-          <img
-            src="src/Images/uplay-about-us---banner.jpg"
-            alt="Image 2"
-            style={imageStyle}
-          />
-        </Box>
-        <Box>
-          <img
-            src="src/Images/communities-interest-groups-banner.jpg"
-            alt="Image 3"
-            style={imageStyle}
-          />
-        </Box>
-      </Carousel>
+      showThumbs={false}
+      autoPlay={true}
+      infiniteLoop={true}
+      transitionTime={300}
+      transitionEffect="fade"
+      showStatus={false}
+      style={{ position: "relative", width: "100%", height: "500px" }} // Set position relative for the arrows to be positioned correctly
+    >
+      <Box>
+        <img
+          src="src/Images/uplay-corporate-engagements-banner.jpg"
+          alt="Image 1"
+          style={imageStyle}
+        />
+      </Box>
+      <Box>
+        <img
+          src="src/Images/uplay-about-us---banner.jpg"
+          alt="Image 2"
+          style={imageStyle}
+        />
+      </Box>
+      <Box>
+        <img
+          src="src/Images/communities-interest-groups-banner.jpg"
+          alt="Image 3"
+          style={imageStyle}
+        />
+      </Box>
+    </Carousel>
       <Box>
         <Typography
-          variant="h5"
+          variant="h4"
           sx={{
             my: 5,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             fontWeight: "bold",
+            fontFamily: "Poppins"
           }}
         >
-          About Us
+          About UPlay
         </Typography>
         <Typography
           sx={{
             fontSize: "25px",
             fontStyle: "italic",
+            fontFamily: "Poppins"
           }}
         >
           You Play, We'll Do The Rest
@@ -78,6 +89,7 @@ function HomePage() {
             fontSize: "15px",
             my: 2,
             color: "#444444",
+            fontFamily: "Poppins"  
           }}
         >
           UPlay, powered by NTUC Club, is a phygital (physical + digital)
@@ -89,6 +101,7 @@ function HomePage() {
             fontSize: "15px",
             my: 2,
             color: "#444444",
+            fontFamily: "Poppins"
           }}
         >
           More than just a booking platform, UPlay aspires to connect people
@@ -117,6 +130,7 @@ function HomePage() {
               fontWeight: "bold",
               fontSize: "18px",
               my: 5,
+              fontFamily: "Poppins"
             }}
           >
             View Our Events

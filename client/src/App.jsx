@@ -109,7 +109,7 @@ function App() {
         <UserContext.Provider value={{ user, setUser }}>
           <Router>
             <ThemeProvider theme={MyTheme}>
-              <AppBar
+            <AppBar
                 position="static"
                 elevation={0}
                 sx={{
@@ -130,16 +130,19 @@ function App() {
                       />
                     </Link>
                     <Link to="/schedules">
-                      <Typography>All Experiences</Typography>
+                      <Typography fontFamily="Poppins" fontWeight="bold">
+                        All Experiences
+                      </Typography>
                     </Link>
                     <Box sx={{ flexGrow: 1 }}></Box>
 
                     {user && (
                       <>
                         <Button
+                        
                           onClick={handleSchedulingOpen}
                           variant="text"
-                          sx={{ textTransform: "none", fontSize: "15px" }}
+                          sx={{ textTransform: "none", fontSize: "15px",fontFamily:"Poppins", fontWeight:"bold" }}
                         >
                           Schedules
                         </Button>
@@ -149,6 +152,7 @@ function App() {
                           onClose={handleSchedulingClose}
                         >
                           <MenuItem
+                            sx={{fontFamily:"Poppins"}}
                             component={Link}
                             to="/individualschedule"
                             onClick={handleSchedulingClose}
@@ -156,6 +160,8 @@ function App() {
                             My Schedules
                           </MenuItem>
                           <MenuItem
+                          sx={{fontFamily:"Poppins"}}
+                          fontFamily="Poppins" 
                             component={Link}
                             to="/bookings"
                             onClick={handleSchedulingClose}
@@ -165,7 +171,7 @@ function App() {
                         </Menu>
 
                         <Link to="/reviews">
-                          <Typography>Reviews</Typography>
+                          <Typography fontFamily="Poppins" fontWeight="bold">Reviews</Typography>
                         </Link>
 
                         <Button onClick={handleNotiOpen}>
@@ -180,6 +186,8 @@ function App() {
                             component={Link}
                             to="/viewnotifications"
                             onClick={handleNotiClose}
+
+                            sx={{fontFamily:"Poppins"}}
                           >
                             View Notifications
                           </MenuItem>
@@ -187,6 +195,7 @@ function App() {
                             component={Link}
                             to="/notifications"
                             onClick={handleNotiClose}
+                            sx={{fontFamily:"Poppins"}}
                           >
                             Notifications
                           </MenuItem>
@@ -209,6 +218,7 @@ function App() {
                             component={Link}
                             to="/Update"
                             onClick={handleMenuClose}
+                            sx={{fontFamily:"Poppins"}}
                           >
                             Update
                           </MenuItem>
@@ -216,6 +226,7 @@ function App() {
                             component={Link}
                             to="/Delete"
                             onClick={handleMenuClose}
+                            sx={{fontFamily:"Poppins"}}
                           >
                             Delete
                           </MenuItem>
@@ -223,6 +234,7 @@ function App() {
                             component={Link}
                             to="/adminpanel"
                             onClick={handleMenuClose}
+                            sx={{fontFamily:"Poppins"}}
                           >
                             Admin Panel
                           </MenuItem>
@@ -230,6 +242,7 @@ function App() {
                             component={Link}
                             to="/reviews"
                             onClick={handleMenuClose}
+                            sx={{fontFamily:"Poppins"}} 
                           >
                             My Reviews
                           </MenuItem>
@@ -237,11 +250,12 @@ function App() {
                             component={Link}
                             to="/rewards"
                             onClick={handleMenuClose}
+                            sx={{fontFamily:"Poppins"}}
                           >
                             My Rewards
                           </MenuItem>
-                          <MenuItem>
-                            <Button onClick={logout}>Logout</Button>
+                          <MenuItem sx={{fontFamily:"Poppins", color:"red"}} onClick={logout}>
+                          Logout
                           </MenuItem>
                         </Menu>
                       </>
@@ -249,12 +263,12 @@ function App() {
                     {!user && (
                       <>
                         <Link to="/register">
-                          <Typography style={{ fontFamily: "Poppins" }}>
+                          <Typography fontFamily="Poppins">
                             Register
                           </Typography>
                         </Link>
                         <Link to="/login">
-                          <Typography style={{ fontFamily: "Poppins" }}>
+                          <Typography fontFamily="Poppins">
                             Login
                           </Typography>
                         </Link>

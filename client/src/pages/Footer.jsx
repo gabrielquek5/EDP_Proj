@@ -20,11 +20,12 @@ function Footer() {
         sx={{
           textAlign: "center",
           padding: "20px",
+          fontFamily:"Poppins"
         }}
       >
-        <Typography>Copyright &copy; {new Date().getFullYear()} IT2166 - EDP </Typography>
-        <Typography>Credits: <a href="https://www.uplay.com.sg/" target="_blank">Uplay Singapore</a></Typography>
-        <Typography>All rights reserved.</Typography>
+        <Typography fontFamily="Poppins">Copyright &copy; {new Date().getFullYear()} IT2166 - EDP </Typography>
+        <Typography fontFamily="Poppins">Credits: <a href="https://www.uplay.com.sg/" target="_blank">Uplay Singapore</a></Typography>
+        <Typography fontFamily="Poppins">All rights reserved.</Typography>
       </Box>
     </Box>
   );
