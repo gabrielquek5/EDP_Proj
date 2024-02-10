@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Container,
@@ -18,12 +18,13 @@ import {
   DialogContentText,
 } from "@mui/material";
 import http from "../http";
+import UserContext from "../contexts/UserContext";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
+  const { user } = useContext(UserContext);
   const [message, setMessage] = useState("");
   const [rewardName, setRewardName] = useState(""); // State to store the applied reward name
   const [openDialog, setOpenDialog] = useState(false);
@@ -53,11 +54,19 @@ function ShoppingCart() {
     </section>
   );
 
+
+
+
   const fetchCartItems = async () => {
     try {
-      const response = await http.get("/shoppingcart");
-      setCartItems(response.data);
-      console.log(cartItems)
+      const id = user.id
+      const res = await http.get(`/shoppingcart/${id}`);
+      console.log("user",user) 
+      const filteredCart = res.data.filter(
+        (cart) => !cart.isDeleted
+      )
+      setCartItems(filteredCart);
+      console.log(filteredCart);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -82,36 +91,6 @@ function ShoppingCart() {
         console.error("Session URL is undefined");
       }
   
-      // Assuming you have the event ID from the shopping cart
-    //   const id = 1; // Adjust as per your data structure
-  
-    //   // Extracting the first element of the cartArray
-    //   const cart = cartArray[0];
-  
-    //   // Fetch event details including price
-    //   const eventResponse = await http.get(`/Schedule/${id}`);
-    //   const eventData = eventResponse.data;
-    //   console.log(eventData);
-    //   // Extract price from event details
-    //   const eventName = eventData.title
-    //   const eventPrice = eventData.price;
-    //   const eventDate = eventData.selectedDate
-  
-    //   // Create the booking data object with the appropriate values
-    //   const bookingData = {
-    //     bookingDate: eventDate, // Assuming DateCart is correct
-    //     pax: cart.quantity,
-    //     price: eventPrice, // Set the price from the event
-    //     bookingTitle: eventName,
-    //     ScheduleId: id,
-    //     IsCancelled: false
-    //   };
-    //   console.log(bookingData)
-  
-    //   // Make the HTTP POST request to create a booking
-    //   const bookingResponse = await http.post(`/bookings/${id}`, bookingData);
-  
-    //   console.log("Booking created:", bookingResponse.data);
     } catch (error) {
       console.error("Error during checkout and booking:", error);
     }
@@ -150,10 +129,12 @@ function ShoppingCart() {
             </Typography>
             <hr />  
             <List>
-              {cartItems.map((cart) => (
+              {cartItems
+              .filter((cart) => !user || user.id === cart.userId)
+              .map((cart) => (
                 <React.Fragment key={cart.itemID}>
                   <ListItem>
-                    <ListItemText
+                    <ListItemText sx={{fontFamily:"Poppins"}}
                       primary={cart.eventName}
                       secondary={`Price: $${cart.eventPrice} | Quantity: ${cart.quantity}`}
                     />
@@ -174,21 +155,21 @@ function ShoppingCart() {
             </Typography>
             <hr />
             {rewardName && (
-              <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+              <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3, fontFamily:"Poppins" }}>
                 Reward Applied: {rewardName}
               </Typography>
             )}
 
-            <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3 }}>
+            <Typography variant="h6" sx={{ marginBottom: 2, color: "green", mt: 3, fontFamily:"Poppins" }}>
               Reward Applied: {rewardName}
             </Typography>
 
 
-            <Typography variant="h6" sx={{ marginBottom: 2, mt: 3 }}>
+            <Typography variant="h6" sx={{ marginBottom: 2, mt: 3, fontFamily:"Poppins" }}>
               Total: ${calculateSubtotal()}
             </Typography>
             
-            <Button onClick={async() => handleCheckout(cartItems)} variant="contained" color="primary">
+            <Button onClick={async() => handleCheckout(cartItems)} variant="contained" color="primary" fontFamily="Poppins">
             CHECKOUT
           </Button>
           </Paper>
