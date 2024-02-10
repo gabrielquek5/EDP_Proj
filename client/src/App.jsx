@@ -12,7 +12,13 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import MyTheme from "./themes/MyTheme";
 import MyForm from "./pages/MyForm";
@@ -61,14 +67,23 @@ function App() {
   const [dropMenu, setdropMenu] = useState(null);
   const [dropMenuNoti, setdropMenuNoti] = useState(null);
   const [dropMenuScheduling, setdropMenuScheduling] = useState(null);
-
   const [user, setUser] = useState(null);
+
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      http.get("/user/auth").then((res) => {
-        setUser(res.data.user);
-        setLoading(false);
-      });
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      http
+        .get("/user/auth")
+        .then((res) => {
+          setUser(res.data.user);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Authentication failed:", error);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -299,7 +314,9 @@ function App() {
                     path={"/successfulpayment"}
                     element={<SuccessfulPayment />}
                   />
-                  <Route path={"/addschedule"} element={<AddSchedule />} />
+                  {user && (
+                    <Route path={"/addschedule"} element={<AddSchedule />} />
+                  )}
                   <Route
                     path={"/individualschedule"}
                     element={<IndividualSchedules />}
