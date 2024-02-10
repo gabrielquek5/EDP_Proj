@@ -161,7 +161,7 @@ function Schedules() {
                   {schedule.imageFile && (
                     <Box className="image-size">
                       <img
-                        alt="tutorial"
+                        alt="event_image"
                         src={`${import.meta.env.VITE_FILE_BASE_URL}${
                           schedule.imageFile
                         }`}
@@ -171,7 +171,7 @@ function Schedules() {
 
                   <CardContent sx={{ position: "relative" }}>
                     <Box sx={{ display: "flex", mb: 1 }}>
-                      <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6" sx={{ flexGrow: 1, fontFamily:"Poppins",fontWeight:"bold" }}>
                         {schedule.title}
                       </Typography>
                     </Box>
