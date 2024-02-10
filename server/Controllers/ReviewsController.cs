@@ -1,5 +1,7 @@
 ﻿using WebApplication1.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Controllers
 {
@@ -16,29 +18,59 @@ namespace WebApplication1.Controllers
 
         private static readonly List<Review> list = new();
 
+        /*        [HttpGet]
+                public IActionResult GetAll(string? search)
+                {
+                    try
+                    {
+                        IQueryable<Review> result = _context.Reviews;
+
+                        if (search != null)
+                        {
+                            result = result.Where(x => x.Comments.Contains(search)
+                                || x.Rating.ToString().Contains(search));
+                        }
+
+                        var list = result.ToList().OrderByDescending(x => x.createdAt).ToList();
+                        return Ok(list);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log or handle the exception as needed
+                        return StatusCode(500, "An error occurred while processing the request.");
+                    }
+                }*/
+
         [HttpGet]
-        public IActionResult GetAll(string? search)
+        public IActionResult GetAll()
         {
             try
             {
-                IQueryable<Review> result = _context.Reviews;
+                int userId = GetUserId();
+                var result = _context.Reviews
+                    .Include(s => s.Schedule)
+                    .Where(s => s.Schedule.IsDeleted == false)
+                    .Select(review => new
+                    {
+                        review.ReviewID,
+                        review.Rating,
+                        review.Comments,
+                        review.Picture,
+                        EventTitle = review.Schedule.Title,
+                        ScheduleId = review.Schedule.ScheduleId,
+                        userId = userId
+                        // Include other properties you need
+                    })
+                    .ToList();
 
-                if (search != null)
-                {
-                    result = result.Where(x => x.Comments.Contains(search)
-                        || x.Rating.ToString().Contains(search));
-                }
-
-                var list = result.ToList().OrderByDescending(x => x.createdAt).ToList();
-                return Ok(list);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
-                return StatusCode(500, "An error occurred while processing the request.");
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Internal Server Error");
             }
         }
-
 
         [HttpGet("{id}")]
         public IActionResult GetReview(int id)
@@ -51,27 +83,47 @@ namespace WebApplication1.Controllers
             return Ok(review);
         }
 
-        [HttpPost]
-        public IActionResult AddReview(Review review)
+        [HttpPost("{id}")]
+        public IActionResult AddReview(int id, Review review)
         {
-            var now = DateTime.Now;
-            var myReview = new Review()
+            try
             {
-                Rating = review.Rating,
-                Comments = review.Comments,
-                Picture = review.Picture,
-                createdAt = now,
-                updatedAt = now,
-                ScheduleId = review.ScheduleId,
-                UserId= review.UserId,
-                Reported = false
-            };
+                var now = DateTime.Now;
 
-            _context.Reviews.Add(myReview);
-            _context.SaveChanges();
+                // Check if the booking exists
+                var booking = _context.Bookings.FirstOrDefault(b => b.BookingID == id);
+                if (booking == null)
+                {
+                    return NotFound("Booking not found");
+                }
 
-            return Ok(myReview);
+                var myReview = new Review()
+                {
+                    Rating = review.Rating,
+                    Comments = review.Comments,
+                    Picture = review.Picture,
+                    createdAt = now,
+                    updatedAt = now,
+                    Reported = false,
+                    UserId = GetUserId(),
+                    BookingId = id,
+                    ScheduleId= booking.ScheduleId
+                };
+
+                _context.Reviews.Add(myReview);
+                _context.SaveChanges();
+
+                return Ok(myReview);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or return a meaningful error message
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
         }
+
+
+
 
         [HttpPut("{id}")]
         public IActionResult UpdateReview(int id, Review review)
@@ -102,6 +154,13 @@ namespace WebApplication1.Controllers
             _context.Reviews.Remove(myReview);
             _context.SaveChanges();
             return Ok();
+        }
+
+        private int GetUserId()
+        {
+            return Convert.ToInt32(User.Claims
+                .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                .Select(c => c.Value).SingleOrDefault());
         }
     }
 }

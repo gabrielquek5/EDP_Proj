@@ -142,7 +142,7 @@ function AdminPanel() {
                   <TableCell>Event Title</TableCell>
                   <TableCell>Event Description</TableCell>
                   <TableCell>Event Price</TableCell>
-                  <TableCell>Hoster</TableCell>
+                  <TableCell>Host</TableCell>
                   <TableCell>Last Updated</TableCell>
                   <TableCell>Event Status</TableCell>
                   <TableCell>Event Deleted</TableCell>

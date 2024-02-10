@@ -22,6 +22,7 @@ function Reviews() {
     const getReviews = () => {
         http.get('/Reviews').then((res) => {
             setReviewsList(res.data);
+            console.log(ReviewsList)
         });
     };
 
@@ -64,9 +65,7 @@ function Reviews() {
               <Typography variant="h4" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
                 MY REVIEWS
               </Typography>
-              <Link to="/addreview">
-                <Button sx={{ mt: 2, fontFamily: ['poppins'] }}>Add Review</Button>
-              </Link>
+
               
             </Box>
             <hr></hr>
@@ -93,7 +92,7 @@ function Reviews() {
                     <CardContent>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box >
-                            <Typography sx={{mb:2}}>Event Name</Typography>
+                            <Typography sx={{mb:2}}>{Reviews.eventTitle}</Typography>
                           <Rating defaultValue={Reviews.rating} precision={0.5} readOnly />
                           <Link to={`/editreview/${Reviews.reviewID}`}>
                             <IconButton color="primary" sx={{ padding: '4px', mb: 2}}>

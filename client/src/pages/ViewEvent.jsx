@@ -6,6 +6,11 @@ import UserContext from "../contexts/UserContext";
 import global from "../global";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import { Box, Typography, Button, Autocomplete, TextField, } from "@mui/material";
 import axios from "axios";
 
@@ -87,21 +92,50 @@ function ViewEvent() {
   const formik = useFormik({
     initialValues: {
       Quantity: "",
+      cartSelectedDate: dayjs(),
+      cartSelectedTime: dayjs(),
     },
     validationSchema: yup.object({
       Quantity: yup.number().required("Quantity is required"),
+      cartSelectedDate: yup.date()
+        .min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
+        .required("Date is required"),
+
+      cartSelectedTime: yup.date()
+        // .min(dayjs(schedule.selectedTime).start, `Time cannot be before ${dayjs(schedule.selectedTime).format("h:mm A")}`)
+        .required("Time is required"),
     }),
 
     onSubmit: (data) => {
-      http.post(`/shoppingcart/${id}`, data).then((res) => {
-        console.log(res.data);
-        console.log("quantity:", quantity);
-        alert("Succesfully added to cart.");
-      });
+      console.log("onsubmit called")
+      console.log("data.cartSelectedDate:",data.cartSelectedDate)
+      const selectedDateTime = dayjs.tz(
+        `${data.cartSelectedDate.format("YYYY-MM-DD")} ${data.cartSelectedTime.format(
+          "HH:mm:ss"
+        )}`,  
+        "Asia/Singapore"
+      );
+      console.log(selectedDateTime)
+
+      data.cartSelectedDate = selectedDateTime.format();
+      data.cartSelectedTime = selectedDateTime.format();
+          console.log("data",data)
+      http.post(`/shoppingcart/${id}`, data)
+        .then((res) => {
+          console.log(res.data);
+          alert("Successfully added to cart.");
+        })
+        .catch((error) => {
+          console.error("Error adding to cart:", error);
+          // Provide user feedback about the error
+          alert("Failed to add to cart. Please try again.");
+        });
     },
+    
   });
 
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
     <UserContext.Provider value={{ user, setUser }}>
         {!loading && (
           <div>
@@ -162,42 +196,90 @@ function ViewEvent() {
             </Typography>
             <Typography>{schedule.description}</Typography>
             {user && (
+
               <form onSubmit={formik.handleSubmit}>
                 <Box sx={{ my: 2 }}>
-                  <Autocomplete disablePortal
-                    id="combo-box-demo"
-                    options={options}
-                    value={
-                      options.find(
-                        (option) => option.id === formik.values.Quantity
-                      ) || null
-                    }
-                    onChange={(schedule, newValue) => {
-                      formik.setFieldValue("Quantity", newValue?.id || null);
-                      setQuantity(newValue?.id);
-                    }}
-                    onBlur={() => formik.setFieldTouched("Quantity", true)}
-                    slotProps={{
-                      textField: {
-                        error:
-                          formik.touched.Quantity &&
-                          Boolean(formik.errors.Quantity),
-                        helperText:
-                          formik.touched.Quantity && formik.errors.Quantity,
-                      },
-                    }}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Quantity" />
-                    )}
-                  />
+                <Autocomplete
+  disablePortal
+  id="combo-box-demo"
+  options={options}
+  value={
+    options.find(
+      (option) => option.id === formik.values.Quantity
+    ) || null
+  }
+  onChange={(event, newValue) => {
+    formik.setFieldValue("Quantity", newValue?.id || null);
+    setQuantity(newValue?.id);
+  }}
+  onBlur={() => formik.setFieldTouched("Quantity", true)}
+  slotProps={{
+    textField: {
+      error:
+        formik.touched.Quantity && Boolean(formik.errors.Quantity),
+      helperText:
+        formik.touched.Quantity && formik.errors.Quantity,
+    },
+  }}
+  sx={{ width: 300 }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Quantity"
+      error={formik.touched.Quantity && Boolean(formik.errors.Quantity)}
+      helperText={formik.touched.Quantity && formik.errors.Quantity}
+    />
+  )}
+/>
+
                 </Box>
+<Box sx={{ my: 2 }}>
+  {/* DatePicker */}
+  <Box sx={{ width: "100%" }}>
+    <DatePicker
+      label="Please Choose A Date"
+      value={formik.values.cartSelectedDate}
+      minDate={dayjs(schedule.selectedDate)}
+      onChange={(newDate) => formik.setFieldValue("cartSelectedDate", newDate)}
+      slotProps={{
+        textField: {
+          error:
+            formik.touched.cartSelectedDate && Boolean(formik.errors.cartSelectedDate),
+          helperText:
+            formik.touched.cartSelectedDate && formik.errors.cartSelectedDate,
+        },
+      }}
+
+    />
+  </Box>
+
+  {/* TimePicker */}
+  <Box sx={{ mt: 2, width: "100%" }}>
+    <TimePicker
+      label="Please Choose A Time"
+      value={formik.values.cartSelectedTime}
+      onChange={(newTime) => formik.setFieldValue("cartSelectedTime", newTime)}
+      slotProps={{
+        textField: {
+          error:
+            formik.touched.cartSelectedTime && Boolean(formik.errors.cartSelectedTime),
+          helperText:
+            formik.touched.cartSelectedTime && formik.errors.cartSelectedTime,
+        },
+      }}
+
+    />
+  </Box>
+</Box>
+
+
                 <Box sx={{ mt: 3 }}>
                   <Button type="submit" variant="contained">
                     Add to Cart
                   </Button>
                 </Box>
               </form>
+
             )}
             {!user && (
               <>
@@ -213,6 +295,7 @@ function ViewEvent() {
           </div>
         )}
     </UserContext.Provider>
+    </LocalizationProvider>
   );
 }
 
