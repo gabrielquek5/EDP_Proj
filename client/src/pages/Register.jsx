@@ -96,17 +96,19 @@ return (
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      border: '1px solid #FFA500',
+
       borderRadius: '16px',
       padding: '16px',
       width: '50%',
       height: '50%',
       marginLeft: '25%',
-      minHeight: '70vh'
+      minHeight: '70vh',
+      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+      
     }}
   >
     <legend>
-        <Typography variant="h5" sx={{ my: 2, fontFamily:"cursive" }}>
+        <Typography variant="h4" sx={{ my: 2, fontFamily:"Poppins" }}>
         Register
         </Typography>
     </legend>
@@ -199,7 +201,7 @@ return (
         error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
         helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
       />
-      <Button fullWidth variant="contained" sx={{ mt: 2, borderRadius: '12px', backgroundColor: '#FFA500', fontFamily:"cursive" }} type="submit">
+      <Button fullWidth variant="contained" sx={{ mt: 2, borderRadius: '8px', backgroundColor: '#FFAC07A', fontFamily:"Poppins", }} type="submit">
         Register
       </Button>
     </Box>

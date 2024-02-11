@@ -16,7 +16,9 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
+  Box
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import http from "../http";
 import UserContext from "../contexts/UserContext";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -129,22 +131,47 @@ function ShoppingCart() {
             </Typography>
             <hr />  
             <List>
-              {cartItems
-              .filter((cart) => !user || user.id === cart.userId)
-              .map((cart) => (
-                <React.Fragment key={cart.itemID}>
-                  <ListItem>
-                    <ListItemText sx={{fontFamily:"Poppins"}}
-                      primary={cart.eventName}
-                      secondary={`Price: $${cart.eventPrice} | Quantity: ${cart.quantity}`}
-                    />
-                    <IconButton variant="outlined" color="error" onClick={() => deleteCartItem(cart.itemID)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
+            {cartItems
+  .filter((cart) => !user || user.id === cart.userId)
+  .map((cart) => (
+    <React.Fragment key={cart.itemID}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+           <div>
+          <img
+          height="150px"
+          width="auto"
+            alt="event_image"
+            src={`${import.meta.env.VITE_FILE_BASE_URL}${
+              cart.imageFile
+            }`}
+          ></img>
+          </div>
+        <div>
+        <Typography variant="h6" sx={{ fontFamily: "Poppins", mb:1 }}>
+          {cart.eventName}
+        </Typography>
+         
+          <Typography variant="body1" sx={{ fontFamily: "Poppins", mb:1 }}>
+            Price: ${cart.eventPrice}
+          </Typography>
+          
+          <Typography variant="body1" sx={{ fontFamily: "Poppins" }}>
+            Quantity: {cart.quantity}
+          </Typography>
+        </div>
+        <Box sx={{ border: "1px solid #808080", display: "inline-block" }} onClick={() => deleteCartItem(cart.itemID)}>
+  <IconButton color="error">
+    <CloseIcon />
+  </IconButton>
+</Box>
+
+      </div>
+      {/* Divider */}
+      <Divider />
+    </React.Fragment>
+  ))}
+
+
             </List>
           </Paper>
         </Grid>
