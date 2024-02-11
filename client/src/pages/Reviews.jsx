@@ -68,7 +68,7 @@ function Reviews() {
 
               
             </Box>
-            <hr></hr>
+            
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mt:3 }}>
               <Input
                 placeholder="Search"
