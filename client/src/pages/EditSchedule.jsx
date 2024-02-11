@@ -137,20 +137,17 @@ function EditSchedule() {
       data.description = data.description.trim();
       data.postalCode = data.postalCode.trim();
 
-      const selectedDateTime = dayjs.tz(
-        `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
-          "HH:mm:ss"
-        )}`,
-        "Asia/Singapore"
-      );
+      const newDate = dayjs.tz(data.selectedDate, "Asia/Singapore").format("YYYY-MM-DD");    
+      const newTime = data.selectedTime.format("HH:mm");
 
-      data.selectedDate = selectedDateTime.format();
-      data.selectedTime = selectedDateTime.format();
+      data.selectedDate = newDate;
+      data.selectedTime = newTime;
 
       data.price = initialPrice;
 
       http.put(`/schedule/${id}`, data).then((res) => {
         console.log(res.data);
+        console.log(data.selectedDate);
         navigate("/schedules");
       });
     },
@@ -214,11 +211,13 @@ function EditSchedule() {
         eventTypeUpdated = scheduleData.eventType;
       }
 
+      const selectedTime = dayjs(scheduleData.selectedTime, 'HH:mm:ss');
+
       formik.setValues({
         title: scheduleData.title,
         description: scheduleData.description,
         selectedDate: dayjs(scheduleData.selectedDate),
-        selectedTime: dayjs(scheduleData.selectedTime),
+        selectedTime: selectedTime,
         postalCode: scheduleData.postalCode,
         eventType: eventTypeUpdated,
       });

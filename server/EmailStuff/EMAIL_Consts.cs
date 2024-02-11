@@ -40,7 +40,7 @@
         {
             var htmlBody = $"<body style='font-family: Arial, sans-serif;'>" +
                     $"<div style='border: 1px solid #ccc; border-radius: 10px; padding: 10px;'>" +
-                    $"<h1>Dear {firstName},</h1><p>Thank you for using our website. You have successfully updated the event for <h2>{eventTitle}.</h2></p>" +
+                    $"<h1>Dear {firstName},</h1><p>Thank you for using our website. You have successfully <p style='font-weight: bold; color: orange;'>UPATED</p> the event for <h2>{eventTitle}.</h2></p>" +
                     $"<h3>Changes:</h3><pre>{changes}</pre>" +
                     $"<h3>Before:</h3><pre>{beforeValues}</pre>" +
                     $"<h3>After:</h3><pre>{afterValues}</pre>" +
