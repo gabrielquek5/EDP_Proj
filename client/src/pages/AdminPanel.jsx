@@ -29,7 +29,8 @@ import {
   Tooltip,
   Legend,
   PieChart,
-  Pie
+  Pie,
+  ResponsiveContainer,
 } from "recharts";
 import UserContext from "../contexts/UserContext";
 import SearchComponent from "./Components/SearchComponent";
@@ -47,6 +48,13 @@ function AdminPanel() {
   const [searchBook, setSearchBook] = useState("");
   const [sortByDeleteStatus, setSortByDeleteStatus] = useState(false);
   const [sortByCancelledStatus, setSortByCancelledStatus] = useState(false);
+
+  const data = [
+    { name: 'Category 1', value: 400 },
+    { name: 'Category 2', value: 300 },
+    { name: 'Category 3', value: 300 },
+    { name: 'Category 4', value: 200 },
+  ];
 
   const getAllEvents = () => {
     http
@@ -81,6 +89,7 @@ function AdminPanel() {
   useEffect(() => {
     getAllEvents();
     getAllBookings();
+    prepareBookingChartData();
   }, []);
 
   useEffect(() => {
@@ -104,21 +113,6 @@ function AdminPanel() {
     return eventCounts;
   };
 
-  const countBookingsByType = () => {
-    const bookingsCounts = {};
-
-    bookingsList.forEach((booking) => {
-      const bookingType = booking.eventType;
-      if (bookingsCounts[bookingType]) {
-        bookingsCounts[bookingType]++;
-      } else {
-        bookingsCounts[bookingType] = 1;
-      }
-    });
-
-    return bookingsCounts;
-  };
-
   const prepareChartData = () => {
     const eventCounts = countEventsByType();
     return Object.keys(eventCounts).map((eventType) => ({
@@ -127,13 +121,35 @@ function AdminPanel() {
     }));
   };
 
+  const countBookingsByType = () => {
+    const bookingsCounts = {};
+  
+    bookingsList.forEach((booking) => {
+      const bookingType = booking.eventType;
+      console.log("bookingType", bookingType);
+      if (bookingsCounts[bookingType]) {
+        bookingsCounts[bookingType]++;
+      } else {
+        bookingsCounts[bookingType] = 1;
+      }
+    });
+  
+    return bookingsCounts;
+  };
+
+
   const prepareBookingChartData = () => {
     const bookingCounts = countBookingsByType();
-    return Object.keys(bookingCounts).map((bookingType) => ({
-      bookingType,
-      count: bookingCounts[bookingType],
+    console.log("bookingCounts", bookingCounts);
+    
+    // Convert the bookingsCounts object into an array of objects for the pie chart
+    const pieChartData = Object.keys(bookingCounts).map((bookingType) => ({
+      name: bookingType,
+      value: bookingCounts[bookingType],
     }));
-  }
+  
+    return pieChartData;
+  };
 
   const handleEventDeletionOpen = (schedule) => {
     setSelectedSchedule(schedule);
@@ -245,12 +261,13 @@ function AdminPanel() {
   };
 
   return (
-    <Box>
+    <Box sx={{fontFamily:"Poppins"}}>
       <Button
         onClick={handleShowEventTable}
         sx={{
           variant: "contained",
           textDecoration: "none",
+          fontFamily:"Poppins",
           background: "#fddc02",
           color: "black",
           bgcolor: "#fddc02",
@@ -275,6 +292,7 @@ function AdminPanel() {
           textDecoration: "none",
           background: "#fddc02",
           color: "black",
+          fontFamily:"Poppins",
           bgcolor: "#fddc02",
           "&:hover": {
             color: "#e8533f",
@@ -295,6 +313,7 @@ function AdminPanel() {
           ml: 10,
           variant: "contained",
           textDecoration: "none",
+          fontFamily:"Poppins",
           background: "#fddc02",
           color: "black",
           bgcolor: "#fddc02",
@@ -320,6 +339,7 @@ function AdminPanel() {
               flexDirection: "column",
               alignItems: "center",
               my: 2,
+              fontFamily:"Poppins"
             }}
           >
             Event Schedules
@@ -333,15 +353,15 @@ function AdminPanel() {
           />
           <TableContainer component={Paper}>
             <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Event ID</TableCell>
-                  <TableCell>Event Title</TableCell>
-                  <TableCell>Event Type</TableCell>
-                  <TableCell>Event Price</TableCell>
-                  <TableCell>Host</TableCell>
-                  <TableCell>Last Updated</TableCell>
-                  <TableCell>Event Status</TableCell>
+              <TableHead >
+                <TableRow >
+                  <TableCell sx={{fontFamily:"Poppins"}}>Event ID</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Event Title</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Event Type</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Event Price</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Host</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Last Updated</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Event Status</TableCell>
                   <TableCell
                     onClick={toggleSortByDeleteStatus}
                     style={{ cursor: "pointer" }}
@@ -353,16 +373,16 @@ function AdminPanel() {
               <TableBody>
                 {sortedScheduleList.map((schedule) => (
                   <TableRow key={schedule.scheduleId}>
-                    <TableCell>{schedule.scheduleId}</TableCell>
-                    <TableCell>{schedule.title}</TableCell>
-                    <TableCell>{schedule.eventType}</TableCell>
-                    <TableCell>${schedule.price}.00</TableCell>
-                    <TableCell>{schedule.user.firstName}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{schedule.scheduleId}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{schedule.title}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{schedule.eventType}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>${schedule.price}.00</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{schedule.user.firstName}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>
                       {dayjs(schedule.updatedAt).format("YYYY-MM-DD HH:mm:ss")}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>
                       {schedule.isCompleted && !schedule.isDeleted
                         ? "Ended"
                         : !schedule.isCompleted && !schedule.isDeleted
@@ -371,7 +391,7 @@ function AdminPanel() {
                         ? "Ended/Deleted"
                         : "Deleted"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>
                       {schedule.requestDelete ? (
                         schedule.isDeleted ? (
                           schedule.isDeleted.toString()
@@ -409,6 +429,7 @@ function AdminPanel() {
                 flexDirection: "column",
                 alignItems: "center",
                 my: 2,
+                fontFamily:"Poppins"
               }}
             >
               Event Distribution
@@ -431,9 +452,9 @@ function AdminPanel() {
         </>
       )}
 
-{/* Bookings Table and graph */}
+      {/* Bookings Table and graph */}
 
-{showBookingsTable && (
+      {showBookingsTable && (
         <>
           <Typography
             variant="h5"
@@ -442,6 +463,7 @@ function AdminPanel() {
               flexDirection: "column",
               alignItems: "center",
               my: 2,
+              fontFamily:"Poppins"
             }}
           >
             All Bookings
@@ -450,13 +472,13 @@ function AdminPanel() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell >Booking ID</TableCell>
-                  <TableCell>Booking Title</TableCell>
-                  <TableCell>Booking Date and Time</TableCell>
-                  <TableCell>Booking Pax</TableCell>
-                  <TableCell>Last Updated</TableCell>
-                  <TableCell>Booking Status</TableCell>
-                  <TableCell
+                  <TableCell sx={{fontFamily:"Poppins"}}>Booking ID</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Booking Title</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Booking Date and Time</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Booking Pax</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Last Updated</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}>Booking Status</TableCell>
+                  <TableCell sx={{fontFamily:"Poppins"}}
                     onClick={toggleSortByCancelledStatus}
                     style={{ cursor: "pointer" }}
                   >
@@ -467,15 +489,15 @@ function AdminPanel() {
               <TableBody>
                 {sortedBookingList.map((booking) => (
                   <TableRow key={booking.bookingID}>
-                    <TableCell >{booking.bookingID}</TableCell>
-                    <TableCell>{booking.bookingTitle}</TableCell>
-                    <TableCell>{booking.bookingTime}</TableCell>
-                    <TableCell>{booking.pax}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{booking.bookingID}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{booking.bookingTitle}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{booking.bookingTime}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{booking.pax}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>
                       {dayjs(booking.updatedAt).format("YYYY-MM-DD HH:mm:ss")}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>
                       {booking.isCompleted && !schedule.isCancelled
                         ? "Completed"
                         : !booking.isCompleted && !booking.isCancelled
@@ -484,7 +506,7 @@ function AdminPanel() {
                         ? "Cancelled"
                         : "Deleted"}
                     </TableCell>
-                    <TableCell>{booking.isCancelled}</TableCell>
+                    <TableCell sx={{fontFamily:"Poppins"}}>{booking.isCancelled}</TableCell>
 
                   </TableRow>
                 ))}
@@ -501,47 +523,65 @@ function AdminPanel() {
             }}
           >
             <Typography
-  variant="h5"
-  sx={{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    my: 2,
-  }}
->
-  Booking Distribution
-</Typography>
-<PieChart width={600} height={360}>
-  <Pie
-    data={prepareBookingChartData}
-    dataKey="count"
-    nameKey="bookingType"
-    cx="50%"
-    cy="50%"
-    outerRadius={100}
-    fill="#8884d8"
-    label
-  />
-  <Tooltip />
-  <Legend />
-</PieChart>
+              variant="h5"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                my: 2,
+                fontFamily:"Poppins"
+              }}
+            >
+              Booking Distribution
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={prepareBookingChartData()}
+                  dataKey="value" // Use "value" as the dataKey instead of "bookingCounts"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  label
+                />
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          outerRadius={100}
+          fill="#8884d8"
+          label
+        />
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer> */}
           </Box>
         </>
       )}
 
-
-
       <Dialog open={openEvent} onClose={handleEventDeletionClose}>
-        <DialogTitle>Delete Schedule</DialogTitle>
+        <DialogTitle sx={{fontFamily:"Poppins"}}>Delete Schedule</DialogTitle>
         {selectedSchedule && (
           <DialogContent>
-            <DialogContentText>
+            <DialogContentText sx={{fontFamily:"Poppins"}}>
               Are you sure you want to delete this schedule "
               {selectedSchedule.title}"?
-            </DialogContentText>
-            <Typography>User: {selectedSchedule.user.firstName}</Typography>
-            <Typography>Title: {selectedSchedule.title}</Typography>
-            <Typography>Price: ${selectedSchedule.price}.00</Typography>
+            </DialogContentText >
+            <Typography sx={{fontFamily:"Poppins"}}>User: {selectedSchedule.user.firstName}</Typography>
+            <Typography sx={{fontFamily:"Poppins"}}>Title: {selectedSchedule.title}</Typography>
+            <Typography sx={{fontFamily:"Poppins"}}>Price: ${selectedSchedule.price}.00</Typography>
           </DialogContent>
         )}
         <DialogActions>
@@ -549,12 +589,14 @@ function AdminPanel() {
             variant="contained"
             color="inherit"
             onClick={handleEventDeletionClose}
+            sx={{fontFamily:"Poppins"}}
           >
             Cancel
           </Button>
           <Button
             variant="contained"
             onClick={() => rejectdeleteSchedule(selectedSchedule.scheduleId)}
+            sx={{fontFamily:"Poppins"}}
           >
             Reject
           </Button>
@@ -562,6 +604,7 @@ function AdminPanel() {
             variant="contained"
             color="error"
             onClick={() => softdeleteSchedule(selectedSchedule.scheduleId)}
+            sx={{fontFamily:"Poppins"}}
           >
             Delete
           </Button>
@@ -570,5 +613,6 @@ function AdminPanel() {
     </Box>
   );
 }
+
 
 export default AdminPanel;
