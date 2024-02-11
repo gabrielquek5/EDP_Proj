@@ -13,7 +13,7 @@ namespace WebApplication1.Models
         [Required, MinLength(3), MaxLength(100)]
         public string Title { get; set; } = string.Empty;
 
-        [Required, MinLength(3), MaxLength(500)]
+        [Required, MinLength(3), MaxLength(1000)]
         public string Description { get; set; } = string.Empty;
 
         [Required, Column(TypeName = "date")]
