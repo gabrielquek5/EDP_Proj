@@ -118,7 +118,7 @@ function EditSchedule() {
         .string()
         .trim()
         .min(6, "Description must be at least 6 characters")
-        .max(100, "Description must be at most 100 characters")
+        .max(1000, "Description must be at most 1000 characters")
         .required("Description is required"),
       postalCode: yup
         .string()
@@ -523,7 +523,7 @@ function EditSchedule() {
               color="error"
               onClick={softdeleteSchedule}
             >
-              Delete
+              Request
             </Button>
           </DialogActions>
         </Dialog>
