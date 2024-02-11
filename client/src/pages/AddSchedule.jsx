@@ -80,6 +80,13 @@ function AddSchedule() {
     { label: "Others", id: "Others" },
   ];
 
+  // const selectedDateTime = dayjs.tz(
+  //   `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
+  //     "HH:mm:ss"
+  //   )}`,
+  //   "Asia/Singapore"
+  // );
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -128,19 +135,16 @@ function AddSchedule() {
       data.description = data.description.trim();
       data.postalCode = data.postalCode.trim();
 
-      const selectedDateTime = dayjs.tz(
-        `${data.selectedDate.format("YYYY-MM-DD")} ${data.selectedTime.format(
-          "HH:mm:ss"
-        )}`,
-        "Asia/Singapore"
-      );
+      const newDate = dayjs.tz(data.selectedDate, "Asia/Singapore").format("YYYY-MM-DD");    
+      const newTime = data.selectedTime.format("HH:mm");
 
-      data.selectedDate = selectedDateTime.format();
-      data.selectedTime = selectedDateTime.format();
+      data.selectedDate = newDate;
+      data.selectedTime = newTime;
 
       http
         .post("/schedule", data)
         .then((res) => {
+          console.log(data.selectedDate);
           navigate("/schedules");
         })
         .catch((error) => {
