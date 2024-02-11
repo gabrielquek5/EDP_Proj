@@ -20,11 +20,13 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
         alignItems: "center",
         mb: 2,
         border: "1px solid #e3e3e3",
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
         borderRadius: 8,
         width: "fit-content",
-        paddingX: "20px",
+        paddingX: "24px",
         paddingY: "10px",
         margin: "20px auto",
+        
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
@@ -42,31 +44,19 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
             left: "5px",
             border: "1px solid #e8533f",
             color: "#ffffff",
-            padding: "10px",
+            padding: "6px",
             borderRadius: 8,
             fontSize: "2px",
             bgcolor: "#e8533f",
             "&:hover": {
-              color: "black",
               bgcolor: "#e8533f",
             },
           }}
         >
           <Search />
-          <Typography
-            variant="h6"
-            sx={{
-              flexGrow: 1,
-              fontSize: "18px",
-              paddingLeft: "10dp",
-              color: "inherit",
-            }}
-          >
-            Search
-          </Typography>
         </IconButton>
 
-        <IconButton
+        {/* <IconButton
           color="primary"
           onClick={onClickClear}
           sx={{
@@ -79,7 +69,7 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
           }}
         >
           <Clear />
-        </IconButton>
+        </IconButton> */}
       </Box>
       <Box sx={{ flexGrow: 1 }} />
     </Box>

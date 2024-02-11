@@ -183,12 +183,12 @@ function ViewEvent() {
           <Grid container spacing={3}>
             <Grid item xs={8}>
               <div>
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mt:12, mb:2, fontFamily:"Poppins" }}>
                   {schedule.title}
                 </Typography>
             <Typography
               variant="h7"
-              sx={{ my: 2, textDecoration: "underline" }}
+              sx={{ my: 2, textDecoration: "underline", fontFamily:"Poppins" }}
             >
               Event Location:{" "}
               {location ? (
@@ -218,38 +218,38 @@ function ViewEvent() {
             </Box>
                 <Typography
                   variant="subtitle1"
-                  sx={{ fontWeight: "bold", textDecoration: "underline" }}
+                  sx={{ fontWeight: "bold" }}
                 >
                   Event Information:
                 </Typography>
-                            <Typography>
+                            <Typography sx={{fontFamily:"Poppins",}}>
               Date: {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
             </Typography>
-            <Typography>
+            <Typography sx={{fontFamily:"Poppins",}}>
               Time: {dayjs(schedule.selectedTime).format("h:mm A")}{" "}
             </Typography>
-            <Typography>Price: ${schedule.price}</Typography>
+            <Typography sx={{fontFamily:"Poppins",}}>Price: ${schedule.price}</Typography>
 
             <Typography sx={{ my: 1 }}></Typography>
             <Typography
               variant="subtitle1"
-              sx={{ fontWeight: "bold", textDecoration: "underline" }}
+              sx={{ fontWeight: "bold",fontFamily:"Poppins",}}
             >
               Description:
             </Typography>
-            <Typography>{schedule.description}</Typography>
+            <Typography sx={{fontFamily:"Poppins",}}>{schedule.description}</Typography>
                 <Typography
                   variant="subtitle1"
                   sx={{
                     my: 2,
                     fontWeight: "bold",
-                    textDecoration: "underline",
+                    fontFamily:"Poppins",
                   }}
                 >
                   Reviews:
                 </Typography>
                 {reviews.length === 0 ? (
-                  <Typography>No reviews found for this event.</Typography>
+                  <Typography sx={{fontFamily:"Poppins",}}>No reviews found for this event.</Typography>
                 ) : (
                   <Grid container spacing={2}>
                     {reviews.map((review) => (
@@ -260,7 +260,7 @@ function ViewEvent() {
   {review.firstname} {review.lastname}
 </Typography>
 
-                            <Rating value={review.rating} readOnly />
+                            <Rating precision={0.1} value={review.rating} readOnly />
                             <Typography>{review.comments}</Typography>
                             <IconButton onClick={() => handleOpen(review.reviewID)}> {/* Open the dialog on icon click */}
                <FlagIcon />
@@ -277,11 +277,26 @@ function ViewEvent() {
                 )}
               </div>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <div style={{ marginTop: '150px' }}>
               {user && (
                 <form onSubmit={formik.handleSubmit}>
-                  <Box sx={{ my: 2, boxShadow: 3, p: 2, borderRadius: 4,  alignItems: 'center' }}>
-                  <Box sx={{ my: 2 }}>
+                  
+                  <Box sx={{ my: 2, boxShadow: 3, p: 2, borderRadius: 2,  alignItems: 'center' }}>
+                  <Card sx={{border: "1px solid #e3e3e3", borderRadius:"12px", maxWidth: "200px", margin: "auto"}}>
+                  <Box sx={{bgcolor:"#e8533f", height: "50px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <Typography sx={{fontFamily:"Poppins", color:"white", fontWeight: "bold"}}>YOUR PRICE</Typography>
+                  </Box>
+                  <CardContent>
+                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <Typography variant="h5" sx={{ fontFamily:"Poppins", fontWeight:"bold", color:"#e8533f", fontSize:"34px" }}>
+                        ${schedule.price}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+
+                  <Box sx={{ my: 4 }}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -311,9 +326,10 @@ function ViewEvent() {
                             formik.errors.Quantity,
                         },
                       }}
-                      sx={{ width: 300 }}
+                      sx={{ width: 300, fontFamily:"Poppins" }}
                       renderInput={(params) => (
                         <TextField
+                        
                           {...params}
                           label="Quantity"
                           error={
@@ -330,7 +346,7 @@ function ViewEvent() {
                       )}
                     />
                   </Box>
-                  <Box sx={{ my: 2 }}>
+                  <Box sx={{ my: 4 }}>
                     <Box sx={{ width: "100%" }}>
                       <DatePicker
                         label="Please Choose A Date"
@@ -354,7 +370,7 @@ function ViewEvent() {
                         }}
                       />
                     </Box>
-                    <Box sx={{ mt: 2, width: "100%" }}>
+                    <Box sx={{ mt: 4, width: "100%" }}>
                       <TimePicker
                         label="Please Choose A Time"
                         value={formik.values.cartSelectedTime}
@@ -377,8 +393,8 @@ function ViewEvent() {
                       />
                     </Box>
                   </Box>
-                  <Box sx={{ mt: 3 }}>
-                    <Button type="submit" variant="contained">
+                  <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center'  }}>
+                    <Button type="submit" variant="contained" sx={{bgcolor:"#e8533f", fontWeight:"bold", fontFamily:"Poppins"}}>
                       Add to Cart
                     </Button>
                   </Box>
@@ -394,6 +410,7 @@ function ViewEvent() {
                   </Link>
                 </Box>
               )}
+              </div>
             </Grid>
           </Grid>
         )}

@@ -1,4 +1,5 @@
 import "./App.css";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Container,
   AppBar,
@@ -27,7 +28,6 @@ import Login from "./pages/Login";
 import Update from "./pages/Update.Jsx";
 import Delete from "./pages/Delete";
 import http from "./http";
-import { useState, useEffect } from "react";
 import Bookings from "./pages/Bookings";
 import EditBooking from "./pages/EditBooking";
 import ShoppingCart from "./pages/ShoppingCart";
@@ -68,6 +68,7 @@ function App() {
   const [dropMenuNoti, setdropMenuNoti] = useState(null);
   const [dropMenuScheduling, setdropMenuScheduling] = useState(null);
   const [user, setUser] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -82,10 +83,27 @@ function App() {
           console.error("Authentication failed:", error);
           setLoading(false);
         });
+        fetchCartItems();
     } else {
       setLoading(false);
     }
   }, []);
+
+  const fetchCartItems = async () => {
+    try {
+      const id = user.id
+      const res = await http.get(`/shoppingcart/${id}`);
+      console.log("user",user) 
+      const filteredCart = res.data.filter(
+        (cart) => !cart.isDeleted
+      )
+      setCartItems(filteredCart);
+      console.log(filteredCart);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
+  };
 
   const handleMenuOpen = (event) => {
     setdropMenu(event.currentTarget);
@@ -157,7 +175,7 @@ function App() {
                         
                           onClick={handleSchedulingOpen}
                           variant="text"
-                          sx={{ textTransform: "none", fontSize: "15px",fontFamily:"Poppins", fontWeight:"bold" }}
+                          sx={{ textTransform: "none", fontSize: "15px",fontFamily:"Poppins", fontWeight:"bold", mr:5  }}
                         >
                           Schedules
                         </Button>
@@ -219,6 +237,7 @@ function App() {
                         <Link to="/shoppingcart">
                           <Button>
                             <MdOutlineShoppingCart size={24} />
+                            <span>{cartItems.length}</span>
                           </Button>
                         </Link>
                         <Button onClick={handleMenuOpen}>
@@ -229,6 +248,11 @@ function App() {
                           open={Boolean(dropMenu)}
                           onClose={handleMenuClose}
                         >
+                          <MenuItem
+                            sx={{fontFamily:"Poppins", color:"Blue", fontSize:18}}
+                          >
+                            {user.name} {user.lastname}
+                          </MenuItem>
                           <MenuItem
                             component={Link}
                             to="/Update"

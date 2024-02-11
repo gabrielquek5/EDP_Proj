@@ -28,6 +28,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  PieChart,
+  Pie
 } from "recharts";
 import UserContext from "../contexts/UserContext";
 import SearchComponent from "./Components/SearchComponent";
@@ -36,11 +38,15 @@ function AdminPanel() {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [scheduleList, setScheduleList] = useState([]);
+  const [bookingsList, setBookingsList] = useState([]);
   const [openEvent, setEventOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [showEventTable, setShowEventTable] = useState(false);
+  const [showBookingsTable, setShowBookingsTable] = useState(false);
   const [searchSche, setSearchSche] = useState("");
+  const [searchBook, setSearchBook] = useState("");
   const [sortByDeleteStatus, setSortByDeleteStatus] = useState(false);
+  const [sortByCancelledStatus, setSortByCancelledStatus] = useState(false);
 
   const getAllEvents = () => {
     http
@@ -57,8 +63,24 @@ function AdminPanel() {
       });
   };
 
+  const getAllBookings = () => {
+    http
+      .get("/bookings")
+      .then((res) => {
+        const sortedBookingList = res.data.sort((a, b) =>
+          a.bookingID > b.bookingID ? 1 : -1
+        );
+        setBookingsList(sortedBookingList);
+        console.log(sortedBookingList);
+      })
+      .catch((error) => {
+        console.error("Error fetching schedules:", error);
+      });
+  };
+
   useEffect(() => {
     getAllEvents();
+    getAllBookings();
   }, []);
 
   useEffect(() => {
@@ -82,6 +104,21 @@ function AdminPanel() {
     return eventCounts;
   };
 
+  const countBookingsByType = () => {
+    const bookingsCounts = {};
+
+    bookingsList.forEach((booking) => {
+      const bookingType = booking.eventType;
+      if (bookingsCounts[bookingType]) {
+        bookingsCounts[bookingType]++;
+      } else {
+        bookingsCounts[bookingType] = 1;
+      }
+    });
+
+    return bookingsCounts;
+  };
+
   const prepareChartData = () => {
     const eventCounts = countEventsByType();
     return Object.keys(eventCounts).map((eventType) => ({
@@ -89,6 +126,14 @@ function AdminPanel() {
       count: eventCounts[eventType],
     }));
   };
+
+  const prepareBookingChartData = () => {
+    const bookingCounts = countBookingsByType();
+    return Object.keys(bookingCounts).map((bookingType) => ({
+      bookingType,
+      count: bookingCounts[bookingType],
+    }));
+  }
 
   const handleEventDeletionOpen = (schedule) => {
     setSelectedSchedule(schedule);
@@ -117,6 +162,10 @@ function AdminPanel() {
     setShowEventTable(!showEventTable);
   };
 
+  const handleShowBookingTable = () => {
+    setShowBookingsTable(!showBookingsTable);
+  }
+
   const searchSchedules = () => {
     http.get(`/adminschedule?search=${searchSche}`).then((res) => {
       const filteredSchedules = res.data;
@@ -124,8 +173,30 @@ function AdminPanel() {
     });
   };
 
-  const onSearchChangeSchedules = (e) => {
-    setSearchSche(e.target.value);
+  const searchBookings = () => {
+    http.get(`/bookings?search=${searchBookings}`).then((res) => {
+      const filteredSchedules = res.data;
+      setScheduleList(filteredSchedules);
+    });
+  };
+
+  const onSearchChangeBookings = (e) => {
+    setSearchBook(e.target.value);
+  };
+
+  const onSearchKeyDownBookings = (e) => {
+    if (e.key === "Enter") {
+      searchSchedules();
+    }
+  };
+
+  const onClickSearchBookings = () => {
+    searchSchedules();
+  };
+
+  const onClickClearBookings = () => {
+    setSearchBook("");
+    getAllBookings();
   };
 
   const onSearchKeyDownSchedules = (e) => {
@@ -147,12 +218,27 @@ function AdminPanel() {
     setSortByDeleteStatus(!sortByDeleteStatus);
   };
 
+  const onSearchChangeSchedules = (e) => {
+    setSearchSche(e.target.value);
+  };
+
+  const toggleSortByCancelledStatus = () => {
+    setSortByCancelledStatus(!sortByCancelledStatus);
+  };
+
   const sortedScheduleList = sortByDeleteStatus
     ? [
         ...scheduleList.filter((schedule) => schedule.requestDelete),
         ...scheduleList.filter((schedule) => !schedule.requestDelete),
       ]
     : [...scheduleList];
+
+    const sortedBookingList = sortByCancelledStatus
+    ? [
+        ...bookingsList.filter((booking) => booking.isCancelled),
+        ...bookingsList.filter((booking) => !booking.isCancelled),
+      ]
+    : [...bookingsList];
 
   const handleRedirectToAdminReviews = () => {
     navigate("/adminreviews");
@@ -179,6 +265,28 @@ function AdminPanel() {
         }}
       >
         Toggle Event Details
+      </Button>
+
+      <Button
+        onClick={handleShowBookingTable}
+        sx={{
+          ml:10,
+          variant: "contained",
+          textDecoration: "none",
+          background: "#fddc02",
+          color: "black",
+          bgcolor: "#fddc02",
+          "&:hover": {
+            color: "#e8533f",
+            bgcolor: "#fddc02",
+          },
+          boxShadow: "none",
+          borderRadius: 4,
+          fontWeight: "bold",
+          paddingX: "20px",
+        }}
+      >
+        Toggle Booking Details
       </Button>
 
       <Button
@@ -322,6 +430,107 @@ function AdminPanel() {
           </Box>
         </>
       )}
+
+{/* Bookings Table and graph */}
+
+{showBookingsTable && (
+        <>
+          <Typography
+            variant="h5"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              my: 2,
+            }}
+          >
+            All Bookings
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell >Booking ID</TableCell>
+                  <TableCell>Booking Title</TableCell>
+                  <TableCell>Booking Date and Time</TableCell>
+                  <TableCell>Booking Pax</TableCell>
+                  <TableCell>Last Updated</TableCell>
+                  <TableCell>Booking Status</TableCell>
+                  <TableCell
+                    onClick={toggleSortByCancelledStatus}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Cancelled {sortByCancelledStatus ? "▲" : "▼"}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedBookingList.map((booking) => (
+                  <TableRow key={booking.bookingID}>
+                    <TableCell >{booking.bookingID}</TableCell>
+                    <TableCell>{booking.bookingTitle}</TableCell>
+                    <TableCell>{booking.bookingTime}</TableCell>
+                    <TableCell>{booking.pax}</TableCell>
+                    <TableCell>
+                      {dayjs(booking.updatedAt).format("YYYY-MM-DD HH:mm:ss")}
+                    </TableCell>
+
+                    <TableCell>
+                      {booking.isCompleted && !schedule.isCancelled
+                        ? "Completed"
+                        : !booking.isCompleted && !booking.isCancelled
+                        ? "Active"
+                        : !booking.isCompleted && booking.isCancelled
+                        ? "Cancelled"
+                        : "Deleted"}
+                    </TableCell>
+                    <TableCell>{booking.isCancelled}</TableCell>
+
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box
+            style={{
+              height: 400,
+              display: "flex",
+              marginTop: 4,
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+  variant="h5"
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    my: 2,
+  }}
+>
+  Booking Distribution
+</Typography>
+<PieChart width={600} height={360}>
+  <Pie
+    data={prepareBookingChartData}
+    dataKey="count"
+    nameKey="bookingType"
+    cx="50%"
+    cy="50%"
+    outerRadius={100}
+    fill="#8884d8"
+    label
+  />
+  <Tooltip />
+  <Legend />
+</PieChart>
+          </Box>
+        </>
+      )}
+
+
+
       <Dialog open={openEvent} onClose={handleEventDeletionClose}>
         <DialogTitle>Delete Schedule</DialogTitle>
         {selectedSchedule && (
