@@ -108,7 +108,7 @@ function Schedules() {
       />
 
       <Box
-        sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}
+        sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 4 }}
       >
         {eventTypes.map((eventType) => (
           <Button
@@ -116,11 +116,16 @@ function Schedules() {
             onClick={() => handleEventTypeClick(eventType.id)}
             sx={{
               border: "1px solid #fddc02",
-              color: "black",
+              color: selectedEventType === eventType.id ? "#ffffff" : "black",
+              paddingLeft: 3,
+              paddingRight: 3,
+              fontFamily:"Poppins",
+              textTransform: "none",
+              marginTop:"20px",
               bgcolor:
                 selectedEventType === eventType.id ? "#e81515" : "#fddc02",
               "&:hover": {
-                color: "#e81515",
+                color: selectedEventType === eventType.id ? "#ffffff" : "#e81515",
                 bgcolor:
                   selectedEventType === eventType.id ? "#e81515" : "#fddc02",
               },
@@ -157,7 +162,7 @@ function Schedules() {
                 to={`/viewevent/${schedule.scheduleId}`}
                 style={{ textDecoration: "none" }}
               >
-                <Card>
+                <Card sx={{border: "1px solid #e3e3e3", borderRadius:"12px"}}>
                   {schedule.imageFile && (
                     <Box className="image-size">
                       <img
@@ -170,43 +175,43 @@ function Schedules() {
                   )}
 
                   <CardContent sx={{ position: "relative" }}>
-                    <Box sx={{ display: "flex", mb: 1 }}>
+                    <Box sx={{ display: "flex", mb: 2 }}>
                       <Typography variant="h6" sx={{ flexGrow: 1, fontFamily:"Poppins",fontWeight:"bold" }}>
                         {schedule.title}
                       </Typography>
                     </Box>
 
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      color="text.secondary"
+                      sx={{ display: "flex", alignItems: "center", mb: 2.5 }}
+                      
                     >
                       <DateRangeOutlined sx={{ mr: 1 }} />
-                      <Typography sx={{ fontSize: "15px" }}>
-                        Start Date:{" "}
+                      <Typography sx={{ fontSize: "16px", marginRight:"5px" }}>
+                        Starts:{" "}
                       </Typography>
-                      <Typography sx={{ fontWeight: "bold" }}>
+                      <Typography sx={{  fontSize:"16px", fontFamily:"Poppins" }}>
                         {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
                       </Typography>
                     </Box>
 
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      color="text.secondary"
+                      sx={{ display: "flex", alignItems: "center", mb: 2 }}
+                      
                     >
                       <LocationOnIcon sx={{ mr: 1 }} />
-                      <Typography sx={{ fontSize: "15px" }}>
+                      <Typography sx={{ fontSize: "16px", marginRight:"5px", fontFamily:"Poppins" }}>
                         Location:{" "}
                       </Typography>
-                      <Typography sx={{ fontWeight: "bold" }}>
+                      <Typography sx={{  fontSize:"16px", fontFamily:"Poppins" }}>
                         {schedule.postalCode}
                       </Typography>
                     </Box>
 
                     <Box
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      color="text.secondary"
+                      
                     >
-                      <Rating value={averageRating} readOnly />
+                      <Rating precision={0.1} value={averageRating} readOnly />
                       <Typography sx={{ ml: 1, mt: 0.5, fontSize: "1.1rem" }}>
                         ({averageRating})
                       </Typography>
@@ -220,11 +225,11 @@ function Schedules() {
                     <Box sx={{ mt: 6 }}></Box>
                     <Box
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      color="text.secondary"
+                      
                     >
-                      <Typography>From $</Typography>
-                      <Typography sx={{ fontWeight: "bold", fontSize: "25px" }}>
-                        {schedule.price}
+                      <Typography sx={{marginTop:"5px", marginRight:"5px", fontFamily:"Poppins"}}>From </Typography>
+                      <Typography sx={{ fontWeight: "bold", fontSize: "25px", fontFamily:"Poppins" }}>
+                        ${schedule.price}
                       </Typography>
                     </Box>
 
@@ -235,14 +240,14 @@ function Schedules() {
                         right: 0,
                         border: "1px solid #f5f5f5",
                         backgroundColor: "#f5f5f5",
-                        color: "#999798",
+                        color: "#999898",
                         padding: "8px",
                         borderRadius: 2,
                         margin: 3,
                         fontSize: "5px",
                       }}
                     >
-                      <Typography>{schedule.eventType}</Typography>
+                      <Typography sx={{fontFamily:"Poppins", color:"grey"}}>{schedule.eventType}</Typography>
                     </Box>
                   </CardContent>
                 </Card>

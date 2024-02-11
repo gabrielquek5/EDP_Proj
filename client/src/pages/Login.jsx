@@ -48,23 +48,25 @@ function Login() {
   });
   return (
     <Box
-      component="Box"
-      sx={{
-        marginTop: 8,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        border: "1px solid #FFA500",
-        borderRadius: "16px",
-        padding: "5px",
-        width: "50%",
-        height: "50%",
-        marginLeft: "25%",
-        minHeight: "50vh",
-      }}
-    >
-      <Typography variant="h5" sx={{ my: 2, fontFamily: "cursive" }}>
+    component="Box"
+    sx={{
+      marginTop: 8,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+
+      borderRadius: '16px',
+      padding: '16px',
+      width: '50%',
+      height: '50%',
+      marginLeft: '25%',
+      minHeight: '50vh',
+      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+      
+    }}
+  >
+      <Typography variant="h4" sx={{ my: 2, fontFamily: "Poppins" }}>
         Login
       </Typography>
       <Box
@@ -101,9 +103,9 @@ function Login() {
           variant="contained"
           sx={{
             mt: 2,
-            borderRadius: "12px",
-            backgroundColor: "#FFA500",
-            fontFamily: "cursive",
+            borderRadius: "8px",
+            backgroundColor: '#FFAC07A',
+            fontFamily: "poppins",
           }}
           type="submit"
         >
