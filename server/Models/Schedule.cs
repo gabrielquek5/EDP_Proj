@@ -19,8 +19,8 @@ namespace WebApplication1.Models
         [Required, Column(TypeName = "date")]
         public DateTime SelectedDate { get; set; }
 
-        [Required, Column(TypeName = "datetime")]
-        public DateTime SelectedTime { get; set; }
+        [Required, Column(TypeName = "time")]
+        public TimeSpan SelectedTime { get; set; }
 
         [Required, MinLength(6), MaxLength(6)]
         public string PostalCode { get; set; } = string.Empty;

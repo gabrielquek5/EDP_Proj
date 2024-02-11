@@ -285,8 +285,6 @@ namespace WebApplication1.Controllers
                 mySchedule.SelectedTime = schedule.SelectedTime;
             }
             
-            //mySchedule.SelectedDate = schedule.SelectedDate;
-            //mySchedule.SelectedTime = schedule.SelectedTime;
             mySchedule.ImageFile = schedule.ImageFile;
             mySchedule.Price = schedule.Price;
             mySchedule.RequestDelete = false;
