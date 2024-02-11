@@ -21,7 +21,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import http from "../http";
 import UserContext from "../contexts/UserContext";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { useUserData } from "./Components/userData";
 
 function ShoppingCart() {
   const [cartItems, setCartItems] = useState([]);
@@ -30,50 +30,57 @@ function ShoppingCart() {
   const [message, setMessage] = useState("");
   const [rewardName, setRewardName] = useState(""); // State to store the applied reward name
   const [openDialog, setOpenDialog] = useState(false);
-
-  useEffect(() => {
-    fetchCartItems();
-    console.log(cartItems)
+  const { userData, setUserDataCookie } = useUserData();
 
 
-    const query = new URLSearchParams(window.location.search);
-
-    if (query.get("success")) {
-      setMessage("Order placed! You will receive an email confirmation.");
-      setOpenDialog(true);
+  
+  useEffect(() => { 
+    setUserDataCookie(user)
+    if (userData && userData.id) {
+      console.log("User data found. Fetching cart items...");
+      fetchCartItems(userData.id);
+    } else {
+      console.log("User data not found. Skipping cart item fetching.");
     }
-
-    if (query.get("canceled")) {
-      setMessage(
-        "Order canceled -- continue to shop around and checkout when you're ready."
-      );
-    }
-  }, []);
-
+  }, [userData]);
+  
   const Message = ({ message }) => (
     <section>
       <p>{message}</p>
     </section>
   );
+  
 
 
-
-
-  const fetchCartItems = async () => {
+  const fetchCartItems = async (userId) => {
     try {
-      const id = user.id
-      const res = await http.get(`/shoppingcart/${id}`);
-      console.log("user",user) 
-      const filteredCart = res.data.filter(
-        (cart) => !cart.isDeleted
-      )
+      console.log("Fetching cart items for user ID:", userId); // Log the user ID
+      const res = await http.get(`/shoppingcart/${userId}`);
+      console.log("Response from shopping cart API:", res.data); // Log the response data
+      const filteredCart = res.data.filter((cart) => !cart.isDeleted);
+      console.log("Filtered cart items:", filteredCart); // Log the filtered cart items
       setCartItems(filteredCart);
-      console.log(filteredCart);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
   };
+
+  // const fetchCartItems = async () => {
+  //   try {
+  //     const id = userData.id;
+  //     console.log("userData",userData) 
+  //     const res = await http.get(`/shoppingcart/${id}`);
+  //     const filteredCart = res.data.filter(
+  //       (cart) => !cart.isDeleted
+  //     )
+  //     setCartItems(filteredCart);
+  //     console.log("filteredCart",filteredCart);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error("Error fetching cart items:", error);
+  //   }
+  // };
 
   const handleCheckout = async (cartArray) => {
     try {
@@ -99,10 +106,10 @@ function ShoppingCart() {
   };
   
 
-  const deleteCartItem = async (id) => {
+  const deleteCartItem = async (itemId,userId) => {
     try {
-      await http.delete(`/shoppingcart/${id}`);
-      fetchCartItems(); // Refresh cart items after deletion
+      await http.delete(`/shoppingcart/${itemId}`);
+      fetchCartItems(userId); // Refresh cart items after deletion
     } catch (error) {
       console.error("Error deleting item from cart:", error);
     }
@@ -159,7 +166,7 @@ function ShoppingCart() {
             Quantity: {cart.quantity}
           </Typography>
         </div>
-        <Box sx={{ border: "1px solid #808080", display: "inline-block" }} onClick={() => deleteCartItem(cart.itemID)}>
+        <Box sx={{ border: "1px solid #808080", display: "inline-block" }} onClick={() => deleteCartItem(cart.itemID, user.id)}>
   <IconButton color="error">
     <CloseIcon />
   </IconButton>

@@ -15,6 +15,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import {
   AccountCircle,
   AccessTime,
@@ -107,9 +108,10 @@ function IndividualSchedules() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          fontFamily:"Poppins"
         }}
       >
-        Your Schedules
+        My Schedules
       </Typography>
 
       <SearchComponent
@@ -134,6 +136,7 @@ function IndividualSchedules() {
                 textDecoration: "none",
                 background: "#fddc02",
                 color: "black",
+                fontFamily:"Poppins",
                 bgcolor: "#fddc02",
                 "&:hover": {
                   color: "#e8533f",
@@ -158,13 +161,13 @@ function IndividualSchedules() {
               if (schedule.isCompleted) {
                 if (schedule.requestDelete) {
                   return (
-                    <Typography color="error" sx={{ marginX: 1 }}>
+                    <Typography color="error" sx={{ marginX: 1, fontFamily:"Poppins", }}>
                       Completed | Waiting Deletion Approval
                     </Typography>
                   );
                 } else {
                   return (
-                    <Typography color="error" sx={{ marginX: 1 }}>
+                    <Typography color="error" sx={{ marginX: 1, fontFamily:"Poppins", }}>
                       Completed
                     </Typography>
                   );
@@ -172,13 +175,13 @@ function IndividualSchedules() {
               } else {
                 if (schedule.requestDelete) {
                   return (
-                    <Typography color="primary" sx={{ marginX: 1 }}>
+                    <Typography color="primary" sx={{ marginX: 1, fontFamily:"Poppins", }}>
                       Ongoing | Waiting Deletion Approval
                     </Typography>
                   );
                 } else {
                   return (
-                    <Typography color="primary" sx={{ marginX: 1 }}>
+                    <Typography color="primary" sx={{ marginX: 1, fontFamily:"Poppins", }}>
                       Ongoing
                     </Typography>
                   );
@@ -200,7 +203,7 @@ function IndividualSchedules() {
                   )}
                   <CardContent>
                     <Box sx={{ display: "flex", mb: 1 }}>
-                      <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6" sx={{ flexGrow: 1, fontFamily:"Poppins", }}>
                         {schedule.title}
                       </Typography>
                       {user &&
@@ -213,6 +216,7 @@ function IndividualSchedules() {
                                 textDecoration: "none",
                                 color: "#000000",
                                 bgcolor: "#fddc02",
+                                fontFamily:"Poppins",
                                 "&:hover": {
                                   color: "#e8533f",
                                   bgcolor: "#fddc02",
@@ -229,7 +233,7 @@ function IndividualSchedules() {
                             </Button>
                           </Link>
                         )}
-                      <Box sx={{ marginX: 1 }}></Box>
+                      <Box sx={{ marginX: 1, fontFamily:"Poppins", }}></Box>
                       {user && user.id === schedule.userId && (
                         <Button
                           variant="contained"
@@ -237,6 +241,7 @@ function IndividualSchedules() {
                             textDecoration: "none",
                             color: "#ffffff",
                             bgcolor: "#ed7565",
+                            fontFamily:"Poppins",
                             "&:hover": {
                               color: "#ffffff",
                               bgcolor: "#ed7565",
@@ -257,19 +262,19 @@ function IndividualSchedules() {
                       )}
                     </Box>
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      sx={{ display: "flex", alignItems: "center", mb: 1, fontFamily:"Poppins", }}
                       color="text.secondary"
                     >
-                      <AccountCircle sx={{ mr: 1 }} />
-                      <Typography>{schedule.user?.firstName}</Typography>
+                      <AccountCircle sx={{ mr: 1, fontFamily:"Poppins", }} />
+                      <Typography sx={{fontFamily:"Poppins",}}>{schedule.user?.firstName}</Typography>
                     </Box>
                     <Box
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      sx={{ display: "flex", alignItems: "center", mb: 1, fontFamily:"Poppins", }}
                       color="text.secondary"
                     >
                       <DateRangeOutlined sx={{ mr: 1 }} />
-                      <Typography>Start Date: </Typography>
-                      <Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>Start Date: </Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>
                         {dayjs(schedule.selectedDate).format("DD MMMM YYYY")}
                       </Typography>
                     </Box>
@@ -278,8 +283,8 @@ function IndividualSchedules() {
                       color="text.secondary"
                     >
                       <AccessTime sx={{ mr: 1 }} />
-                      <Typography>Created Date: </Typography>
-                      <Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>Created Date: </Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>
                         {dayjs(schedule.createdAt).format(
                           global.datetimeFormat
                         )}
@@ -290,8 +295,8 @@ function IndividualSchedules() {
                       color="text.secondary"
                     >
                       <AccessTime sx={{ mr: 1 }} />
-                      <Typography>Updated Date: </Typography>
-                      <Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>Updated Date: </Typography>
+                      <Typography sx={{fontFamily:"Poppins",}}>
                         {dayjs(schedule.updatedAt).format(
                           global.datetimeFormat
                         )}
@@ -301,8 +306,8 @@ function IndividualSchedules() {
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       color="text.secondary"
                     >
-                      <AccessTime sx={{ mr: 1 }} />
-                      <Typography>Event Status: </Typography>
+                      <AutorenewIcon sx={{ mr: 1 }} />
+                      <Typography sx={{fontFamily:"Poppins",}}>Event Status: </Typography>
                       {eventStatus()}
                     </Box>
                   </CardContent>
@@ -313,9 +318,9 @@ function IndividualSchedules() {
       </Grid>
 
       <Dialog open={open} onClose={handleEndEventClose}>
-        <DialogTitle>Conclude Event</DialogTitle>
+        <DialogTitle sx={{fontFamily:"Poppins",}}>Conclude Event</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{fontFamily:"Poppins",}}>
             Are you sure you want to end this event?
           </DialogContentText>
         </DialogContent>
@@ -324,6 +329,7 @@ function IndividualSchedules() {
             variant="contained"
             color="inherit"
             onClick={handleEndEventClose}
+            sx={{fontFamily:"Poppins",}}
           >
             Cancel
           </Button>
@@ -331,6 +337,7 @@ function IndividualSchedules() {
             variant="contained"
             color="error"
             onClick={() => endEvent(endEventId)}
+            sx={{fontFamily:"Poppins",}}
           >
             End Event
           </Button>

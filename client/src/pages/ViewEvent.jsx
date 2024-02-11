@@ -140,11 +140,11 @@ function ViewEvent() {
     validationSchema: yup.object({
       Quantity: yup.number().required("Quantity is required"),
       cartSelectedDate: yup.date()
-        //.min(dayjs(schedule.selectedDate).date(), `Date cannot be before ${dayjs(schedule.selectedDate).format("DD MMMM YYYY")}`)
+        
         .required("Date is required"),
 
       cartSelectedTime: yup.date()
-        // .min(dayjs(schedule.selectedTime).start, `Time cannot be before ${dayjs(schedule.selectedTime).format("h:mm A")}`)
+        
         .required("Time is required"),
     }),
 
@@ -164,7 +164,7 @@ function ViewEvent() {
           console.log("data",data)
       http.post(`/shoppingcart/${id}`, data)
         .then((res) => {
-          console.log(res.data);
+          console.log("Item added to cart",res.data.userId);
           alert("Successfully added to cart.");
         })
         .catch((error) => {
