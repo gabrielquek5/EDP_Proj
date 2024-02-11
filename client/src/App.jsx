@@ -57,6 +57,7 @@ import AdminPanel from "./pages/AdminPanel";
 import uplayLogo from "./assets/logo_uplay.png";
 import NotFound from "./pages/NotFound";
 import Footer from "./pages/Footer";
+import { useUserData } from "../src/pages/Components/userData";
 
 function App() {
   const logout = () => {
@@ -69,6 +70,7 @@ function App() {
   const [dropMenuScheduling, setdropMenuScheduling] = useState(null);
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
+  const { userData, setUserDataCookie } = useUserData();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -78,32 +80,30 @@ function App() {
         .then((res) => {
           setUser(res.data.user);
           setLoading(false);
+          // Move the call to fetchCartItems here
+          setUserDataCookie(res.data.user);
+          fetchCartItems(res.data.user.id);
         })
         .catch((error) => {
           console.error("Authentication failed:", error);
           setLoading(false);
         });
-        fetchCartItems();
     } else {
       setLoading(false);
     }
   }, []);
-
-  const fetchCartItems = async () => {
+  
+  const fetchCartItems = async (userId) => {
     try {
-      const id = user.id
-      const res = await http.get(`/shoppingcart/${id}`);
-      console.log("user",user) 
-      const filteredCart = res.data.filter(
-        (cart) => !cart.isDeleted
-      )
+      const res = await http.get(`/shoppingcart/${userId}`);
+      const filteredCart = res.data.filter((cart) => !cart.isDeleted);
       setCartItems(filteredCart);
-      console.log(filteredCart);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
   };
+  
 
   const handleMenuOpen = (event) => {
     setdropMenu(event.currentTarget);
@@ -351,7 +351,7 @@ function App() {
                   />
                   <Route path={"/schedules"} element={<Schedules />} />
                   <Route path={"/adminschedules"} />
-                  <Route path={"/viewevent/:id"} element={<ViewEvent />} />
+                  <Route path={"/viewevent/:id"} element={<ViewEvent onItemAddedToCart={fetchCartItems} />} />
                   <Route path={"/rewards"} element={<Rewards />} />
                   <Route path={"/addreward"} element={<AddReward />} />
                   <Route path={"/editreward/:id"} element={<EditReward />} />

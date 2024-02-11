@@ -145,11 +145,11 @@ function AdminReviews() {
             <Container maxWidth="md" sx={{ mt: 4 }}>
                 <Box>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
-                        <Typography variant="h4" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
+                        <Typography variant="h5" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
                             REPORTED REVIEWS
                         </Typography>
                     </Box>
-                    <hr></hr>
+                    
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mt: 3 }}>
                         
                         <Box sx={{ flexGrow: 1 }} />
