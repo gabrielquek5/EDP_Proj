@@ -133,9 +133,9 @@ function Bookings() {
 
       {/* Tabs */}
       <Tabs value={currentTab} onChange={(e, newValue) => setCurrentTab(newValue)}>
-        <Tab label="Active Bookings" value="active" />
-        <Tab label="Completed Bookings" value="completed" />
-        <Tab label="Cancelled Bookings" value="cancelled" />
+        <Tab label="Active Bookings" value="active" fontFamily="Poppins" />
+        <Tab label="Completed Bookings" value="completed" fontFamily="Poppins" />
+        <Tab label="Cancelled Bookings" value="cancelled" fontFamily="Poppins" />
       </Tabs>
 
       {/* Search Box */}

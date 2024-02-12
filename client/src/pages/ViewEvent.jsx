@@ -40,6 +40,7 @@ function ViewEvent() {
   const [open, setOpen] = useState(false);
   const [dialogId, setDialogId] = useState(null);
   const navigate = useNavigate();
+  dayjs.extend(utc)
 
   const [schedule, setSchedule] = useState({
     title: "",
@@ -287,8 +288,8 @@ function ViewEvent() {
                 ) : (
                   <Grid container spacing={2}>
                     {reviews.map((review) => (
-                      <Grid item xs={12} key={review.reviewID}>
-                        <Card variant="outlined">
+                      <Grid item xs={8} key={review.reviewID}>
+                        <Card variant="outlined" sx={{ position: 'relative' }}>
                           <CardContent>
                             <Typography
                               sx={{ fontWeight: "bold", fontSize: "1.2rem" }}
@@ -301,14 +302,12 @@ function ViewEvent() {
                               value={review.rating}
                               readOnly
                             />
-                            <Typography>{review.comments}</Typography>
-                            <IconButton
-                              onClick={() => handleOpen(review.reviewID)}
-                            >
-                              {" "}
-                              {/* Open the dialog on icon click */}
-                              <FlagIcon />
+                            <Typography sx={{ overflowWrap: 'break-word' }}>{review.comments}</Typography>
+                            
+                            <IconButton onClick={() => handleOpen(review.reviewID)} sx={{ position: 'absolute', top: 0, right: 0 }}>
+                              <FlagIcon style={{ color: 'red' }} />
                             </IconButton>
+
                           </CardContent>
                         </Card>
                       </Grid>

@@ -33,6 +33,7 @@ function EditReview() {
             Rating: yup.number().required('Rating is required'),
             Comments: yup.string().trim()
                 .min(5, 'Review must be at least 5 characters long')
+                .matches(/^[a-zA-Z0-9\s.,!?]*$/, 'Review must only contain letters, numbers, and basic punctuation.')
                 .max(200, 'Review must be less than 200 characters long')
         }),
 

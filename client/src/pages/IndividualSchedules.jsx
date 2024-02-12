@@ -111,7 +111,7 @@ function IndividualSchedules() {
           fontFamily:"Poppins"
         }}
       >
-        My Schedules
+        My Events
       </Typography>
 
       <SearchComponent
@@ -241,18 +241,19 @@ function IndividualSchedules() {
                             textDecoration: "none",
                             color: "#ffffff",
                             bgcolor: "#ed7565",
-                            fontFamily:"Poppins",
+                            fontFamily: "Poppins",
                             "&:hover": {
-                              color: "#ffffff",
-                              bgcolor: "#ed7565",
-                              boxShadow: "none",
-                              fontWeight: "bold",
+                                color: "#ffffff",
+                                bgcolor: "#ed7565",
+                                boxShadow: "none",
+                                fontWeight: "bold",
                             },
                             boxShadow: "none",
                             borderRadius: 4,
                             fontWeight: "bold",
                             fontSize: "12px",
-                          }}
+                            height: "32px", // Adjust the height to your desired size
+                        }}
                           onClick={() =>
                             handleEndEventOpen(schedule.scheduleId)
                           }
