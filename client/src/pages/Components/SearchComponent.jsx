@@ -1,17 +1,23 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Input,
-  IconButton,
-} from "@mui/material";
-import {
-  Search,
-  Clear,
-} from "@mui/icons-material";
-function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearch, onClickClear,}) 
-{
+import React, { useState } from "react";
+import { Box, Input, IconButton } from "@mui/material";
+import { Search, Clear } from "@mui/icons-material";
+function SearchComponent({
+  search,
+  onSearchChange,
+  onSearchKeyDown,
+  onClickSearch,
+  onClickClear,
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleClickSearch = () => {
+    setExpanded(true);
+    onClickSearch();
+  };
+
+  const handleClear = () => {
+    onClickClear();
+  };
   return (
     <Box
       sx={{
@@ -20,13 +26,13 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
         alignItems: "center",
         mb: 2,
         border: "1px solid #e3e3e3",
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         borderRadius: 8,
-        width: "fit-content",
+        width: expanded ? "fit-content" : "10px",
         paddingX: "24px",
         paddingY: "10px",
         margin: "20px auto",
-        
+        transition: "width 1s ease",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
@@ -39,9 +45,9 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
         />
 
         <IconButton
-          onClick={onClickSearch}
+          onClick={handleClickSearch}
           sx={{
-            left: "5px",
+            left: expanded ? "5px" : "0px",
             border: "1px solid #e8533f",
             color: "#ffffff",
             padding: "6px",
@@ -56,20 +62,25 @@ function SearchComponent({ search, onSearchChange, onSearchKeyDown, onClickSearc
           <Search />
         </IconButton>
 
-        {/* <IconButton
-          color="primary"
-          onClick={onClickClear}
-          sx={{
-            left: "7px",
-            color: "black",
-            marginLeft: "10px",
-            border: "1px solid #ebebeb",
-            background: "#ebebeb",
-            padding: "5px",
-          }}
-        >
-          <Clear />
-        </IconButton> */}
+        {expanded && (
+          <IconButton
+            color="primary"
+            onClick={handleClear}
+            sx={{
+              left: "7px",
+              color: "black",
+              marginLeft: "10px",
+              border: "1px solid #ebebeb",
+              background: "#ebebeb",
+              padding: "1px",
+              "& .MuiSvgIcon-root": {
+                fontSize: "18px",
+              },
+            }}
+          >
+            <Clear />
+          </IconButton>
+        )}
       </Box>
       <Box sx={{ flexGrow: 1 }} />
     </Box>
