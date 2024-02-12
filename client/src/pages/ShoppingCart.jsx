@@ -35,7 +35,6 @@ function ShoppingCart() {
 
   
   useEffect(() => { 
-    setUserDataCookie(user)
     if (userData && userData.id) {
       console.log("User data found. Fetching cart items...");
       fetchCartItems(userData.id);
