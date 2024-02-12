@@ -1,6 +1,6 @@
     import React, { useState, useEffect } from 'react';
     import { useNavigate, useParams } from 'react-router-dom';
-    import { Box, Typography, TextField, Button, Grid, Rating, IconButton, Card } from '@mui/material';
+    import { Box,FormHelperText, Typography, TextField, Button, Grid, Rating, IconButton, Card } from '@mui/material';
     import { useFormik } from 'formik';
     import * as yup from 'yup';
     import http from '../http';
@@ -34,6 +34,7 @@
                 Comments: yup.string().trim()
                     .min(5, 'Review must be at least 5 characters long')
                     .max(200, 'Review must be less than 200 characters long')
+                    .matches(/^[a-zA-Z0-9\s.,!?]*$/, 'Review must only contain letters, numbers, and basic punctuation.')
                     .required('Review is required'),
 
             }),
@@ -75,7 +76,7 @@
                             <img
                             alt="event_image"
                             src={`${import.meta.env.VITE_FILE_BASE_URL}${booking.imageFile}`}
-                            style={{ width: 'auto', height: 'auto' }}
+                            style={{ width: '200px', height: 'auto' }}
                             />
 
                         )}
@@ -85,10 +86,10 @@
                     </Grid>
                         
                     {/* Labels Group */}
-                    <Grid item xs={1.5} sx={{ textAlign: 'right' }}>
+                    <Grid item xs={1.5} sx={{ textAlign: 'right', }}>
                         <Box>
                         <Typography variant="h6" sx={{ mb: 1, fontFamily:"Poppins" }}>
-                            Rating
+                            Add Rating
                         </Typography>
                         <Typography variant="h6" sx={{ mb: 1, mt: 8, fontFamily:"Poppins" }}>
                             Comments
@@ -110,6 +111,11 @@
                             error={formik.touched.Rating && Boolean(formik.errors.Rating)}
                             helperText={formik.touched.Rating && formik.errors.Rating}
                         />
+                        {formik.touched.Rating && formik.errors.Rating && (
+    <FormHelperText error>
+        {formik.errors.Rating}
+    </FormHelperText>
+)}
                         <TextField
                             sx={{ mt: 8 ,fontFamily:"Poppins"}}
                             fullWidth

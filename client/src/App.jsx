@@ -177,7 +177,7 @@ function App() {
                           variant="text"
                           sx={{ textTransform: "none", fontSize: "15px",fontFamily:"Poppins", fontWeight:"bold", mr:5  }}
                         >
-                          Schedules
+                          Events and Bookings
                         </Button>
                         <Menu
                           anchorEl={dropMenuScheduling}
@@ -190,7 +190,7 @@ function App() {
                             to="/individualschedule"
                             onClick={handleSchedulingClose}
                           >
-                            My Schedules
+                            My Events
                           </MenuItem>
                           <MenuItem
                           sx={{fontFamily:"Poppins"}}
@@ -237,7 +237,7 @@ function App() {
                         <Link to="/shoppingcart">
                           <Button>
                             <MdOutlineShoppingCart size={24} />
-                            <span>{cartItems.length}</span>
+
                           </Button>
                         </Link>
                         <Button onClick={handleMenuOpen}>
