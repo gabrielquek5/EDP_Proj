@@ -97,8 +97,11 @@ function ViewNotifications() {
                                             {notification.description}
                                         </Typography>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-                                        {/* Extract only the date part */}
-                                        {dayjs(notification.endDate).format('DD-MM-YYYY')}
+                                            Start-Date: {dayjs(notification.startDate).format('DD-MM-YYYY')}
+                                        </Typography>
+                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                            {/* Extract only the date part */}
+                                            End-Date:  {dayjs(notification.endDate).format('DD-MM-YYYY')}
                                         </Typography>
                                     </CardContent>
                                 </Card>
