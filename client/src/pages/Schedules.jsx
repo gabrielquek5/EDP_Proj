@@ -137,7 +137,14 @@ function Schedules() {
           </Button>
         ))}
       </Box>
-
+            {scheduleList.length === 0 ? (
+    <Typography
+      variant="h6"
+      sx={{ textAlign: "center", fontFamily: "Poppins", mt: 4 }}
+    >
+      There are no events currently available.
+    </Typography>
+  ) : (
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
           const scheduleReviews = reviews.filter(
@@ -256,6 +263,7 @@ function Schedules() {
           );
         })}
       </Grid>
+    )}
     </Box>
   );
 }
