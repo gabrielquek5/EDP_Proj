@@ -57,6 +57,40 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetUserCart(int id)
+        {
+            try
+            {
+                var result = _context.ShoppingCarts
+                    .Include(s => s.Schedule)
+                    .Where(s => s.UserId == id && !s.Schedule.IsDeleted)
+                    .OrderByDescending(x => x.itemID)
+                    .Select(cart => new
+                    {
+                        cart.itemID,
+                        cart.Quantity,
+                        cart.CartSelectedDate,
+                        cart.CartSelectedTime,
+                        EventName = cart.Schedule.Title,
+                        EventPrice = cart.Schedule.Price,
+                        ScheduleId = cart.Schedule.ScheduleId,
+                        userId = cart.UserId,
+                        imageFile = cart.Schedule.ImageFile,
+                        IsDeleted = cart.Schedule.IsDeleted,
+                        // Include other properties you need
+                    })
+                    .ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
         [HttpPost("{id}")]
         public IActionResult AddToCart(int id,ShoppingCart shoppingCart)
         {

@@ -126,7 +126,6 @@ function ShoppingCart() {
   };
 
 
-
   return (
     <Container maxWidth="lg" sx={{ background: "#00000", minHeight: "100vh", paddingY: 4 }}>
       <Grid container spacing={4}>
@@ -182,7 +181,7 @@ function ShoppingCart() {
             </List>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={4} mt={2}>
           <Paper elevation={3} sx={{ padding: 3, background: "white" }}>
             <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
               TOTAL
@@ -202,10 +201,17 @@ function ShoppingCart() {
             <Typography variant="h6" sx={{ marginBottom: 2, mt: 3, fontFamily:"Poppins" }}>
               Total: ${calculateSubtotal()}
             </Typography>
-            
+            <Box
+                        sx={{
+                          mt: 3,
+                          display: "flex",
+                          justifyContent: "left",
+                        }}
+                      >
             <Button onClick={async() => handleCheckout(cartItems)} variant="contained" color="primary" fontFamily="Poppins">
             CHECKOUT
           </Button>
+          </Box>
           </Paper>
         </Grid>
       </Grid>

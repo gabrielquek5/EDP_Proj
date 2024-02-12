@@ -62,12 +62,34 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public IActionResult GetBooking(int id)
         {
-            Booking? booking = _context.Bookings.Find(id);
-            if (booking == null)
+            int userId = GetUserId();
+            var result = _context.Bookings
+            .Include(booking => booking.Schedule) // Include the Schedule related data
+            .Where(booking => booking.BookingID == id) // Filter by booking ID
+            .Select(booking => new
+            {
+                booking.BookingID,
+                booking.BookingDate,
+                booking.BookingTime,
+                booking.Pax,
+                booking.BookingTitle,
+                booking.IsCancelled,
+                EventTitle = booking.Schedule.Title,
+                ImageFile = booking.Schedule.ImageFile,
+                EventDesription = booking.Schedule.Description,
+                EventType = booking.Schedule.EventType,
+                IsCompleted = booking.Schedule.IsCompleted,
+                HasReview = booking.HasReview,
+                ScheduleId = booking.Schedule.ScheduleId,
+                userId = userId
+                // Include other properties you need
+            })
+            .ToList();
+            if (result == null)
             {
                 return NotFound();
             }
-            return Ok(booking);
+            return Ok(result);
         }
 
         [HttpPost("{id}")]
