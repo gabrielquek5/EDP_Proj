@@ -26,5 +26,8 @@ namespace WebApplication1.Models
 
         [Column(TypeName = "datetime")]
         public DateTime UpdatedAt { get; set; }
+
+        [MaxLength(20)]
+        public string? ImageFile { get; set; }
     }
 }
