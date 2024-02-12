@@ -17,6 +17,7 @@ function AddNotification() {
         initialValues: {
             name: "",
             description: "",
+            startDate: null,
             endDate: null,
         },
         validationSchema: yup.object({
@@ -28,6 +29,7 @@ function AddNotification() {
                 .min(3, 'Description must be at least 3 characters')
                 .max(500, 'Description must be at most 500 characters')
                 .required('Description is required'),
+            startDate: yup.date(),
             endDate: yup.date(),
                 
         }),
@@ -79,6 +81,27 @@ function AddNotification() {
                     error={formik.touched.description && Boolean(formik.errors.description)}
                     helperText={formik.touched.description && formik.errors.description}
                 />
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                        fullWidth
+                        margin="dense"
+                        label="StartDate"
+                        name="startDate"
+                        value={formik.values.startDate || null}
+                        onChange={(date) => formik.setFieldValue('startDate', date)}
+                        onBlur={() => formik.setFieldTouched('startDate', true)}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                variant="standard"
+                                margin="dense"
+                                helperText={formik.touched.startDate && formik.errors.startDate}
+                                fullWidth
+                                value={formatDate(formik.values.startDate)}
+                            />
+                        )}
+                    />
+                </LocalizationProvider>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                         fullWidth
