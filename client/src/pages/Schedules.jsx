@@ -210,11 +210,11 @@ function Schedules() {
                     <Box
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                       
-                    >
-                      <Rating precision={0.1} value={averageRating} readOnly />
-                      <Typography sx={{ ml: 1, mt: 0.5, fontSize: "1.1rem" }}>
-                        ({averageRating})
-                      </Typography>
+                    ><Typography sx={{ mr: 1, mt: 0.5, fontSize: "1.2rem", color:"grey" }}>
+                    {averageRating}
+                  </Typography>
+                      <Rating precision={0.1} value={averageRating} readOnly size="medium" />
+                      
                     </Box>
                     <Box>
                       <Typography sx={{ fontWeight: "bold" }}>
