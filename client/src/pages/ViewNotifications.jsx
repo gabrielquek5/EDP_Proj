@@ -55,7 +55,7 @@ function ViewNotifications() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
+            <Typography variant="h5" sx={{ my: 2 , display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100px'}}>
                 Notifications
             </Typography>
 
@@ -80,6 +80,15 @@ function ViewNotifications() {
                         return (
                             <Grid item xs={12} md={6} lg={4} key={notification.id}>
                                 <Card>
+                                     {
+                                        notification.imageFile && (
+                                            <Box className="aspect-ratio-container">
+                                                <img alt="notification"
+                                        src={`${import.meta.env.VITE_FILE_BASE_URL}${notification.imageFile}`}>
+                                                </img>
+                                            </Box>
+                                        )
+                                    }
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
                                             <Typography variant="h6" sx={{ flexGrow: 1 }}>

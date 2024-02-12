@@ -49,6 +49,7 @@ namespace WebApplication1.Controllers
                     EndDate = notification.EndDate,
                     CreatedAt = now,
                     UpdatedAt = now,
+                    ImageFile = notification.ImageFile,
                 };
                 _context.Notifications.Add(adminNotification);
                 _context.SaveChanges();
@@ -98,6 +99,7 @@ namespace WebApplication1.Controllers
                 adminNotification.StartDate = notification.StartDate;
                 adminNotification.EndDate = notification.EndDate;
                 adminNotification.UpdatedAt = DateTime.Now;
+                adminNotification.ImageFile = notification.ImageFile;
                 _context.SaveChanges();
                 return Ok();
             }
