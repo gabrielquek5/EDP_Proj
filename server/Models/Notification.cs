@@ -15,6 +15,10 @@ namespace WebApplication1.Models
 
         [DataType(DataType.Date)]
         [Column(TypeName = "date")]
+        public DateTime? StartDate { get; set; }
+
+        [DataType(DataType.Date)]
+        [Column(TypeName = "date")]
         public DateTime? EndDate { get; set; }
 
         [Column(TypeName = "datetime")]

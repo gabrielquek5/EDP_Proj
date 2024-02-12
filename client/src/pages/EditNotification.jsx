@@ -16,6 +16,7 @@ function EditNotification() {
     const [notification, setNotification] = useState({
         notificationtitle: "",
         description: "",
+        startDate: new Date(),
         endDate: new Date()
     });
     const [loading, setLoading] = useState(true);
@@ -23,6 +24,7 @@ function EditNotification() {
     useEffect(() => {
         http.get(`/notification/${id}`).then((res) => {
             // Ensure endDate is a Date object
+            res.data.startDate = new Date(res.data.startDate);
             res.data.endDate = new Date(res.data.endDate);
 
             setNotification(res.data);
@@ -42,6 +44,7 @@ function EditNotification() {
                 .min(3, 'Description must be at least 3 characters')
                 .max(500, 'Description must be at most 500 characters')
                 .required('Description is required'),
+            startDate: yup.date(),
             endDate:  yup.date(),
                 
         }),
@@ -112,6 +115,27 @@ function EditNotification() {
                             error={formik.touched.description && Boolean(formik.errors.description)}
                             helperText={formik.touched.description && formik.errors.description}
                         />
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                                fullWidth
+                                margin="dense"
+                                label="StartDate"
+                                name="startDate"
+                                value={formik.values.startDate || null}
+                                onChange={(date) => formik.setFieldValue('startDate', date)}
+                                onBlur={() => formik.setFieldTouched('startDate', true)}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="standard"
+                                        margin="dense"
+                                        helperText={formik.touched.startDate && formik.errors.startDate}
+                                        fullWidth
+                                        value={formatDate(formik.values.startDate)}
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                                 fullWidth

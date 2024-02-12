@@ -45,6 +45,7 @@ namespace WebApplication1.Controllers
                 {
                     Name = notification.Name,
                     Description = notification.Description.Trim(),
+                    StartDate = notification.StartDate,
                     EndDate = notification.EndDate,
                     CreatedAt = now,
                     UpdatedAt = now,
@@ -94,7 +95,7 @@ namespace WebApplication1.Controllers
                 }
                 adminNotification.Name = notification.Name.Trim();
                 adminNotification.Description = notification.Description.Trim();
-
+                adminNotification.StartDate = notification.StartDate;
                 adminNotification.EndDate = notification.EndDate;
                 adminNotification.UpdatedAt = DateTime.Now;
                 _context.SaveChanges();
