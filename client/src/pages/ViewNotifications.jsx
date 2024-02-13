@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Input, IconButton, FormControl, RadioGroup, FormControlLabel, Radio, Button } from '@mui/material';
 import { AccessTime, Search, Clear, Edit } from '@mui/icons-material';
 import http from '../http';
 import dayjs from 'dayjs';
@@ -10,8 +10,20 @@ function ViewNotifications() {
     const [notificationList, setNotificationList] = useState([]);
     const [search, setSearch] = useState('');
 
+    // Notification opt-in / out
+    const [notificationPreference, setNotificationPreference] = useState('');
+
     const onSearchChange = (e) => {
         setSearch(e.target.value);
+    };
+
+    // Notification opt-in / out
+    const handlePreferenceChange = (event) => {
+        setNotificationPreference(event.target.value);
+    };
+    // Notification opt-in / out
+    const handleSubmit = () => {
+        console.log('Notification preference:', notificationPreference);
     };
 
     const getNotifications = () => {
@@ -55,9 +67,42 @@ function ViewNotifications() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 , display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100px'}}>
+            <Typography variant="h5" sx={{my: 2, display: 'flex', flexDirection: "column", alignItems: "center"}}>
                 Notifications
             </Typography>
+            <Card
+                sx={{
+                    textAlign: 'center',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    maxWidth: '500px',
+                    margin: 'auto',
+                }}
+            >
+                <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                    Do you want to receive notifications via email?
+                </Typography>
+                <FormControl component="fieldset">
+                    <RadioGroup
+                        aria-label="notificationPreference"
+                        name="notificationPreference"
+                        value={notificationPreference}
+                        onChange={handlePreferenceChange}
+                    >
+                        <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                        <FormControlLabel value="no" control={<Radio />} label="No" />
+                    </RadioGroup>
+                </FormControl>
+                <Box sx={{ marginTop: 2 , marginBottom: 2}}>
+                    <Button variant="contained" onClick={handleSubmit} sx={{bgcolor: "#fddc02", 
+                                color: "black", 
+                                "&:hover": {
+                                    color: "#e8533f",
+                                    bgcolor: "#fddc02", 
+                                }}}>Submit</Button>
+                </Box>
+            </Card>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Input value={search} placeholder="Search"
@@ -91,7 +136,7 @@ function ViewNotifications() {
                                     }
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
-                                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                                            <Typography variant="h6" sx={{ flexGrow: 1 , fontWeight: 'bold' }}>
                                                 {notification.name}
                                             </Typography>
                                         </Box>
