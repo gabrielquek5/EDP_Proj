@@ -12,7 +12,8 @@ import {
     DialogActions,
     Button,
     Checkbox,
-    Input
+    Input,
+    Rating
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Search, Clear } from '@mui/icons-material';
@@ -37,6 +38,7 @@ function AdminReviews() {
     const getAdminReviews = () => {
         http.get('/AdminReviews/reported').then((res) => {
             setAdminReviewsList(res.data);
+            console.log(adminreviewsList)
         });
     };
 
@@ -183,8 +185,8 @@ function AdminReviews() {
                                 <Box sx={{ border: '1px solid #ccc', padding: '10px', borderRadius: '5px', display: 'flex', justifyContent: 'space-between' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <div>
-                                            <Typography variant="h6">{review.eventName}</Typography>
-                                            <Typography variant="body1">Rating: {review.rating}</Typography>
+                                            <Typography variant="h6">{review.eventTitle}</Typography>
+                                            <Rating precision={0.1} value={review.rating} readOnly size="medium" />
                                             <Typography variant="body2">{review.description}</Typography>
                                             <Typography variant="body2">{review.comments}</Typography>
                                         </div>    
