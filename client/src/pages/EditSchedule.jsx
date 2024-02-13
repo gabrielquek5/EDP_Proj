@@ -259,9 +259,10 @@ function EditSchedule() {
           Edit Schedule
         </Typography>
         {!loading && (
-          <Box component="form" onSubmit={formik.handleSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6} lg={8}>
+          <Box component="form" onSubmit={formik.handleSubmit}  sx={{ m: 5, alignItems: "center" }}>
+            <Grid container spacing={2} direction="column"   alignItems="center"
+  justifyContent="center">
+              <Grid item xs={12} md={6} lg={8} alignItems={"center"}>
                 <TextField
                   fullWidth
                   margin="dense"
@@ -395,51 +396,57 @@ function EditSchedule() {
                     </Select>
                   </Box>
                 )}
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
                 <Box sx={{ textAlign: "center", mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    component="label"
-                    sx={{
-                      variant: "contained",
-                      textDecoration: "none",
-                      color: "black",
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{
+                    variant: "contained",
+                    textDecoration: "none",
+                    color: "white",
+                    bgcolor: "#e81515",
+                    "&:hover": {
+                      color: "#ffffff",
                       bgcolor: "#e81515",
-                      "&:hover": {
-                        color: "#ffffff",
-                        bgcolor: "#e81515",
-                      },
-                      boxShadow: "none",
-                      borderRadius: 4,
-                      fontWeight: "bold",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      paddingX: "50px",
-                      paddingY: "10px",
-                    }}
-                  >
-                    Upload Image
-                    <input
-                      hidden
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={onFileChange}
+                    },
+                    boxShadow: "none",
+                    borderRadius: 4,
+                    fontWeight: "bold",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    paddingX: "50px",
+                    paddingY: "10px",
+                  }}
+                >
+                  Add Event Image (required)
+                  <input
+                    hidden
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={onFileChange}
+                  />
+                </Button>
+                {!imageFile && (
+                  <Typography color="error" sx={{ mt: 1 }}>
+                    Image is required
+                  </Typography>
+                )}
+                {imageFile && (
+                  <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
+                    <img
+                      alt="uploaded-schedule"
+                      src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}
+                      style={{
+                        width: "auto",
+                        height: "200px",
+                        objectFit: "cover",
+                      }}
                     />
-                  </Button>
-                  {imageFile && (
-                    <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                      <img
-                        alt="tutorial"
-                        src={`${
-                          import.meta.env.VITE_FILE_BASE_URL
-                        }${imageFile}`}
-                      ></img>
-                    </Box>
-                  )}
-                </Box>
+                  </Box>
+                )}
+              </Box>  
               </Grid>
             </Grid>
             <Box

@@ -398,59 +398,6 @@ function AddSchedule() {
                 )}
               </Box>
             </Grid>
-            {/* <Grid item xs={12} md={6} lg={4}>
-              <Box sx={{ textAlign: "center", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  component="label"
-                  sx={{
-                    variant: "contained",
-                    textDecoration: "none",
-                    color: "white",
-                    bgcolor: "#e81515",
-                    "&:hover": {
-                      color: "#ffffff",
-                      bgcolor: "#e81515",
-                    },
-                    boxShadow: "none",
-                    borderRadius: 4,
-                    fontWeight: "bold",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    paddingX: "50px",
-                    paddingY: "10px",
-                  }}
-                >
-                  Add Event Image (required)
-                  <input
-                    hidden
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={onFileChange}
-                  />
-                </Button>
-                {!imageFile && (
-                  <Typography color="error" sx={{ mt: 1 }}>
-                    Image is required
-                  </Typography>
-                )}
-                {imageFile && (
-                  <Box className="aspect-ratio-container" sx={{ mt: 2 }}>
-                    <img
-                      alt="uploaded-schedule"
-                      src={`${import.meta.env.VITE_FILE_BASE_URL}${imageFile}`}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </Grid> */}
           </Grid>
           <Box
             sx={{
