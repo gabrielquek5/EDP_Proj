@@ -62,14 +62,28 @@ function Reviews() {
         <Container maxWidth="md" sx={{ mt: 4 }}>
           <Box>
             <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Typography variant="h5" sx={{ my: 2, fontFamily: 'poppins', textAlign: 'center', flexGrow: 1 }}>
+              <Typography variant="h4" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
                 MY REVIEWS
               </Typography>
 
               
             </Box>
             
-
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, mt:3 }}>
+              <Input
+                placeholder="Search"
+                onChange={onSearchChange}
+                onKeyDown={onSearchKeyDown}
+                value={search}
+              />
+              <IconButton color="primary" onClick={onClickSearch}>
+                <Search />
+              </IconButton>
+              <IconButton color="primary" onClick={onClickClear}>
+                <Clear />
+              </IconButton>
+              <Box sx={{ flexGrow: 1 }} />
+            </Box>
     
             <Grid container spacing={2}>
               {ReviewsList.map((Reviews) => (
