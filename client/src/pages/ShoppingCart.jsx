@@ -124,18 +124,19 @@ function ShoppingCart({ rewardCode }) { // Receive rewardCode as a prop
   };
 
   const applyCouponCode = () => {
-    if (couponCode === rewardList[0].code) { // Check if the entered coupon code matches reward code
-      setRewardName(` ${couponCode}`);
-      setErrorMessage("");
-      // Calculate the total amount after applying the coupon
-      const subtotal = calculateSubtotal();
-      const discount = 10 ; // calculate the discount based on the coupon code
-      const totalWithCoupon = subtotal - (subtotal / discount)
-      setTotalCoupon(totalWithCoupon.toFixed(2)); // Set the totalCoupon state
+    const appliedCoupon = rewardList.find(reward => reward.code === couponCode);
+    if (appliedCoupon) { // Check if the entered coupon code matches any reward code
+        setRewardName(` ${couponCode}`);
+        setErrorMessage("");
+        // Calculate the total amount after applying the coupon
+        const subtotal = calculateSubtotal();
+        const discount = 10 ; // Assuming the discount is 10%
+        const totalWithCoupon = subtotal - (subtotal * (discount / 100)); // Apply discount
+        setTotalCoupon(totalWithCoupon.toFixed(2)); // Set the totalCoupon state
     } else {
-      setErrorMessage("Invalid coupon code");
+        setErrorMessage("Invalid coupon code");
     }
-  };
+};
 
   return (
     <Container maxWidth="lg" sx={{ background: "#00000", minHeight: "100vh", paddingY: 4 }}>
