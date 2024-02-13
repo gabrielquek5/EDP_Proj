@@ -88,12 +88,12 @@ function AddNotification() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100px' }}>
+            <Typography variant="h5" sx={{ my: 2, display: 'flex', flexDirection: "column", alignItems: "center" }}>
                 Add Notification
             </Typography>
-            <Box component="form" onSubmit={formik.handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={6} lg={8}>
+            <Box component="form" onSubmit={formik.handleSubmit} sx={{ m: 5, alignItems: "center" }}>
+                <Grid container spacing={2} >
+                    <Grid item xs={12} md={6} lg={8} alignItems="center"  >
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
                             label="Name"
@@ -103,6 +103,7 @@ function AddNotification() {
                             onBlur={formik.handleBlur}
                             error={formik.touched.name && Boolean(formik.errors.name)}
                             helperText={formik.touched.name && formik.errors.name}
+                            
                         />
                         <TextField
                             fullWidth margin="dense" autoComplete="off"
@@ -160,7 +161,14 @@ function AddNotification() {
                     </Grid>
                     <Grid item xs={12} md={6} lg={4}>
                         <Box sx={{ textAlign: 'center', mt: 2 }} >
-                            <Button variant="contained" component="label">
+                            <Button variant="contained" component="label" sx={{ 
+                                bgcolor: "#FFA500", 
+                                color: "white", 
+                                "&:hover": {
+                                    color: "#e8533f",
+                                    bgcolor: "#fddc02", 
+                                }
+                            }}>
                                 Upload Image
                                 <input hidden accept="image/*" multiple type="file"
                                  onChange={onFileChange} />
@@ -178,7 +186,16 @@ function AddNotification() {
                     </Grid>
                 </Grid>
                 <Box sx={{ mt: 2 }}>
-                    <Button variant="contained" type="submit">
+                    <Button variant="contained" type="submit"
+                    sx={{
+                        bgcolor: "#fddc02", 
+                        color: "black", 
+                        "&:hover": {
+                            //bgcolor: "#e8533f",
+                            color: "#e8533f",
+                            bgcolor: "#fddc02", 
+                        }
+                    }}>
                         Add
                     </Button>
                 </Box>

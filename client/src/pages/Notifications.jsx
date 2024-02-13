@@ -51,7 +51,7 @@ function Notifications() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100px' }}>
+            <Typography variant="h5" sx={{ my: 2, display: 'flex', flexDirection: "column", alignItems: "center"}}>
                 Notifications
             </Typography>
 
@@ -69,7 +69,15 @@ function Notifications() {
                 </IconButton>
                 <Box sx={{ flexGrow: 1 }} />
                 <Link to="/addnotification" style={{ textDecoration: 'none' }}>
-                    <Button variant='contained'>
+                    <Button variant='contained'component="label" sx={{ 
+                                bgcolor: "#fddc02", 
+                                color: "black", 
+                                "&:hover": {
+                                    color: "#e8533f",
+                                    bgcolor: "#fddc02", 
+                                }
+                            }}
+                    >
                         Add
                     </Button>
                 </Link>
@@ -92,7 +100,7 @@ function Notifications() {
                                     }
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
-                                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                                            <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold'  }}>
                                                 {notification.name}
                                             </Typography>
                                             <Link to={`/editnotification/${notification.id}`}>

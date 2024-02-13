@@ -123,12 +123,12 @@ function EditNotification() {
     return (
         <div>
              <Box>
-                <Typography variant="h5" sx={{ my: 2 , display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100px'}}>
+                <Typography variant="h5" sx={{ my: 2, display: 'flex', flexDirection: "column", alignItems: "center"}}>
                     Edit Notification
                 </Typography>
                 {
                     !loading && (
-                        <Box component="form" onSubmit={formik.handleSubmit}>
+                        <Box component="form" onSubmit={formik.handleSubmit} sx={{ m: 5, alignItems: "center" }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={6} lg={8}>
                                     <TextField
@@ -197,7 +197,15 @@ function EditNotification() {
                                 </Grid>
                                 <Grid item xs={12} md={6} lg={4}>
                                     <Box sx={{ textAlign: 'center', mt: 2 }}>
-                                        <Button variant="contained" component="label">
+                                        <Button variant="contained" component="label" sx={{ 
+                                            bgcolor: "#FFA500", 
+                                            color: "white", 
+                                            "&:hover": {
+                                                color: "#e8533f",
+                                                bgcolor: "#fddc02", 
+                                            }
+                                        }}
+                                    >
                                             Upload Image
                                             <input hidden accept="image/*" multiple type="file" onChange={onFileChange} />
                                         </Button>
@@ -212,7 +220,16 @@ function EditNotification() {
                                 </Grid>
                             </Grid>
                             <Box sx={{ mt: 2 }}>
-                                <Button variant="contained" type="submit">
+                                <Button variant="contained" type="submit" sx={{
+                                    bgcolor: "#fddc02", 
+                                    color: "black", 
+                                    "&:hover": {
+                                        //bgcolor: "#e8533f",
+                                        color: "#e8533f",
+                                        bgcolor: "#fddc02", 
+                                    }
+                                }}
+                            >
                                     Update
                                 </Button>
                                 <Button variant="contained" sx={{ ml: 2 }} color="error" onClick={handleOpen}>
