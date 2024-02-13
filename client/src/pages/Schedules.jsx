@@ -14,12 +14,14 @@ import http from "../http";
 import dayjs from "dayjs";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SearchComponent from "./Components/SearchComponent";
+import UserContext from "../contexts/UserContext";
 
 function Schedules() {
   const [scheduleList, setScheduleList] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedEventType, setSelectedEventType] = useState("");
   const [reviews, setReviews] = useState([]);
+  const { user } = useContext(UserContext);
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
@@ -138,12 +140,47 @@ function Schedules() {
         ))}
       </Box>
             {scheduleList.length === 0 ? (
+              <>
     <Typography
       variant="h6"
       sx={{ textAlign: "center", fontFamily: "Poppins", mt: 4 }}
     >
       There are no events currently available.
     </Typography>
+    <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
+  >
+    {user && (
+      <Link to="/addschedule" style={{ textDecoration: "none" }}>
+        <Button
+          variant="contained"
+          sx={{
+            textDecoration: "none",
+            background: "#fddc02",
+            color: "black",
+            mt:3,
+            fontFamily:"Poppins",
+            bgcolor: "#fddc02",
+            "&:hover": {
+              color: "#e8533f",
+              bgcolor: "#fddc02",
+            },
+            boxShadow: "none",
+            borderRadius: 1,
+            border:" 1px solid black",
+            fontWeight: "bold",
+          }}
+        >
+          Add New Event Here
+        </Button>
+      </Link>
+    )}
+  </Box>
+  </>
   ) : (
       <Grid container spacing={2}>
         {scheduleList.map((schedule, i) => {
