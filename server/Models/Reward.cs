@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using WebApplication1.Models;
 
 namespace WebApplication1.Models
 {
@@ -27,11 +26,8 @@ namespace WebApplication1.Models
 		[Column(TypeName = "datetime")]
 		public DateTime UpdatedAt { get; set; }
 
-		// Soft delete flag
-
 		public int UserId { get; set; }
 
 		public User? User { get; set; }
 	}
-
 }
