@@ -155,8 +155,7 @@ function ShoppingCart({ rewardCode }) { // Receive rewardCode as a prop
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <img
-                          height="150px"
-                          width="auto"
+                          style={{ maxHeight: '150px', maxWidth: '100%' }}
                           alt="event_image"
                           src={`${import.meta.env.VITE_FILE_BASE_URL}${cart.imageFile}`}
                         ></img>

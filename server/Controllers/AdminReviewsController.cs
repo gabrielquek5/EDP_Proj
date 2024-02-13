@@ -23,18 +23,40 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                IQueryable<Review> result = _context.Reviews.Where(r => r.Reported);
+                
 
+                var result = _context.Reviews
+                    .Include(s => s.Schedule)
+                    .Where(r => r.Reported)
+                    .Select(review => new
+                    {
+                        review.ReviewID,
+                        review.Rating,
+                        review.Comments,
+                        review.Picture,
+                        review.Reported,
+                        EventTitle = review.Schedule.Title,
+                        ScheduleId = review.Schedule.ScheduleId,
+                        
+                        username = review.User.FirstName,
+                        // Include other properties you need
+                    });
+
+                // Apply search filter if search parameter is provided
                 if (!string.IsNullOrEmpty(search))
                 {
-                    result = result.Where(r => r.Comments.Contains(search) || r.Rating.ToString().Contains(search));
+                    result = result.Where(x => x.Comments.Contains(search)
+                                            || x.Rating.ToString().Contains(search));
                 }
 
-                var reportedReviews = result.OrderByDescending(r => r.createdAt).ToList();
-                return Ok(reportedReviews);
+                // Execute the query and convert the result to a list
+                var resultList = result.ToList();
+
+                return Ok(resultList);
             }
             catch (Exception ex)
             {
+                // Log the exception or handle it appropriately
                 return StatusCode(500, "Internal Server Error");
             }
         }
