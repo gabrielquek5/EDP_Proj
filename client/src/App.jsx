@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined';
 import {
   BrowserRouter as Router,
   Routes,
@@ -48,6 +49,7 @@ import ViewEvent from "./pages/ViewEvent";
 import Rewards from "./pages/Rewards";
 import AddReward from "./pages/AddReward";
 import EditReward from "./pages/EditReward";
+import ViewRewards from './pages/ViewRewards';
 import Notifications from "./pages/Notifications";
 import AddNotification from "./pages/AddNotification";
 import EditNotification from "./pages/EditNotification";
@@ -67,6 +69,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [dropMenu, setdropMenu] = useState(null);
   const [dropMenuNoti, setdropMenuNoti] = useState(null);
+  const [dropMenuReward, setdropMenuReward] = useState(null); // Added state for reward menu
   const [dropMenuScheduling, setdropMenuScheduling] = useState(null);
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
@@ -121,6 +124,14 @@ function App() {
     setdropMenuNoti(null);
   };
 
+  const handleRewardOpen = (event) => {
+    setdropMenuReward(event.currentTarget);
+  };
+
+  const handleRewardClose = () => {
+    setdropMenuReward(null);
+  };
+
   const handleSchedulingOpen = (event) => {
     setdropMenuScheduling(event.currentTarget);
   };
@@ -142,7 +153,7 @@ function App() {
         <UserContext.Provider value={{ user, setUser }}>
           <Router>
             <ThemeProvider theme={MyTheme}>
-            <AppBar
+              <AppBar
                 position="static"
                 elevation={0}
                 sx={{
@@ -172,7 +183,6 @@ function App() {
                     {user && (
                       <>
                         <Button
-                        
                           onClick={handleSchedulingOpen}
                           variant="text"
                           sx={{ textTransform: "none", fontSize: "15px",fontFamily:"Poppins", fontWeight:"bold", mr:5  }}
@@ -219,7 +229,6 @@ function App() {
                             component={Link}
                             to="/viewnotifications"
                             onClick={handleNotiClose}
-
                             sx={{fontFamily:"Poppins"}}
                           >
                             View Notifications
@@ -231,6 +240,32 @@ function App() {
                             sx={{fontFamily:"Poppins"}}
                           >
                             Notifications
+                          </MenuItem>
+                        </Menu>
+
+                        <Button onClick={handleRewardOpen}>
+                          <CardGiftcardOutlinedIcon />
+                        </Button>
+                        <Menu
+                          anchorEl={dropMenuReward} 
+                          open={Boolean(dropMenuReward)}
+                          onClose={handleRewardClose}
+                        >
+                          <MenuItem
+                            component={Link}
+                            to="/viewrewards"
+                            onClick={handleRewardClose}
+                            sx={{fontFamily:"Poppins"}}
+                          >
+                            View Rewards
+                          </MenuItem>
+                          <MenuItem
+                            component={Link}
+                            to="/rewards"
+                            onClick={handleRewardClose}
+                            sx={{fontFamily:"Poppins"}}
+                          >
+                            Rewards
                           </MenuItem>
                         </Menu>
 
@@ -285,14 +320,7 @@ function App() {
                           >
                             My Reviews
                           </MenuItem>
-                          <MenuItem
-                            component={Link}
-                            to="/rewards"
-                            onClick={handleMenuClose}
-                            sx={{fontFamily:"Poppins"}}
-                          >
-                            My Rewards
-                          </MenuItem>
+  
                           <MenuItem sx={{fontFamily:"Poppins", color:"red"}} onClick={logout}>
                           Logout
                           </MenuItem>
@@ -355,11 +383,12 @@ function App() {
                   <Route path={"/rewards"} element={<Rewards />} />
                   <Route path={"/addreward"} element={<AddReward />} />
                   <Route path={"/editreward/:id"} element={<EditReward />} />
+                  <Route path={"/viewrewards"} element={<ViewRewards />} />
                   <Route path={"/notifications"} element={<Notifications />} />
                   <Route
                     path={"/addnotification"}
                     element={<AddNotification />}
-                  />
+                  />s
                   <Route
                     path={"/editnotification/:id"}
                     element={<EditNotification />}
