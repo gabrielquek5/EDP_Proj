@@ -5,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Security.Claims;
-using WebApplication1.Models;
-using WebApplication1;
+using Stripe;
 
 namespace WebApplication1.Controllers
 {
@@ -38,6 +37,7 @@ namespace WebApplication1.Controllers
 				t.Description,
 				t.Duration,  // Include Duration in the response
 				t.ImageFile,
+				t.Code,
 				t.CreatedAt,
 				t.UpdatedAt,
 				t.UserId,
@@ -66,6 +66,7 @@ namespace WebApplication1.Controllers
 				reward.Duration,  // Include Duration in the response
 				reward.ImageFile,
 				reward.CreatedAt,
+				reward.Code,
 				reward.UpdatedAt,
 				reward.UserId,
 				User = new
@@ -79,6 +80,27 @@ namespace WebApplication1.Controllers
 		[HttpPost, Authorize]
 		public IActionResult AddReward(Reward reward)
 		{
+			StripeConfiguration.ApiKey = "sk_test_51OPMIjE7dlDzSq3bdLinND1GsOB1umKYNwDgYOubmE9LyTupQQHt0cFKj5re4ucAl3E5PINgwPS74OJgWyxvaE3U00AYisjkJZ";
+
+			// Create a coupon
+			var couponOptions = new CouponCreateOptions
+			{
+				PercentOff = 10, // You can adjust this percentage as needed
+				Duration = "once", // Duration of the coupon
+								   // Add other coupon options as needed
+			};
+			var couponService = new CouponService();
+			var coupon = couponService.Create(couponOptions);
+			var Code = GenerateRedemptionCode();
+			// Create a promotion code
+			var codeOptions = new PromotionCodeCreateOptions
+			{
+				Coupon = coupon.Id, // Use the ID of the created coupon
+				Code = Code // Generate a redemption code
+			};
+			var codeService = new PromotionCodeService();
+			var code = codeService.Create(codeOptions);
+
 			int userId = GetUserId();
 			var now = DateTime.Now;
 			var myReward = new Reward()
@@ -89,7 +111,9 @@ namespace WebApplication1.Controllers
 				ImageFile = reward.ImageFile,
 				CreatedAt = now,
 				UpdatedAt = now,
-				UserId = userId
+				UserId = userId,
+				CouponId = coupon.Id,   // Store the coupon ID
+				Code = Code, // Store the code ID
 			};
 
 			_context.Rewards.Add(myReward);
@@ -141,6 +165,16 @@ namespace WebApplication1.Controllers
 			_context.Rewards.Remove(myReward);
 			_context.SaveChanges();
 			return Ok();
+		}
+
+		private string GenerateRedemptionCode()
+		{
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			var random = new Random();
+			var redemptionCode = new string(Enumerable.Repeat(chars, 6)
+			  .Select(s => s[random.Next(s.Length)]).ToArray());
+
+			return redemptionCode;
 		}
 
 		private int GetUserId()
