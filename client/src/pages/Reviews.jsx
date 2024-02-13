@@ -62,7 +62,7 @@ function Reviews() {
         <Container maxWidth="md" sx={{ mt: 4 }}>
           <Box>
             <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Typography variant="h4" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
+              <Typography variant="h5" sx={{ my: 2, fontFamily: ['poppins'], textAlign: 'center', flexGrow: 1 }}>
                 MY REVIEWS
               </Typography>
 
@@ -92,7 +92,7 @@ function Reviews() {
                     <CardContent>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box >
-                            <Typography variant="h6" sx={{mb:2 }}>{Reviews.eventTitle}</Typography>
+                            <Typography variant="body1" sx={{mb:2, fontSize:18 }}>{Reviews.eventTitle}</Typography>
                           <Rating defaultValue={Reviews.rating} precision={0.5} readOnly />
                           <Link to={`/editreview/${Reviews.reviewID}`}>
                             <IconButton color="primary" sx={{ padding: '4px', mb: 2}}>
@@ -110,7 +110,7 @@ function Reviews() {
                           </Box>
                         )}
                       </Box>
-                      <Typography variant="body4" sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>
+                      <Typography variant="body4" sx={{ whiteSpace: 'pre-wrap',fontSize:15 , overflowWrap: 'break-word' }}>
                         {Reviews.comments}
                       </Typography>
                     </CardContent>

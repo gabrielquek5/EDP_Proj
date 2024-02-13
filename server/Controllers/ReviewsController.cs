@@ -42,11 +42,12 @@ namespace WebApplication1.Controllers
                 }*/
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string? search)
         {
             try
             {
                 int userId = GetUserId();
+
                 var result = _context.Reviews
                     .Include(s => s.Schedule)
                     .Where(s => s.Schedule.IsDeleted == false)
@@ -61,10 +62,19 @@ namespace WebApplication1.Controllers
                         userId = userId,
                         username = review.User.FirstName,
                         // Include other properties you need
-                    })
-                    .ToList();
+                    });
 
-                return Ok(result);
+                // Apply search filter if search parameter is provided
+                if (!string.IsNullOrEmpty(search))
+                {
+                    result = result.Where(x => x.Comments.Contains(search)
+                                            || x.Rating.ToString().Contains(search));
+                }
+
+                // Execute the query and convert the result to a list
+                var resultList = result.ToList();
+
+                return Ok(resultList);
             }
             catch (Exception ex)
             {
@@ -72,6 +82,7 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetReview(int id)

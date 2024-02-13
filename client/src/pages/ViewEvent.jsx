@@ -421,7 +421,7 @@ function ViewEvent() {
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label="Quantity"
+                              label="Pax"
                               error={
                                 formik.touched.Quantity &&
                                 Boolean(formik.errors.Quantity)

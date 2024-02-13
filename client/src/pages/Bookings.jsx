@@ -127,35 +127,40 @@ function Bookings() {
   return (
     
     <Box>
-      <Typography variant="h5" sx={{ my: 2 }}>
+      <Typography variant="h5" sx={{
+          my: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          fontFamily:"Poppins"
+        }}>
         My Bookings
       </Typography>
 
       {/* Tabs */}
+      <Box sx={{
+          my: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          fontFamily:"Poppins"
+        }}>
       <Tabs value={currentTab} onChange={(e, newValue) => setCurrentTab(newValue)}>
         <Tab label="Active Bookings" value="active" fontFamily="Poppins" />
         <Tab label="Completed Bookings" value="completed" fontFamily="Poppins" />
         <Tab label="Cancelled Bookings" value="cancelled" fontFamily="Poppins" />
       </Tabs>
-
-      {/* Search Box */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 3 }}>
-        <Search />
-        <Input
-          value={search}
-          placeholder="Search"
-          onChange={onSearchChange}
-        />
-        <Clear onClick={() => setSearch("")} />
       </Box>
 
       {/* Bookings */}
       <Grid container spacing={2}>
         {filterBookings().length === 0 ? (
-          <Typography mt={5} fontFamily={'Poppins'} variant="body1">You currently do not have any {currentTab === "active" ? "active" : currentTab === "completed" ? "completed" : "cancelled"} bookings.</Typography>
+
+          <Typography mt={5} fontFamily='Poppins' textAlign="center" variant="body1">You currently do not have any {currentTab === "active" ? "active" : currentTab === "completed" ? "completed" : "cancelled"} bookings.</Typography>
+
         ) : (
           filterBookings().map((booking) => (
-            <Grid item xs={12} md={6} lg={4} key={booking.bookingID}>
+            <Grid item xs={12} md={6} lg={4} mt={5} key={booking.bookingID}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: "flex", mb: 1 }}>
