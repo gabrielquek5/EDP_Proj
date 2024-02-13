@@ -1,19 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
-import { AccountCircle, AccessTime, Search, Clear, Edit } from '@mui/icons-material';
+import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Button } from '@mui/material';
+import { AccountCircle, Search, Clear, Edit } from '@mui/icons-material';
 import http from '../http';
-import dayjs from 'dayjs';
 import UserContext from '../contexts/UserContext';
-import global from '../global';
 
 function Rewards() {
     const [rewardList, setRewardList] = useState([]);
     const [search, setSearch] = useState('');
     const { user } = useContext(UserContext);
-    const [open, setOpen] = useState(false);
-    const [selectedReward, setSelectedReward] = useState(null);
-    const [successMessage, setSuccessMessage] = useState("");
 
     const onSearchChange = (e) => {
         setSearch(e.target.value);
@@ -48,28 +43,6 @@ function Rewards() {
     const onClickClear = () => {
         setSearch('');
         getRewards();
-    };
-
-    const handleRedeem = (reward) => {
-        setSelectedReward(reward);
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-        setSelectedReward(null);
-        setSuccessMessage("");
-    };
-
-    const confirmRedeem = () => {
-        // Add logic for redeeming the reward
-        // You can call an API or perform any action here
-
-        // Display success message in Dialog
-        setSuccessMessage(`Congratulations! You have redeemed ${selectedReward.title} and been added to cart.`);
-
-        setOpen(false);
-        setSelectedReward(null);
     };
 
     return (
@@ -139,18 +112,12 @@ function Rewards() {
                                                 {reward.user?.name}
                                             </Typography>
                                         </Box>
-                                        {/* Remove date and time display */}
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                                             {reward.description}
                                         </Typography>
                                         <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                                             {reward.duration}
                                         </Typography>
-                                        <Box sx={{ mt: 2, textAlign: 'right' }}>
-                                            <Button variant="outlined" color="primary" sx={{ color: 'green' }} onClick={() => handleRedeem(reward)}>
-                                                Redeem
-                                            </Button>
-                                        </Box>
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -158,46 +125,6 @@ function Rewards() {
                     })
                 }
             </Grid>
-
-            {/* Redeem Confirmation Dialog */}
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>
-                    Confirm Redemption
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to redeem {selectedReward?.title}?
-                    </DialogContentText>
-                    <DialogContentText>
-                        The reward will expire after {selectedReward?.duration}.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="outlined" color="inherit" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="outlined" color="primary" onClick={confirmRedeem}>
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Success Dialog */}
-            <Dialog open={!!successMessage} onClose={() => setSuccessMessage("")}>
-                <DialogTitle>
-                    Redemption Successful
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {successMessage}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="outlined" color="primary" onClick={() => setSuccessMessage("")}>
-                        OK
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 }

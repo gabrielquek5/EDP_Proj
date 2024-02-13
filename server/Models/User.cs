@@ -20,30 +20,30 @@ namespace WebApplication1.Models
 
 		[MaxLength(50)]
 		public string Email { get; set; } = string.Empty;
-		
+
 		[MaxLength(8)]
 		public string PhoneNumber { get; set; } = string.Empty;
 
 		[MaxLength(100)]
 		public string Password { get; set; } = string.Empty;
-		[Column(TypeName ="datetime")]
+		[Column(TypeName = "datetime")]
 		public DateTime CreatedAt { get; set; }
-		[Column(TypeName ="datetime")]
+		[Column(TypeName = "datetime")]
 		public DateTime UpdatedAt { get; set; }
 
-        // Navigation property to represent the one-to-many relationship
+		// Navigation property to represent the one-to-many relationship
 
 		[JsonIgnore]
-		public List<ShoppingCart>? ShoppingCarts { get; set;}
-        [JsonIgnore]
-        public List<Booking>? Bookings { get; set; }
-        [JsonIgnore]
-        public List<Review>? Reviews { get; set; }
-        [JsonIgnore]
-        public List<Schedule>? Schedules { get; set; }
-        [JsonIgnore]
-        public List<Notification>? Notifications { get; set; }
-        [JsonIgnore]
+		public List<ShoppingCart>? ShoppingCarts { get; set; }
+		[JsonIgnore]
+		public List<Booking>? Bookings { get; set; }
+		[JsonIgnore]
+		public List<Review>? Reviews { get; set; }
+		[JsonIgnore]
+		public List<Schedule>? Schedules { get; set; }
+		[JsonIgnore]
+		public List<Notification>? Notifications { get; set; }
+		[JsonIgnore]
 		public List<Reward>? Rewards { get; set; }
-    }
+	}
 }
