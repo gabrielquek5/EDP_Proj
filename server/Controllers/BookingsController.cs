@@ -42,7 +42,7 @@ namespace WebApplication1.Controllers
                         IsCompleted = booking.Schedule.IsCompleted,
                         HasReview = booking.HasReview,
                         ScheduleId = booking.Schedule.ScheduleId,
-                        userId = userId
+                        userId = booking.UserId
                         // Include other properties you need
                     })
                     .ToList();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Box,
   Typography,
@@ -21,12 +21,14 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import http from "../http";
 import dayjs from "dayjs";
 import global from "../global";
+import UserContext from "../contexts/UserContext";
 
 function Bookings() {
   const [bookingsList, setBookingsList] = useState([]);
   const [activeBookings, setActiveBookings] = useState([]);
   const [completedBookings, setCompletedBookings] = useState([]);
   const [cancelledBookings, setCancelledBookings] = useState([]);
+  const { user } = useContext(UserContext);
   const [search, setSearch] = useState("");
   const [id, setId] = useState(null);
   const [open, setOpen] = useState(false);
@@ -46,11 +48,12 @@ function Bookings() {
     setOpen(false);
   };
 
+
   const getBookings = async () => {
     try {
       const res = await http.get("/bookings");
       const bookings = res.data;
-  
+      console.log("bookings",bookings)
       const activeBookingsFiltered = [];
       const completedBookingsFiltered = [];
       const cancelledBookingsFiltered = [];
@@ -91,6 +94,7 @@ function Bookings() {
     getBookings();
     console.log(bookingsList);
     console.log(completedBookings)
+      
   }, []);
 
   const cancelBooking = () => {
@@ -106,11 +110,19 @@ function Bookings() {
       });
   };
 
-  const filterBookings = (bookings) => {
-    if (currentTab === "active") return activeBookings;
-    if (currentTab === "completed") return completedBookings;
-    if (currentTab === "cancelled") return cancelledBookings;
-  };
+const filterBookings = (bookings) => {
+  let filteredBookings = [];
+  if (currentTab === "active") {
+    filteredBookings = activeBookings.filter(booking => booking.userId === user.id);
+  } else if (currentTab === "completed") {
+    filteredBookings = completedBookings.filter(booking => booking.userId === user.id);
+  } else if (currentTab === "cancelled") {
+    filteredBookings = cancelledBookings.filter(booking => booking.userId === user.id);
+  }
+  
+  return filteredBookings;
+
+};
 
   const handleReview = (bookingID, hasReview) => {
     console.log("View review for booking with ID:", bookingID);
@@ -154,12 +166,12 @@ function Bookings() {
 
       {/* Bookings */}
       <Grid container spacing={2}>
-        {filterBookings().length === 0 ? (
+        {filterBookings().filter((booking) => !user || user.id === booking.userId).length === 0 ? (
 
           <Typography mt={5} fontFamily='Poppins' textAlign="center" variant="body1">You currently do not have any {currentTab === "active" ? "active" : currentTab === "completed" ? "completed" : "cancelled"} bookings.</Typography>
 
         ) : (
-          filterBookings().map((booking) => (
+          filterBookings().filter((booking) => !user || user.id === booking.userId).map((booking, i) => (
             <Grid item xs={12} md={6} lg={4} mt={5} key={booking.bookingID}>
               <Card>
                 <CardContent>
@@ -192,7 +204,7 @@ function Bookings() {
                     color="text.primary"
                   >
                     <PeopleAltIcon sx={{ mr: 1, mt: 0.5 }} />
-                    <Typography>Pax: {booking.pax}</Typography>
+                    <Typography>Quantity: {booking.pax}</Typography>
                   </Box>
                   <Box
                     sx={{ display: "flex", alignItems: "center", mb: 1 }}
