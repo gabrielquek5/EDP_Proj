@@ -124,7 +124,7 @@ namespace WebApplication1.Controllers
 		[HttpPut("{id}")]
         public IActionResult UpdateCart(int id, ShoppingCart shoppingCart)
         {
-            var myShoppingCart = _context.ShoppingCarts.Find(id);
+            var myShoppingCart = _context.ShoppingCarts.Find(id);   
             if (myShoppingCart == null)
             {
                 return NotFound();
@@ -203,7 +203,8 @@ namespace WebApplication1.Controllers
                 {
                     LineItems = lineItems,
                     Mode = "payment",
-                    SuccessUrl = "http://localhost:3000/successfulpayment",
+					AllowPromotionCodes = true,
+					SuccessUrl = "http://localhost:3000/successfulpayment",
                     CancelUrl = "http://localhost:3000/shoppingcart"
                 };
 

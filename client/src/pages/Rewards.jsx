@@ -47,8 +47,8 @@ function Rewards() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
-                Rewards
+            <Typography variant="h5" sx={{ my: 2, textAlign: 'center' , fontFamily:"Poppins" }}>
+                Add Rewards
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -67,7 +67,7 @@ function Rewards() {
                 {
                     user && (
                         <Link to="/addreward" style={{ textDecoration: 'none' }}>
-                            <Button variant='contained'>
+                            <Button variant='contained' sx={{ fontFamily:"Poppins"}}>
                                 Add
                             </Button>
                         </Link>
@@ -91,8 +91,8 @@ function Rewards() {
                                         )
                                     }
                                     <CardContent>
-                                        <Box sx={{ display: 'flex', mb: 1 }}>
-                                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                                        <Box sx={{ display: 'flex', mb: 1 , fontFamily:"Poppins" }}>
+                                            <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 'bold', fontFamily:"Poppins" }}>
                                                 {reward.title}
                                             </Typography>
                                             {
@@ -107,15 +107,11 @@ function Rewards() {
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
                                             color="text.secondary">
-                                            <AccountCircle sx={{ mr: 1 }} />
-                                            <Typography>
-                                                {reward.user?.name}
-                                            </Typography>
                                         </Box>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                        <Typography sx={{ whiteSpace: 'pre-wrap', fontFamily:"Poppins" }}>
                                             {reward.description}
                                         </Typography>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                        <Typography sx={{ whiteSpace: 'pre-wrap', fontFamily:"Poppins" }}>
                                             {reward.duration}
                                         </Typography>
                                     </CardContent>

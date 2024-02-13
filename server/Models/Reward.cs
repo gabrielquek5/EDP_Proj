@@ -20,6 +20,9 @@ namespace WebApplication1.Models
 		[MaxLength(20)]
 		public string? ImageFile { get; set; }
 
+		public string? CouponId { get; set; }
+		public string? Code { get; set; }
+
 		[Column(TypeName = "datetime")]
 		public DateTime CreatedAt { get; set; }
 

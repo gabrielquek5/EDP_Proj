@@ -24,7 +24,7 @@ import http from "../http";
 import UserContext from "../contexts/UserContext";
 import { useUserData } from "./Components/userData";
 
-function ShoppingCart() {
+function ShoppingCart({ rewardCode }) { // Receive rewardCode as a prop
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
@@ -36,8 +36,10 @@ function ShoppingCart() {
   const [errorMessage, setErrorMessage] = useState(""); // State to store error message
   const [total, setTotal] = useState(0); // State to store the total amount
   const [totalCoupon, setTotalCoupon] = useState(0); // State to store the total amount after applying coupon
+  const [rewardList, setRewardList] = useState([]);
 
   useEffect(() => { 
+    getRewards();
     if (userData && userData.id) {
       console.log("User data found. Fetching cart items...");
       fetchCartItems(userData.id);
@@ -52,6 +54,13 @@ function ShoppingCart() {
     </section>
   );
   
+  const getRewards = () => {
+    http.get('/reward').then((res) => {
+        setRewardList(res.data);
+         
+    });
+};
+
   const fetchCartItems = async (userId) => {
     try {
       console.log("Fetching cart items for user ID:", userId); // Log the user ID
@@ -68,29 +77,32 @@ function ShoppingCart() {
       console.error("Error fetching cart items:", error);
     }
   };
-
+  
   const handleCheckout = async (cartArray) => {
     try {
-      // Make the HTTP POST request to create a checkout session
-      const checkoutResponse = await http.post("/shoppingcart/create-checkout-session");
-      console.log(checkoutResponse);
-      
-      // Access the response data directly
-      const checkoutData = checkoutResponse.data;
-      
-      // Check if the response contains the URL
-      
-      if (checkoutData && checkoutData.url) {
-        console.log("Session URL:", checkoutData.url);
-        window.location.href = checkoutData.url; // Redirect to Stripe Checkout
-      } else {
-        console.error("Session URL is undefined");
-      }
-  
+        // Prepare the data to be sent to the backend, including the coupon code
+        const checkoutData = {
+            cart: cartArray,
+            couponCode: couponCode  // Assuming couponCode is the state containing the coupon code
+        };
+
+        // Make the HTTP POST request to create a checkout session
+        const checkoutResponse = await http.post("/shoppingcart/create-checkout-session", checkoutData);
+        
+        // Access the response data directly
+        const responseData = checkoutResponse.data;
+        
+        // Check if the response contains the URL
+        if (responseData && responseData.url) {
+            console.log("Session URL:", responseData.url);
+            window.location.href = responseData.url; // Redirect to Stripe Checkout
+        } else {
+            console.error("Session URL is undefined");
+        }
     } catch (error) {
-      console.error("Error during checkout and booking:", error);
+        console.error("Error during checkout and booking:", error);
     }
-  };
+};
   
   const deleteCartItem = async (itemId,userId) => {
     try {
@@ -112,28 +124,17 @@ function ShoppingCart() {
   };
 
   const applyCouponCode = () => {
-    const fivePercentCodes = ['h3Fg7P', 'K9sE2t', 'R4dM6W', 'x8TjL1', 'A2nQ5k'];
-    const tenPercentCodes = ['G7pQ4f', 'K5mR8n', 'D3sF9k', 'W6tH2r', 'E1jN7L'];
-
-    let discountPercentage = 0;
-    if (fivePercentCodes.includes(couponCode)) {
-      setRewardName(`5% off - ${couponCode}`);
+    if (couponCode === rewardList[0].code) { // Check if the entered coupon code matches reward code
+      setRewardName(` ${couponCode}`);
       setErrorMessage("");
-      discountPercentage = 0.05;
-    } else if (tenPercentCodes.includes(couponCode)) {
-      setRewardName(`10% off - ${couponCode}`);
-      setErrorMessage("");
-      discountPercentage = 0.1;
+      // Calculate the total amount after applying the coupon
+      const subtotal = calculateSubtotal();
+      const discount = 10 ; // calculate the discount based on the coupon code
+      const totalWithCoupon = subtotal - (subtotal / discount)
+      setTotalCoupon(totalWithCoupon.toFixed(2)); // Set the totalCoupon state
     } else {
       setErrorMessage("Invalid coupon code");
-      return; // Exit early if the coupon code is invalid
     }
-
-    // Calculate the total amount after applying the discount
-    const subtotal = calculateSubtotal();
-    const discountAmount = subtotal * discountPercentage;
-    const totalWithDiscount = (subtotal - discountAmount).toFixed(2);
-    setTotalCoupon(totalWithDiscount);
   };
 
   return (

@@ -7,7 +7,6 @@ import UserContext from '../contexts/UserContext';
 
 const getRandomItem = (array) => array[Math.floor(Math.random() * array.length)];
 
-// Arrays of redemption codes
 const regularRedemptionCodes = ['h3Fg7P', 'K9sE2t', 'R4dM6W', 'x8TjL1', 'A2nQ5k'];
 const tenPercentRedemptionCodes = ['G7pQ4f', 'K5mR8n', 'D3sF9k', 'W6tH2r', 'E1jN7L'];
 
@@ -26,6 +25,7 @@ function ViewRewards() {
     const getRewards = () => {
         http.get('/reward').then((res) => {
             setRewardList(res.data);
+             
         });
     };
 
@@ -37,6 +37,7 @@ function ViewRewards() {
 
     useEffect(() => {
         getRewards();
+        console.log(rewardList)
     }, []);
 
     const onSearchKeyDown = (e) => {
@@ -82,12 +83,7 @@ function ViewRewards() {
             return item;
         });
         setRewardList(updatedRewardList);
-
-        // Add logic for redeeming the reward
-        // You can call an API or perform any action here
-
-        // Display success message in Dialog
-        setSuccessMessage(`Congratulations! You have redeemed ${selectedReward.title}. Please copy the code "${redemptionCode}" and add it to cart to apply the reward.`);
+        setSuccessMessage(`Congratulations! You have redeemed ${selectedReward.title}. Please copy the code "${selectedReward.code}" and add it to cart to apply the reward.`);
 
         setOpen(false);
         setSelectedReward(null);
@@ -95,11 +91,11 @@ function ViewRewards() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
+            <Typography variant="h5" sx={{ my: 2, textAlign: 'center' , fontFamily:"Poppins"}}>
                 Rewards
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                 <Input value={search} placeholder="Search"
                     onChange={onSearchChange}
                     onKeyDown={onSearchKeyDown} />
@@ -131,24 +127,24 @@ function ViewRewards() {
                                     }
                                     <CardContent>
                                         <Box sx={{ display: 'flex', mb: 1 }}>
-                                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                                            <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 'bold' , fontFamily:"Poppins" }}>
                                                 {reward.title}
                                             </Typography>
                                         </Box>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                        <Typography sx={{ whiteSpace: 'pre-wrap' , fontFamily:"Poppins" }}>
                                             {reward.description}
                                         </Typography>
-                                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>
+                                        <Typography sx={{ whiteSpace: 'pre-wrap' , fontFamily:"Poppins" }}>
                                             Duration: {reward.duration}
                                         </Typography>
                                         {reward.redemptionCode && (
-                                            <Typography sx={{ whiteSpace: 'pre-wrap', mt: 2 }}>
-                                                Your redemption code: {reward.redemptionCode}
+                                            <Typography sx={{ whiteSpace: 'pre-wrap', mt: 2, fontWeight:"bold" , fontFamily:"Poppins" }}>
+                                                Your redemption code: {reward.code}
                                             </Typography>
                                         )}
                                         <Box sx={{ mt: 2, textAlign: 'right' }}>
                                             {!reward.redemptionCode && (
-                                                <Button variant="outlined" color="primary" sx={{ color: 'green' }} onClick={() => handleRedeem(reward)}>
+                                                <Button variant="outlined" color="primary" sx={{ color: 'green' , fontFamily:"Poppins" }} onClick={() => handleRedeem(reward)}>
                                                     Redeem
                                                 </Button>
                                             )}
@@ -163,7 +159,7 @@ function ViewRewards() {
 
             {/* Redeem Confirmation Dialog */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>
+                <DialogTitle >
                     Confirm Redemption
                 </DialogTitle>
                 <DialogContent>

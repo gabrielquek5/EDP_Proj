@@ -74,7 +74,7 @@ function AddReward() {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ my: 2 }}>
+            <Typography variant="h5" sx={{ my: 2, fontFamily:"Poppins" }}>
                 Add Reward
             </Typography>
             <Box component="form" onSubmit={formik.handleSubmit}>
@@ -114,7 +114,7 @@ function AddReward() {
                     </Grid>
                     <Grid item xs={12} md={6} lg={4}>
                         <Box sx={{ textAlign: 'center', mt: 2 }} >
-                            <Button variant="contained" component="label">
+                            <Button variant="contained" component="label" sx={{fontFamily:"Poppins"}}>
                                 Upload Image
                                 <input hidden accept="image/*" multiple type="file"
                                     onChange={onFileChange} />
@@ -132,7 +132,7 @@ function AddReward() {
                     </Grid>
                 </Grid>
                 <Box sx={{ mt: 2 }}>
-                    <Button variant="contained" type="submit">
+                    <Button variant="contained" type="submit" sx={{fontFamily:"Poppins"}}>
                         Add
                     </Button>
                 </Box>
