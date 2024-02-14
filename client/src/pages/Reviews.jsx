@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Typography, Grid, Card, CardContent, Input, IconButton, Rating, Button, Container  } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -9,22 +9,26 @@ import http from '../http';
 import dayjs from 'dayjs';
 import global from '../global';
 import '@fontsource/poppins';
+import UserContext from "../contexts/UserContext";
 
 
 function Reviews() {
     const [ReviewsList, setReviewsList] = useState([]);
     const [search, setSearch] = useState('');
+    const { user } = useContext(UserContext);
 
     const onSearchChange = (e) => {
         setSearch(e.target.value);
     };
 
     const getReviews = () => {
-        http.get('/Reviews').then((res) => {
+        http.get(`/reviews/${user.id}`).then((res) => {
             setReviewsList(res.data);
             console.log(ReviewsList)
         });
     };
+
+    
 
     const searchReviews = () => {
         http.get(`/Reviews?search=${search}`).then((res) => {

@@ -213,7 +213,7 @@ namespace WebApplication1.Controllers
             _context.Schedules.Add(mySchedule);
             _context.SaveChanges();
 
-            //await _emailService.SendEventAddedEmail(userEmail, userName, mySchedule.Title);
+            /*await _emailService.SendEventAddedEmail(userEmail, userName, mySchedule.Title);*/
 
             return Ok(mySchedule);
         }
@@ -294,10 +294,10 @@ namespace WebApplication1.Controllers
 
             _context.SaveChanges();
 
-            /*if (changes.Length > 0)
+            if (changes.Length > 0)
             {
-                await _emailService.SendScheduleUpdateEmail(userEmail, userName, mySchedule.Title,  changes.ToString(), beforeValues.ToString(), afterValues.ToString());
-            }*/
+                await _emailService.SendScheduleUpdateEmail(userEmail, userName, mySchedule.Title, changes.ToString(), beforeValues.ToString(), afterValues.ToString());
+            }
 
             return Ok();
         }
@@ -343,7 +343,7 @@ namespace WebApplication1.Controllers
 			mySchedule.RequestDelete = true;
             _context.SaveChanges();
 
-            //await _emailService.SendEventRequestDeleteEmail(userEmail, userName, mySchedule.Title);
+            await _emailService.SendEventRequestDeleteEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }
@@ -370,7 +370,7 @@ namespace WebApplication1.Controllers
 			mySchedule.UpdatedAt = DateTime.Now;
 			_context.SaveChanges();
 
-			//await _emailService.SendEventDeleteRejectedEmail(userEmail, userName, mySchedule.Title);
+			await _emailService.SendEventDeleteRejectedEmail(userEmail, userName, mySchedule.Title);
 
 			return Ok();
 		}
@@ -396,7 +396,7 @@ namespace WebApplication1.Controllers
             mySchedule.UpdatedAt = DateTime.Now;
             _context.SaveChanges();
 
-            //await _emailService.SendEventDeleteApprovedEmail(userEmail, userName, mySchedule.Title);
+            await _emailService.SendEventDeleteApprovedEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }
@@ -422,7 +422,7 @@ namespace WebApplication1.Controllers
             mySchedule.UpdatedAt = DateTime.Now;
             _context.SaveChanges();
 
-            //await _emailService.SendEventEndedEmail(userEmail, userName, mySchedule.Title);
+            await _emailService.SendEventEndedEmail(userEmail, userName, mySchedule.Title);
 
             return Ok();
         }

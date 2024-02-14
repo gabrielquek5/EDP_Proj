@@ -18,28 +18,6 @@ namespace WebApplication1.Controllers
 
         private static readonly List<Review> list = new();
 
-        /*        [HttpGet]
-                public IActionResult GetAll(string? search)
-                {
-                    try
-                    {
-                        IQueryable<Review> result = _context.Reviews;
-
-                        if (search != null)
-                        {
-                            result = result.Where(x => x.Comments.Contains(search)
-                                || x.Rating.ToString().Contains(search));
-                        }
-
-                        var list = result.ToList().OrderByDescending(x => x.createdAt).ToList();
-                        return Ok(list);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log or handle the exception as needed
-                        return StatusCode(500, "An error occurred while processing the request.");
-                    }
-                }*/
 
         [HttpGet]
         public IActionResult GetAll(string? search)
@@ -84,15 +62,44 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public IActionResult GetReview(int id)
+        [HttpGet("{userId}")]
+        public IActionResult GetAll(int userId, string? search)
         {
-            Review? review = _context.Reviews.Find(id);
-            if (review == null)
+            try
             {
-                return NotFound();
+                var result = _context.Reviews
+                    .Include(review => review.Schedule)
+                    .Where(review => review.Schedule.IsDeleted == false && review.UserId == userId) // Filter by userId
+                    .Select(review => new
+                    {
+                        review.ReviewID,
+                        review.Rating,
+                        review.Comments,
+                        review.Picture,
+                        EventTitle = review.Schedule.Title,
+                        ScheduleId = review.Schedule.ScheduleId,
+                        userId = userId,
+                        username = review.User.FirstName,
+                        // Include other properties you need
+                    });
+
+                // Apply search filter if search parameter is provided
+                if (!string.IsNullOrEmpty(search))
+                {
+                    result = result.Where(x => x.Comments.Contains(search)
+                                            || x.Rating.ToString().Contains(search));
+                }
+
+                // Execute the query and convert the result to a list
+                var resultList = result.ToList();
+
+                return Ok(resultList);
             }
-            return Ok(review);
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpGet("{id}/schedules")]
