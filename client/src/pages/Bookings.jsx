@@ -51,7 +51,7 @@ function Bookings() {
 
   const getBookings = async () => {
     try {
-      const res = await http.get("/bookings");
+      const res = await http.get(`/bookings/user/${user.id}`);
       const bookings = res.data;
       console.log("bookings",bookings)
       const activeBookingsFiltered = [];
@@ -102,7 +102,8 @@ function Bookings() {
       .then((res) => {
         console.log("Booking cancelled successfully:", id);
         handleClose();
-        window.location.reload();
+        alert("Booking cancelled successfully!"); // Display alert message
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error('Error cancelling booking:', error);
